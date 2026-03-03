@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCM Solution — Hardware Development Phase Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --scm-blue: #1B9BD4;
+    --scm-green: #7DC242;
+    --scm-navy: #1A2B4A;
+    --scm-dark: #0D1B2E;
+    --scm-mid: #132238;
+    --scm-surface: #1A2D45;
+    --scm-border: #1E3A55;
+    --text: #E8F1F8;
+    --muted: #7A9BB5;
+    --white: #FFFFFF;
+
+    --idea: #1B9BD4;
+    --poc: #2AAB6E;
+    --design: #7DC242;
+    --test: #F5A623;
+    --factory: #E8624A;
+    --mp: #9B6BD4;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--scm-dark);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Subtle grid texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(27,155,212,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(27,155,212,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 48px 32px 80px; }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 56px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--scm-border);
+  }
+
+  .logo-area { display: flex; flex-direction: column; gap: 4px; }
+
+  .logo-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .logo-text span.s { color: var(--scm-blue); }
+  .logo-text span.c { color: var(--scm-green); }
+  .logo-text span.m { color: var(--text); }
+  .logo-text span.sol { color: var(--muted); font-weight: 500; font-size: 20px; letter-spacing: 0.12em; }
+
+  .logo-sub {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .header-badge {
+    background: rgba(27,155,212,0.1);
+    border: 1px solid rgba(27,155,212,0.25);
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 11px;
+    color: var(--scm-blue);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Phase arrow bar */
+  .phase-bar {
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 48px;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+  }
+
+  .phase-arrow {
+    flex: 1;
+    position: relative;
+    padding: 16px 20px 16px 28px;
+    cursor: pointer;
+    transition: filter 0.2s, transform 0.1s;
+    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 50%, calc(100% - 18px) 100%, 0 100%, 18px 50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .phase-arrow:first-child {
+    clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 50%, calc(100% - 18px) 100%, 0 100%);
+    padding-left: 20px;
+  }
+
+  .phase-arrow:last-child {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 18px 50%);
+  }
+
+  .phase-arrow:hover { filter: brightness(1.15); }
+  .phase-arrow.active { filter: brightness(1.2); transform: scaleY(1.04); z-index: 2; }
+
+  .phase-arrow[data-phase="idea"]    { background: var(--idea); }
+  .phase-arrow[data-phase="poc"]     { background: var(--poc); }
+  .phase-arrow[data-phase="design"]  { background: var(--design); }
+  .phase-arrow[data-phase="test"]    { background: var(--test); }
+  .phase-arrow[data-phase="factory"] { background: var(--factory); }
+  .phase-arrow[data-phase="mp"]      { background: var(--mp); }
+
+  .pa-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  .pa-gate {
+    font-size: 10px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Detail panel */
+  .detail-panel {
+    display: none;
+    background: var(--scm-surface);
+    border: 1px solid var(--scm-border);
+    border-radius: 8px;
+    margin-bottom: 32px;
+    overflow: hidden;
+    animation: slideDown 0.25s ease;
+  }
+
+  .detail-panel.open { display: block; }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .dp-header {
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid var(--scm-border);
+  }
+
+  .dp-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dp-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .dp-gate-badge {
+    margin-left: auto;
+    padding: 4px 12px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: white;
+    opacity: 0.9;
+  }
+
+  .dp-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0;
+  }
+
+  .dp-col {
+    padding: 24px 24px;
+    border-right: 1px solid var(--scm-border);
+  }
+
+  .dp-col:last-child { border-right: none; }
+
+  .dp-col-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--scm-border);
+  }
+
+  .dp-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 9px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .dp-item::before {
+    content: '→';
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  .dp-item.highlight::before { color: var(--scm-green); content: '✓'; }
+
+  /* Main flow diagram */
+  .flow-section { margin-bottom: 48px; }
+
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--scm-border);
+  }
+
+  /* Gate row */
+  .gate-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .gate-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .gate-diamond {
+    width: 56px;
+    height: 56px;
+    transform: rotate(45deg);
+    border: 2px solid var(--scm-blue);
+    background: rgba(27,155,212,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .gate-diamond:hover {
+    background: rgba(27,155,212,0.2);
+    border-color: var(--scm-green);
+    transform: rotate(45deg) scale(1.1);
+  }
+
+  .gate-diamond.passed {
+    background: rgba(125,194,66,0.15);
+    border-color: var(--scm-green);
+  }
+
+  .gate-inner {
+    transform: rotate(-45deg);
+    text-align: center;
+  }
+
+  .gate-id {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--scm-blue);
+    letter-spacing: 0.06em;
+    display: block;
+    line-height: 1;
+  }
+
+  .gate-name-label {
+    font-size: 9px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 8px;
+    text-align: center;
+    max-width: 70px;
+  }
+
+  .gate-connector {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, var(--scm-border), var(--scm-blue), var(--scm-border));
+    min-width: 40px;
+    position: relative;
+    top: -18px;
+  }
+
+  .gate-connector::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: -4px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid var(--scm-blue);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+
+  /* Workstream grid */
+  .workstream-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .ws-col-header {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: 8px;
+  }
+
+  .ws-card {
+    background: var(--scm-mid);
+    border: 1px solid var(--scm-border);
+    border-radius: 5px;
+    padding: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: default;
+  }
+
+  .ws-card:hover {
+    border-color: var(--scm-blue);
+    background: var(--scm-surface);
+    color: var(--text);
+  }
+
+  .ws-card strong {
+    display: block;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .ws-card .tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-top: 6px;
+  }
+
+  /* SCM Bridge section */
+  .bridge-section {
+    background: linear-gradient(135deg, rgba(27,155,212,0.08), rgba(125,194,66,0.08));
+    border: 1px solid rgba(27,155,212,0.2);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin-bottom: 32px;
+  }
+
+  .bridge-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .bridge-title .scm { color: var(--scm-blue); }
+  .bridge-title .bridge { color: var(--scm-green); }
+
+  .bridge-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+  }
+
+  .bridge-col { display: flex; flex-direction: column; gap: 6px; }
+
+  .bridge-col-head {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--scm-border);
+    margin-bottom: 2px;
+  }
+
+  .bridge-item {
+    font-size: 11px;
+    color: var(--text);
+    line-height: 1.4;
+    padding: 4px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .bridge-item::before {
+    content: '•';
+    color: var(--scm-green);
+    flex-shrink: 0;
+    font-size: 14px;
+    line-height: 1.1;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 16px 20px;
+    background: var(--scm-mid);
+    border: 1px solid var(--scm-border);
+    border-radius: 6px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .l-diamond {
+    width: 12px; height: 12px;
+    transform: rotate(45deg);
+    border: 1.5px solid var(--scm-blue);
+    background: rgba(27,155,212,0.15);
+    flex-shrink: 0;
+  }
+
+  .l-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .l-line { width: 24px; height: 2px; flex-shrink: 0; }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--scm-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <header>
+    <div class="logo-area">
+      <div class="logo-text">
+        <span class="s">S</span><span class="c">C</span><span class="m">M</span>
+        <span class="sol"> SOLUTION</span>
+      </div>
+      <div class="logo-sub">Hardware Development System</div>
+    </div>
+    <div class="header-badge">Phase Map — Rev 1.0</div>
+  </header>
+
+  <!-- Phase Arrow Bar -->
+  <div class="phase-bar">
+    <div class="phase-arrow" data-phase="idea" onclick="togglePanel('idea')">
+      <div class="pa-label">Idea</div>
+      <div class="pa-gate">DR0 · Concept</div>
+    </div>
+    <div class="phase-arrow" data-phase="poc" onclick="togglePanel('poc')">
+      <div class="pa-label">PoC</div>
+      <div class="pa-gate">DR1 · Prelim</div>
+    </div>
+    <div class="phase-arrow" data-phase="design" onclick="togglePanel('design')">
+      <div class="pa-label">Design</div>
+      <div class="pa-gate">DR2 · Critical</div>
+    </div>
+    <div class="phase-arrow" data-phase="test" onclick="togglePanel('test')">
+      <div class="pa-label">Test</div>
+      <div class="pa-gate">DR3 · EVT / DVT</div>
+    </div>
+    <div class="phase-arrow" data-phase="factory" onclick="togglePanel('factory')">
+      <div class="pa-label">Factory</div>
+      <div class="pa-gate">DR4 · PVT</div>
+    </div>
+    <div class="phase-arrow" data-phase="mp" onclick="togglePanel('mp')">
+      <div class="pa-label">MP</div>
+      <div class="pa-gate">Mass Production</div>
+    </div>
+  </div>
+
+  <!-- Detail Panels (expand on click) -->
+  <div id="panel-idea" class="detail-panel">
+    <div class="dp-header">
+      <div class="dp-dot" style="background:var(--idea)"></div>
+      <div class="dp-title" style="color:var(--idea)">Idea Phase</div>
+      <div class="dp-gate-badge" style="background:var(--idea)">Gate: DR0 — Concept Review</div>
+    </div>
+    <div class="dp-body">
+      <div class="dp-col">
+        <div class="dp-col-title">Objective</div>
+        <div class="dp-item">Identify market need and define the problem</div>
+        <div class="dp-item">Secure stakeholder and resource buy-in</div>
+        <div class="dp-item">Select manufacturing partners</div>
+        <div class="dp-item">Establish project infrastructure</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">Key Deliverables</div>
+        <div class="dp-item">MRD — Market Requirements Document</div>
+        <div class="dp-item">Stakeholder review sign-off</div>
+        <div class="dp-item">User stories documented</div>
+        <div class="dp-item">Vendor shortlist + NDAs signed</div>
+        <div class="dp-item">Google Drive folder structure created</div>
+        <div class="dp-item">Contact log opened</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">SCM Solution Tasks</div>
+        <div class="dp-item">Document review</div>
+        <div class="dp-item">Find factory partners with matching skills</div>
+        <div class="dp-item">Get supplier input</div>
+        <div class="dp-item">Translation support</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">DR0 Gate Criteria</div>
+        <div class="dp-item highlight">MRD drafted and reviewed</div>
+        <div class="dp-item highlight">Stakeholder sign-off complete</div>
+        <div class="dp-item highlight">Partners selected and NDAs signed</div>
+        <div class="dp-item highlight">Drive structure created</div>
+        <div class="dp-item highlight">Contact log opened</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-poc" class="detail-panel">
+    <div class="dp-header">
+      <div class="dp-dot" style="background:var(--poc)"></div>
+      <div class="dp-title" style="color:var(--poc)">Proof of Concept Phase</div>
+      <div class="dp-gate-badge" style="background:var(--poc)">Gate: DR1 — Preliminary Design Review</div>
+    </div>
+    <div class="dp-body">
+      <div class="dp-col">
+        <div class="dp-col-title">Objective</div>
+        <div class="dp-item">Reduce technical and market risk</div>
+        <div class="dp-item">Validate core technology works</div>
+        <div class="dp-item">Explore off-the-shelf solutions</div>
+        <div class="dp-item">Lock architecture before full design</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">Key Deliverables</div>
+        <div class="dp-item">Market validation complete</div>
+        <div class="dp-item">System interface diagram</div>
+        <div class="dp-item">Non-form-factor PoC sample built</div>
+        <div class="dp-item">PRD drafted internally</div>
+        <div class="dp-item">Preliminary BOM drafted</div>
+        <div class="dp-item">Long-lead items flagged</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">SCM Solution Tasks</div>
+        <div class="dp-item">Test prototypes</div>
+        <div class="dp-item">Source components and engineering services</div>
+        <div class="dp-item">Explore off-the-shelf solutions</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">DR1 Gate Criteria</div>
+        <div class="dp-item highlight">PoC sample built and tested</div>
+        <div class="dp-item highlight">Market validation done</div>
+        <div class="dp-item highlight">PRD approved internally</div>
+        <div class="dp-item highlight">Preliminary BOM drafted</div>
+        <div class="dp-item highlight">Factory partners confirmed</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-design" class="detail-panel">
+    <div class="dp-header">
+      <div class="dp-dot" style="background:var(--design)"></div>
+      <div class="dp-title" style="color:var(--design)">Design Phase</div>
+      <div class="dp-gate-badge" style="background:var(--design)">Gate: DR2 — Critical Design Review</div>
+    </div>
+    <div class="dp-body">
+      <div class="dp-col">
+        <div class="dp-col-title">Objective</div>
+        <div class="dp-item">Complete all ME and EE design</div>
+        <div class="dp-item">Release all engineering drawings</div>
+        <div class="dp-item">Get DFM feedback from partners</div>
+        <div class="dp-item">Prepare manufacturer-ready file packages</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">Key Deliverables</div>
+        <div class="dp-item">ME asset checklist signed off</div>
+        <div class="dp-item">EE asset checklist signed off</div>
+        <div class="dp-item">TRD compiled</div>
+        <div class="dp-item">DFM feedback incorporated</div>
+        <div class="dp-item">Handoff manifests prepared</div>
+        <div class="dp-item">Master BOM with MPNs</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">SCM Solution Tasks</div>
+        <div class="dp-item">Support ME, EE, SW, packaging design teams</div>
+        <div class="dp-item">BOM costing</div>
+        <div class="dp-item">Material selection</div>
+        <div class="dp-item">3rd party checks</div>
+        <div class="dp-item">FMEA support</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">DR2 Gate Criteria</div>
+        <div class="dp-item highlight">ME + EE checklists signed off</div>
+        <div class="dp-item highlight">All drawings released</div>
+        <div class="dp-item highlight">TRD reviewed and approved</div>
+        <div class="dp-item highlight">DFM feedback incorporated</div>
+        <div class="dp-item highlight">IP review complete</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-test" class="detail-panel">
+    <div class="dp-header">
+      <div class="dp-dot" style="background:var(--test)"></div>
+      <div class="dp-title" style="color:var(--test)">Test Phase</div>
+      <div class="dp-gate-badge" style="background:var(--test)">Gates: DR3 · EVT · DVT</div>
+    </div>
+    <div class="dp-body">
+      <div class="dp-col">
+        <div class="dp-col-title">Objective</div>
+        <div class="dp-item">Send file packages to CM and ODM</div>
+        <div class="dp-item">Build and test first physical prototypes</div>
+        <div class="dp-item">Validate design against all requirements</div>
+        <div class="dp-item">Complete First Article Inspection</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">Key Deliverables</div>
+        <div class="dp-item">CM + ODM packages sent with manifests</div>
+        <div class="dp-item">EVT report — pass/fail</div>
+        <div class="dp-item">DVT report — reliability + regulatory</div>
+        <div class="dp-item">FAI report signed off</div>
+        <div class="dp-item">Vendor audit complete</div>
+        <div class="dp-item">Certifications submitted</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">SCM Solution Tasks</div>
+        <div class="dp-item">FAI support</div>
+        <div class="dp-item">Check EVT and DVT steps and results</div>
+        <div class="dp-item">Oversee reliability testing</div>
+        <div class="dp-item">Certifications for different markets</div>
+        <div class="dp-item">Test fixture design</div>
+        <div class="dp-item">RFQs — POs — PIs</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">DR3 Gate Criteria</div>
+        <div class="dp-item highlight">EVT passed</div>
+        <div class="dp-item highlight">DVT passed</div>
+        <div class="dp-item highlight">FAI signed off</div>
+        <div class="dp-item highlight">Vendor audit complete</div>
+        <div class="dp-item highlight">BOM frozen</div>
+        <div class="dp-item highlight">All certifications obtained</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-factory" class="detail-panel">
+    <div class="dp-header">
+      <div class="dp-dot" style="background:var(--factory)"></div>
+      <div class="dp-title" style="color:var(--factory)">Factory Phase</div>
+      <div class="dp-gate-badge" style="background:var(--factory)">Gates: DR4 · PVT</div>
+    </div>
+    <div class="dp-body">
+      <div class="dp-col">
+        <div class="dp-col-title">Objective</div>
+        <div class="dp-item">Set up and validate production line</div>
+        <div class="dp-item">Run PVT to confirm yield and quality</div>
+        <div class="dp-item">Train operators and confirm SOPs</div>
+        <div class="dp-item">Confirm MP readiness</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">Key Deliverables</div>
+        <div class="dp-item">Production SOPs approved</div>
+        <div class="dp-item">Test fixtures validated</div>
+        <div class="dp-item">Operator training verified</div>
+        <div class="dp-item">PVT report — yield targets met</div>
+        <div class="dp-item">QC inline inspection active</div>
+        <div class="dp-item">MP readiness confirmed</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">SCM Solution Tasks</div>
+        <div class="dp-item">Check production line SOPs</div>
+        <div class="dp-item">Check PVT results</div>
+        <div class="dp-item">Verify operator training</div>
+        <div class="dp-item">Check capacity</div>
+        <div class="dp-item">Test the production line</div>
+        <div class="dp-item">Determine MP readiness</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">DR4 Gate Criteria</div>
+        <div class="dp-item highlight">PVT passed</div>
+        <div class="dp-item highlight">Production SOPs confirmed</div>
+        <div class="dp-item highlight">Operator training verified</div>
+        <div class="dp-item highlight">QC inspection active</div>
+        <div class="dp-item highlight">BOM locked</div>
+        <div class="dp-item highlight">MP readiness sign-off</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-mp" class="detail-panel">
+    <div class="dp-header">
+      <div class="dp-dot" style="background:var(--mp)"></div>
+      <div class="dp-title" style="color:var(--mp)">Mass Production</div>
+      <div class="dp-gate-badge" style="background:var(--mp)">Gate: MP — Ship Product</div>
+    </div>
+    <div class="dp-body">
+      <div class="dp-col">
+        <div class="dp-col-title">Objective</div>
+        <div class="dp-item">Run sustained mass production</div>
+        <div class="dp-item">Monitor quality and yield continuously</div>
+        <div class="dp-item">Manage logistics and shipping</div>
+        <div class="dp-item">Handle failure analysis and improvements</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">Key Deliverables</div>
+        <div class="dp-item">MP POs placed and confirmed</div>
+        <div class="dp-item">Production schedule running</div>
+        <div class="dp-item">Yield metrics tracked</div>
+        <div class="dp-item">Final inspection active</div>
+        <div class="dp-item">Logistics and shipping arranged</div>
+        <div class="dp-item">8D failure analysis process active</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">SCM Solution Tasks</div>
+        <div class="dp-item">Verify quality processes are working</div>
+        <div class="dp-item">Final inspection of material</div>
+        <div class="dp-item">Logistics and shipping</div>
+        <div class="dp-item">Metrics and 8D reports</div>
+        <div class="dp-item">Optimize production</div>
+        <div class="dp-item">Failure analysis</div>
+      </div>
+      <div class="dp-col">
+        <div class="dp-col-title">Ongoing Requirements</div>
+        <div class="dp-item highlight">Contact log kept current</div>
+        <div class="dp-item highlight">ECOs tracked and communicated</div>
+        <div class="dp-item highlight">Quality issues logged with 8D ref</div>
+        <div class="dp-item highlight">Partner communications documented</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gate Flow Diagram -->
+  <div class="flow-section">
+    <div class="section-title">Design Review Gates</div>
+    <div class="gate-flow">
+      <div class="gate-node">
+        <div class="gate-diamond" title="DR0 — Concept Review">
+          <div class="gate-inner"><span class="gate-id">DR0</span></div>
+        </div>
+        <div class="gate-name-label">Concept</div>
+      </div>
+      <div class="gate-connector"></div>
+      <div class="gate-node">
+        <div class="gate-diamond" title="DR1 — Preliminary Design">
+          <div class="gate-inner"><span class="gate-id">DR1</span></div>
+        </div>
+        <div class="gate-name-label">Prelim Design</div>
+      </div>
+      <div class="gate-connector"></div>
+      <div class="gate-node">
+        <div class="gate-diamond" title="DR2 — Critical Design Review">
+          <div class="gate-inner"><span class="gate-id">DR2</span></div>
+        </div>
+        <div class="gate-name-label">Critical Design</div>
+      </div>
+      <div class="gate-connector"></div>
+      <div class="gate-node">
+        <div class="gate-diamond" title="DR3 — Build Readiness">
+          <div class="gate-inner"><span class="gate-id">DR3</span></div>
+        </div>
+        <div class="gate-name-label">Build Ready</div>
+      </div>
+      <div class="gate-connector"></div>
+      <div class="gate-node">
+        <div class="gate-diamond" title="EVT — Engineering Validation">
+          <div class="gate-inner"><span class="gate-id">EVT</span></div>
+        </div>
+        <div class="gate-name-label">Eng. Validation</div>
+      </div>
+      <div class="gate-connector"></div>
+      <div class="gate-node">
+        <div class="gate-diamond" title="DVT — Design Validation">
+          <div class="gate-inner"><span class="gate-id">DVT</span></div>
+        </div>
+        <div class="gate-name-label">Design Validation</div>
+      </div>
+      <div class="gate-connector"></div>
+      <div class="gate-node">
+        <div class="gate-diamond" title="DR4 — Production Readiness">
+          <div class="gate-inner"><span class="gate-id">DR4</span></div>
+        </div>
+        <div class="gate-name-label">Prod. Ready</div>
+      </div>
+      <div class="gate-connector"></div>
+      <div class="gate-node">
+        <div class="gate-diamond" style="border-color:var(--scm-green);background:rgba(125,194,66,0.15)" title="MP — Mass Production">
+          <div class="gate-inner"><span class="gate-id" style="color:var(--scm-green)">MP</span></div>
+        </div>
+        <div class="gate-name-label">Mass Production</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCM Bridge Services -->
+  <div class="bridge-section">
+    <div class="bridge-title">
+      Use <span class="scm">SCM</span> <span class="bridge">BRIDGE</span> for Supply Chain Services
+    </div>
+    <div class="bridge-grid">
+      <div class="bridge-col">
+        <div class="bridge-col-head">Idea</div>
+        <div class="bridge-item">Document review</div>
+        <div class="bridge-item">Get supplier input</div>
+        <div class="bridge-item">Translation</div>
+        <div class="bridge-item">Find factory partners</div>
+      </div>
+      <div class="bridge-col">
+        <div class="bridge-col-head">PoC</div>
+        <div class="bridge-item">Test prototypes</div>
+        <div class="bridge-item">Source components</div>
+        <div class="bridge-item">Engineering services</div>
+        <div class="bridge-item">Off-the-shelf solutions</div>
+      </div>
+      <div class="bridge-col">
+        <div class="bridge-col-head">Design</div>
+        <div class="bridge-item">Support EE, ME, SW teams</div>
+        <div class="bridge-item">BOM costing</div>
+        <div class="bridge-item">Material selection</div>
+        <div class="bridge-item">3rd party checks</div>
+        <div class="bridge-item">FMEA support</div>
+      </div>
+      <div class="bridge-col">
+        <div class="bridge-col-head">Test</div>
+        <div class="bridge-item">FAI support</div>
+        <div class="bridge-item">EVT + DVT oversight</div>
+        <div class="bridge-item">Reliability testing</div>
+        <div class="bridge-item">Certifications</div>
+        <div class="bridge-item">RFQs — POs — PIs</div>
+      </div>
+      <div class="bridge-col">
+        <div class="bridge-col-head">Factory</div>
+        <div class="bridge-item">Production line SOPs</div>
+        <div class="bridge-item">PVT results check</div>
+        <div class="bridge-item">Operator training verify</div>
+        <div class="bridge-item">Capacity checks</div>
+        <div class="bridge-item">MP readiness</div>
+      </div>
+      <div class="bridge-col">
+        <div class="bridge-col-head">MP</div>
+        <div class="bridge-item">Quality verification</div>
+        <div class="bridge-item">Final inspection</div>
+        <div class="bridge-item">Logistics + shipping</div>
+        <div class="bridge-item">Metrics + 8D reports</div>
+        <div class="bridge-item">Failure analysis</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="l-diamond"></div>
+      Design Review Gate — must pass to proceed
+    </div>
+    <div class="legend-item">
+      <div class="l-dot" style="background:var(--scm-blue)"></div>
+      Click any phase arrow above to expand details
+    </div>
+    <div class="legend-item">
+      <div class="l-dot" style="background:var(--scm-green)"></div>
+      Green items = gate pass criteria
+    </div>
+    <div class="legend-item">
+      <div class="l-line" style="background:linear-gradient(90deg,var(--scm-blue),var(--scm-green))"></div>
+      Primary development flow
+    </div>
+  </div>
+
+  <footer>
+    <span>SCM Solution LTD. — Hardware Development System</span>
+    <span>© 2025 · Phase Map Rev 1.0</span>
+  </footer>
+
+</div>
+
+<script>
+  function togglePanel(phase) {
+    const panel = document.getElementById('panel-' + phase);
+    const arrow = document.querySelector('[data-phase="' + phase + '"]');
+    const isOpen = panel.classList.contains('open');
+
+    // Close all
+    document.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('open'));
+    document.querySelectorAll('.phase-arrow').forEach(a => a.classList.remove('active'));
+
+    // Open clicked if it was closed
+    if (!isOpen) {
+      panel.classList.add('open');
+      arrow.classList.add('active');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+</script>
+</body>
+</html>
