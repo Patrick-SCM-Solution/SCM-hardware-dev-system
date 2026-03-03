@@ -8,7 +8,7 @@ Built for use alongside Google Drive, Notion, and Odoo Knowledge.
 
 ## Live Site
 
-**[View the Phase Map →](https://yourusername.github.io/scm-hardware-system)**
+**[View the Phase Map →]([https://yourusername.github.io/scm-hardware-system](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/))**
 
 > Replace `yourusername` with your GitHub username after setup.
 
