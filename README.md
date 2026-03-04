@@ -10,8 +10,6 @@ Built for use alongside Google Drive, Notion, and Odoo Knowledge.
 
 **[View the Phase Map →](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/))**
 
-> Replace `yourusername` with your GitHub username after setup.
-
 ---
 
 ## What's Inside
