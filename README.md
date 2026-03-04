@@ -26,6 +26,9 @@ Interactive overview of all six development phases — Idea, PoC, Design, Test, 
 | File | Description |
 |------|-------------|
 [Handoff Manfest Tool](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/handoff-manifest.html) | Asset Pack Manifest Builder For Keeping Assets Organized |
+[Project Asset Registry](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/project-asset-registry.html) | Asset Registry to Organize File Locations |
+
+tools/project-asset-registry.html
 ### Coming Soon
 - `checklists/dr0-gate.html` through `dr4-gate.html` — Design review gate checklists
 - `templates/mrd.html` — Market Requirements Document template
