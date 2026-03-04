@@ -2,7 +2,7 @@
 
 A structured reference system for hardware product development, covering the full journey from Idea through to Mass Production.
 
-Built for use alongside Google Drive, Notion, and Odoo Knowledge.
+Built for use alongside Google Drive, Notion, and Odoo Knowledge. A way for me to visualize my thoughts on supplychain and product development. 
 
 ---
 
@@ -31,7 +31,10 @@ Interactive overview of all six development phases — Idea, PoC, Design, Test, 
 - `templates/mrd.html` — Market Requirements Document template
 - `templates/prd.html` — Product Requirements Document template
 - `templates/trd.html` — Technical Requirements Document template
-- `templates/handoff-manifest.html` — Handoff manifest template
+- `templates/rfi.html` — Request for Information template
+- `templates/rfp.html` — Request for Proposal Document template
+- `templates/rfq.html` — Request for Quoatation Document template
+- `templates/handoff-manifest.html` — Handoff manifest template ^^ See Tools Above
 - `sops/file-release.html` — File release SOP
 - `sops/revision-control.html` — Revision control SOP
 
@@ -49,7 +52,8 @@ Interactive overview of all six development phases — Idea, PoC, Design, Test, 
 | MP | Mass Production | Yield, QC, logistics, failure analysis |
 
 ---
-
+## Next Stages
+|Adopted to Workflow in Notion then will migrate to Odoo once the workflow functions |
 ## Google Drive Structure
 
 Create this folder structure for every new project:
