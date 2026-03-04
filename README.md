@@ -53,7 +53,7 @@ Interactive overview of all six development phases — Idea, PoC, Design, Test, 
 
 ---
 ## Next Stages
-|Adopted to Workflow in Notion then will migrate to Odoo once the workflow functions |
+Adopt to Workflow in Notion then will migrate to Odoo once the workflow functions 
 ## Google Drive Structure
 
 Create this folder structure for every new project:
