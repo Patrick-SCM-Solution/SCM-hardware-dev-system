@@ -7,8 +7,7 @@ Built for use alongside Google Drive, Notion, and Odoo Knowledge.
 ---
 
 ## Live Site
-
-**[View the Phase Map →](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/))**
+[View the Phase Map →](index.html)
 
 ---
 
@@ -20,8 +19,8 @@ Interactive overview of all six development phases — Idea, PoC, Design, Test, 
 ### Checklists
 | File | Description |
 |------|-------------|
-| `checklists/me-assets.html` | Mechanical Engineering asset checklist — master assembly through to manufacturer exports |
-| `checklists/ee-assets.html` | Electrical Engineering asset checklist — schematics, Gerbers, BOM, CPL, test scripts |
+| [ME Asset Checklist](checklists/me-assets.html) | Mechanical Engineering asset checklist — master assembly through to manufacturer exports |
+| [EE Asset Checklist](checklists/ee-assets.html) | Electrical Engineering asset checklist — schematics, Gerbers, BOM, CPL, test scripts |
 
 ### Coming Soon
 - `checklists/dr0-gate.html` through `dr4-gate.html` — Design review gate checklists
