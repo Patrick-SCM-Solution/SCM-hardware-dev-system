@@ -73,12 +73,6 @@ Create this folder structure for every new project:
     /SupplyChain_RevA_[date]/
 ```
 
----
 
-## Embedding in Notion
-
-Each page has its own URL on GitHub Pages. Use Notion's `/embed` block and paste the URL to render any page inline.
-
----
 
 © 2025 SCM Solution LTD.
