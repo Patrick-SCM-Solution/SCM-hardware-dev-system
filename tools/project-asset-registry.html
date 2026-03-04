@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Asset Registry — SCM Hardware System</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1B9BD4;--green:#7DC242;--dark:#0D1B2E;--mid:#132238;
+  --surf:#1A2D45;--bdr:#1E3A55;--text:#E8F1F8;--muted:#7A9BB5;
+  --warn:#FC8181;--amber:#F6AD55;--purple:#B794F4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--dark);color:var(--text);font-family:Barlow,sans-serif;min-height:100vh}
+body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(27,155,212,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(27,155,212,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:40px 32px 80px}
+nav{display:flex;align-items:center;gap:8px;margin-bottom:36px;font-size:12px;color:var(--muted)}
+nav a{color:var(--blue);text-decoration:none}nav a:hover{text-decoration:underline}
+nav span{color:var(--bdr)}
+.phase-tag{display:inline-block;font-family:"Barlow Condensed",sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);border:1px solid rgba(246,173,85,.3);background:rgba(246,173,85,.08);padding:3px 10px;border-radius:3px;margin-bottom:12px}
+h1{font-family:"Barlow Condensed",sans-serif;font-size:32px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;line-height:1.1;margin-bottom:8px}
+.subtitle{font-size:14px;color:var(--muted);max-width:640px;line-height:1.6;margin-bottom:32px}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--bdr);margin-bottom:28px}
+.tab{padding:12px 20px;font-family:"Barlow Condensed",sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;display:flex;align-items:center;gap:8px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-badge{background:rgba(27,155,212,.15);color:var(--blue);font-size:10px;padding:1px 7px;border-radius:99px;font-weight:700}
+.panel{display:none}.panel.active{display:block}
+
+/* CARDS */
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:24px 28px;margin-bottom:20px}
+.card-title{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:18px;color:var(--text);display:flex;align-items:center;justify-content:space-between}
+.card-title-left{display:flex;align-items:center;gap:10px}
+.card-title-left::before{content:"";display:block;width:3px;height:16px;border-radius:2px;background:var(--amber)}
+
+/* FIELDS */
+.field-grid{display:grid;gap:14px;margin-bottom:14px}
+.fg-2{grid-template-columns:1fr 1fr}
+.fg-3{grid-template-columns:1fr 1fr 1fr}
+.fg-4{grid-template-columns:1fr 1fr 1fr 1fr}
+.fg-1{grid-template-columns:1fr}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.field input,.field select,.field textarea{background:var(--mid);border:1px solid var(--bdr);border-radius:4px;padding:9px 11px;color:var(--text);font-family:Barlow,sans-serif;font-size:13px;outline:none;transition:border-color .15s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--amber)}
+.field select option{background:var(--mid)}
+.field textarea{resize:vertical;min-height:60px}
+
+/* BUTTONS */
+.btn{font-family:"Barlow Condensed",sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:9px 18px;border-radius:4px;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#1688bb}
+.btn-amber{background:var(--amber);color:#0D1B2E}
+.btn-amber:hover{filter:brightness(1.1)}
+.btn-green{background:var(--green);color:#0D1B2E}
+.btn-green:hover{filter:brightness(1.1)}
+.btn-ghost{background:transparent;border:1px solid var(--bdr);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue)}
+.btn-danger{background:transparent;border:1px solid rgba(252,129,129,.3);color:var(--warn)}
+.btn-danger:hover{background:rgba(252,129,129,.08)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+/* PARTY CARDS */
+.party-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:20px}
+.party-card{background:var(--mid);border:2px solid var(--bdr);border-radius:6px;padding:16px;position:relative;transition:border-color .15s}
+.party-card:hover{border-color:rgba(246,173,85,.3)}
+.party-card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.party-name{font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.party-type-badge{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:3px;border:1px solid;white-space:nowrap}
+.pt-cm{color:var(--blue);border-color:rgba(27,155,212,.4);background:rgba(27,155,212,.08)}
+.pt-odm{color:var(--amber);border-color:rgba(246,173,85,.4);background:rgba(246,173,85,.08)}
+.pt-client{color:var(--green);border-color:rgba(125,194,66,.4);background:rgba(125,194,66,.08)}
+.pt-supplier{color:var(--purple);border-color:rgba(183,148,244,.4);background:rgba(183,148,244,.08)}
+.pt-agency{color:#76E4F7;border-color:rgba(118,228,247,.4);background:rgba(118,228,247,.08)}
+.pt-internal{color:var(--muted);border-color:rgba(122,155,181,.3);background:rgba(122,155,181,.06)}
+.party-contact{font-size:11px;color:var(--muted);margin-bottom:4px}
+.party-asset-count{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)}
+.party-actions{display:flex;gap:6px;margin-top:10px}
+.icon-btn{width:28px;height:28px;border-radius:4px;border:1px solid var(--bdr);background:transparent;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s}
+.icon-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+/* ASSET TABLE */
+.filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-select{background:var(--mid);border:1px solid var(--bdr);border-radius:4px;padding:7px 10px;color:var(--text);font-family:Barlow,sans-serif;font-size:12px;outline:none;transition:border-color .15s}
+.filter-select:focus{border-color:var(--blue)}
+.filter-search{background:var(--mid);border:1px solid var(--bdr);border-radius:4px;padding:7px 12px;color:var(--text);font-family:Barlow,sans-serif;font-size:12px;outline:none;flex:1;min-width:180px}
+.filter-search:focus{border-color:var(--blue)}
+.filter-search::placeholder{color:var(--muted)}
+.asset-count-lbl{font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap}
+
+.asset-table{width:100%;border-collapse:collapse}
+.asset-table th{background:rgba(10,13,20,.8);color:var(--muted);font-family:"Barlow Condensed",sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:10px 12px;text-align:left;border-bottom:1px solid var(--bdr);white-space:nowrap;cursor:pointer;user-select:none}
+.asset-table th:hover{color:var(--blue)}
+.asset-table th.sorted{color:var(--amber)}
+.asset-table td{padding:10px 12px;border-bottom:1px solid rgba(30,58,85,.4);vertical-align:middle;font-size:12px}
+.asset-table tr:hover td{background:rgba(246,173,85,.03)}
+.asset-table tr.editing td{background:rgba(27,155,212,.05);border-bottom-color:var(--blue)}
+
+.status-pill{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:3px}
+.s-draft{background:rgba(122,155,181,.15);color:var(--muted)}
+.s-approved{background:rgba(125,194,66,.15);color:var(--green)}
+.s-sent{background:rgba(27,155,212,.15);color:var(--blue)}
+.s-review{background:rgba(246,173,85,.15);color:var(--amber)}
+.s-superseded{background:rgba(252,129,129,.1);color:var(--warn);text-decoration:line-through}
+
+.access-pill{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:3px}
+.a-internal{background:rgba(122,155,181,.12);color:var(--muted)}
+.a-nda{background:rgba(252,129,129,.12);color:var(--warn)}
+.a-public{background:rgba(125,194,66,.12);color:var(--green)}
+
+.storage-pill{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-right:3px}
+.sp-gdrive{background:rgba(27,155,212,.15);color:var(--blue)}
+.sp-sharepoint{background:rgba(246,173,85,.15);color:var(--amber)}
+.sp-dropbox{background:rgba(125,194,66,.15);color:var(--green)}
+.sp-local{background:rgba(183,148,244,.15);color:var(--purple)}
+
+.link-cell a{color:var(--blue);text-decoration:none;font-family:monospace;font-size:11px}
+.link-cell a:hover{text-decoration:underline}
+.no-link{color:var(--muted);font-size:11px;font-style:italic}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-state .big{font-size:40px;margin-bottom:12px}
+.empty-state p{font-size:14px;line-height:1.6}
+
+/* ADD ASSET FORM */
+.add-form{background:var(--mid);border:1px solid var(--blue);border-radius:6px;padding:20px;margin-bottom:16px;display:none}
+.add-form.open{display:block}
+.add-form-title{font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);margin-bottom:14px}
+
+/* STATS BAR */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+.stat-card{background:var(--surf);border:1px solid var(--bdr);border-radius:6px;padding:14px 16px}
+.stat-val{font-family:"Barlow Condensed",sans-serif;font-size:26px;font-weight:800;line-height:1;margin-bottom:4px}
+.stat-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* EXPORT */
+.code-block{background:var(--dark);border:1px solid var(--bdr);border-radius:6px;padding:16px;font-family:monospace;font-size:11px;color:var(--text);white-space:pre-wrap;word-break:break-all;max-height:500px;overflow-y:auto;line-height:1.6}
+
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--bdr);display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <a href="../index.html">← Phase Map</a>
+  <span>/</span><span>Tools</span>
+  <span>/</span><span>Project Asset Registry</span>
+</nav>
+
+<div class="phase-tag">Project Tool — All Phases</div>
+<h1>Project Asset<br>Registry</h1>
+<p class="subtitle">Central index for all project files across every vendor, client, and partner. Track where every asset lives, who owns it, its status, and access level — in one place.</p>
+
+<!-- PROJECT HEADER -->
+<div class="card" id="project-header-card">
+  <div class="card-title">
+    <div class="card-title-left">Project Details</div>
+    <button class="btn btn-ghost" onclick="toggleProjectEdit()" id="proj-edit-btn">✎ Edit</button>
+  </div>
+  <div id="proj-display"></div>
+  <div id="proj-form" style="display:none">
+    <div class="field-grid fg-2">
+      <div class="field"><label>Project Name</label><input id="pf-name" type="text" placeholder="e.g. Playtomo Rev A"></div>
+      <div class="field"><label>Client / Company</label><input id="pf-client" type="text" placeholder="e.g. Acme Corp"></div>
+    </div>
+    <div class="field-grid fg-4">
+      <div class="field"><label>Project Code</label><input id="pf-code" type="text" placeholder="e.g. PLY-001"></div>
+      <div class="field"><label>Phase</label>
+        <select id="pf-phase">
+          <option>Idea</option><option>PoC</option><option>Design</option>
+          <option>Test</option><option>Factory</option><option>Mass Production</option>
+        </select>
+      </div>
+      <div class="field"><label>Project Status</label>
+        <select id="pf-status">
+          <option value="active">Active</option>
+          <option value="onhold">On Hold</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="pending">Pending Start</option>
+        </select>
+      </div>
+      <div class="field"><label>Start Date</label><input id="pf-date" type="date"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-amber" onclick="saveProject()">Save Project Details</button>
+      <button class="btn btn-ghost" onclick="toggleProjectEdit()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('overview')" id="tab-overview">Overview</div>
+  <div class="tab" onclick="switchTab('parties')" id="tab-parties">Vendors & Clients <span class="tab-badge" id="badge-parties">0</span></div>
+  <div class="tab" onclick="switchTab('assets')" id="tab-assets">Assets <span class="tab-badge" id="badge-assets">0</span></div>
+  <div class="tab" onclick="switchTab('export')" id="tab-export">Export</div>
+</div>
+
+<!-- ─── OVERVIEW ───────────────────────────────────────────────────── -->
+<div class="panel active" id="panel-overview">
+  <div class="stats-bar" id="stats-bar">
+    <div class="stat-card"><div class="stat-val" id="st-assets">0</div><div class="stat-lbl">Total Assets</div></div>
+    <div class="stat-card"><div class="stat-val" id="st-approved" style="color:var(--green)">0</div><div class="stat-lbl">Approved</div></div>
+    <div class="stat-card"><div class="stat-val" id="st-sent" style="color:var(--blue)">0</div><div class="stat-lbl">Sent to Partner</div></div>
+    <div class="stat-card"><div class="stat-val" id="st-parties">0</div><div class="stat-lbl">Parties</div></div>
+  </div>
+  <div id="overview-by-party"></div>
+</div>
+
+<!-- ─── PARTIES ────────────────────────────────────────────────────── -->
+<div class="panel" id="panel-parties">
+  <div class="card">
+    <div class="card-title"><div class="card-title-left">Add Vendor / Client / Partner</div></div>
+    <div class="field-grid fg-3">
+      <div class="field"><label>Name</label><input id="np-name" type="text" placeholder="e.g. Well Linkage CM"></div>
+      <div class="field"><label>Type</label>
+        <select id="np-type">
+          <option value="cm">Contract Manufacturer (CM)</option>
+          <option value="odm">ODM Partner</option>
+          <option value="client">Client</option>
+          <option value="supplier">Component Supplier</option>
+          <option value="agency">Agency (Marketing/Design)</option>
+          <option value="internal">Internal</option>
+        </select>
+      </div>
+      <div class="field"><label>Contact Name</label><input id="np-contact" type="text" placeholder="e.g. John Smith"></div>
+    </div>
+    <div class="field-grid fg-2">
+      <div class="field"><label>Email</label><input id="np-email" type="email" placeholder="john@company.com"></div>
+      <div class="field"><label>Notes</label><input id="np-notes" type="text" placeholder="e.g. Primary tooling contact"></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-amber" onclick="addParty()">+ Add Party</button>
+    </div>
+  </div>
+  <div class="party-grid" id="party-grid">
+    <div class="empty-state" style="grid-column:1/-1">
+      <div class="big">🏭</div>
+      <p>No parties added yet.<br>Add your CM, ODM, clients, and suppliers above.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ASSETS ─────────────────────────────────────────────────────── -->
+<div class="panel" id="panel-assets">
+  <!-- ADD FORM -->
+  <div class="add-form" id="add-asset-form">
+    <div class="add-form-title">+ Add New Asset</div>
+    <div class="field-grid fg-2">
+      <div class="field"><label>Asset Name</label><input id="na-name" type="text" placeholder="e.g. Master Assembly STEP"></div>
+      <div class="field"><label>File Type / Format</label><input id="na-type" type="text" placeholder="e.g. .step / .stp"></div>
+    </div>
+    <div class="field-grid fg-3">
+      <div class="field"><label>Category</label>
+        <select id="na-category">
+          <option>ME — CAD & Drawings</option>
+          <option>EE — Schematics & Layout</option>
+          <option>EE — Gerbers & Fab</option>
+          <option>EE — BOM & CPL</option>
+          <option>CMF & Materials</option>
+          <option>Tooling & Molds</option>
+          <option>Packaging</option>
+          <option>Requirements (TRD/PRD/MRD)</option>
+          <option>Quotes & Pricing</option>
+          <option>Contracts & NDAs</option>
+          <option>Marketing Materials</option>
+          <option>Test & Certification</option>
+          <option>Vendor Audit</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Party</label><select id="na-party"><option value="">— Select party —</option></select></div>
+      <div class="field"><label>Version / Rev</label><input id="na-version" type="text" placeholder="e.g. Rev A / v1.2"></div>
+    </div>
+    <div class="field-grid fg-3">
+      <div class="field"><label>Storage</label>
+        <select id="na-storage">
+          <option value="gdrive">Google Drive</option>
+          <option value="sharepoint">SharePoint</option>
+          <option value="dropbox">Dropbox</option>
+          <option value="local">Local / Network</option>
+        </select>
+      </div>
+      <div class="field"><label>File Path</label><input id="na-path" type="text" placeholder="/04_Exports/assembly.step"></div>
+      <div class="field"><label>Link / URL</label><input id="na-link" type="text" placeholder="Paste share link..."></div>
+    </div>
+    <div class="field-grid fg-3">
+      <div class="field"><label>Status</label>
+        <select id="na-status">
+          <option value="draft">Draft</option>
+          <option value="review">In Review</option>
+          <option value="approved">Approved</option>
+          <option value="sent">Sent to Partner</option>
+          <option value="superseded">Superseded</option>
+        </select>
+      </div>
+      <div class="field"><label>Access Level</label>
+        <select id="na-access">
+          <option value="internal">Internal Only</option>
+          <option value="nda">NDA Required</option>
+          <option value="public">External Safe</option>
+        </select>
+      </div>
+      <div class="field"><label>Notes</label><input id="na-notes" type="text" placeholder="Any relevant notes..."></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-amber" onclick="addAsset()">+ Add Asset</button>
+      <button class="btn btn-ghost" onclick="toggleAddForm()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="filter-bar">
+    <button class="btn btn-amber" onclick="toggleAddForm()" id="add-btn">+ Add Asset</button>
+    <select class="filter-select" id="filter-party" onchange="renderAssetTable()">
+      <option value="">All Parties</option>
+    </select>
+    <select class="filter-select" id="filter-category" onchange="renderAssetTable()">
+      <option value="">All Categories</option>
+    </select>
+    <select class="filter-select" id="filter-status" onchange="renderAssetTable()">
+      <option value="">All Statuses</option>
+      <option value="draft">Draft</option>
+      <option value="review">In Review</option>
+      <option value="approved">Approved</option>
+      <option value="sent">Sent to Partner</option>
+      <option value="superseded">Superseded</option>
+    </select>
+    <select class="filter-select" id="filter-access" onchange="renderAssetTable()">
+      <option value="">All Access</option>
+      <option value="internal">Internal Only</option>
+      <option value="nda">NDA Required</option>
+      <option value="public">External Safe</option>
+    </select>
+    <input class="filter-search" id="filter-search" placeholder="🔍  Search assets..." oninput="renderAssetTable()">
+    <span class="asset-count-lbl" id="asset-count-lbl"></span>
+  </div>
+
+  <div style="overflow-x:auto">
+    <table class="asset-table" id="asset-table">
+      <thead>
+        <tr>
+          <th onclick="sortBy('name')">Asset Name</th>
+          <th onclick="sortBy('category')">Category</th>
+          <th onclick="sortBy('party')">Party</th>
+          <th onclick="sortBy('version')">Version</th>
+          <th onclick="sortBy('storage')">Storage</th>
+          <th>Path / Link</th>
+          <th onclick="sortBy('status')">Status</th>
+          <th onclick="sortBy('access')">Access</th>
+          <th>Notes</th>
+          <th style="width:80px">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="asset-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ─── EXPORT ─────────────────────────────────────────────────────── -->
+<div class="panel" id="panel-export">
+  <div class="card">
+    <div class="card-title"><div class="card-title-left">Export Registry</div></div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Export the full project asset registry for use in Notion, Odoo, or to share with stakeholders.</p>
+    <div class="btn-row">
+      <button class="btn btn-amber" onclick="generateExport('json')">Generate JSON</button>
+      <button class="btn btn-primary" onclick="generateExport('csv')">Generate CSV</button>
+      <button class="btn btn-ghost" onclick="generateExport('html')">Generate HTML Table</button>
+    </div>
+  </div>
+  <div id="export-out" style="margin-top:16px"></div>
+</div>
+
+<footer>
+  <span>SCM Solution LTD. — Hardware Development System</span>
+  <span>Project Asset Registry · Rev 1.0</span>
+</footer>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────
+const STORAGE_KEY = 'scm-registry-v1';
+let state = {
+  project: {name:'', client:'', code:'', phase:'Idea', date:''},
+  parties: [],
+  assets: [],
+};
+let sortCol = 'name', sortDir = 1;
+let editingPartyId = null;
+
+// ── PERSISTENCE ────────────────────────────────────────────────────
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+function load() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    if (s) state = JSON.parse(s);
+  } catch(e) {}
+}
+
+// ── INIT ───────────────────────────────────────────────────────────
+window.onload = () => {
+  load();
+  document.getElementById('pf-date').valueAsDate = new Date();
+  renderProjectDisplay();
+  renderPartyGrid();
+  renderAssetTable();
+  renderOverview();
+  populatePartySelects();
+  updateBadges();
+};
+
+// ── TAB SWITCHING ──────────────────────────────────────────────────
+function switchTab(name) {
+  ['overview','parties','assets','export'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t===name);
+    document.getElementById('panel-'+t).classList.toggle('active', t===name);
+  });
+  if (name === 'assets') renderAssetTable();
+  if (name === 'overview') renderOverview();
+}
+
+function updateBadges() {
+  document.getElementById('badge-parties').textContent = state.parties.length;
+  document.getElementById('badge-assets').textContent = state.assets.length;
+}
+
+// ── PROJECT ────────────────────────────────────────────────────────
+function toggleProjectEdit() {
+  const form = document.getElementById('proj-form');
+  const disp = document.getElementById('proj-display');
+  const btn  = document.getElementById('proj-edit-btn');
+  const open = form.style.display !== 'none';
+  form.style.display = open ? 'none' : 'block';
+  disp.style.display = open ? 'block' : 'none';
+  btn.textContent = open ? '✎ Edit' : '✕ Cancel';
+  if (!open) {
+    document.getElementById('pf-name').value  = state.project.name;
+    document.getElementById('pf-client').value= state.project.client;
+    document.getElementById('pf-code').value  = state.project.code;
+    document.getElementById('pf-phase').value = state.project.phase;
+    document.getElementById('pf-status').value= state.project.status || 'active';
+    document.getElementById('pf-date').value  = state.project.date;
+  }
+}
+
+function saveProject() {
+  state.project = {
+    name:   document.getElementById('pf-name').value,
+    client: document.getElementById('pf-client').value,
+    code:   document.getElementById('pf-code').value,
+    phase:  document.getElementById('pf-phase').value,
+    status: document.getElementById('pf-status').value,
+    date:   document.getElementById('pf-date').value,
+  };
+  save();
+  renderProjectDisplay();
+  toggleProjectEdit();
+}
+
+function renderProjectDisplay() {
+  const p = state.project;
+  const el = document.getElementById('proj-display');
+  if (!p.name) {
+    el.innerHTML = '<p style="font-size:13px;color:var(--muted)">No project details yet — click Edit to set up this project.</p>';
+    return;
+  }
+  const PHASE_COLORS = {Idea:'var(--blue)',PoC:'var(--green)',Design:'var(--green)',Test:'var(--amber)',Factory:'var(--warn)',['Mass Production']:'var(--purple)'};
+  const STATUS_COLORS = {active:'var(--green)',onhold:'var(--amber)',completed:'var(--blue)',cancelled:'var(--warn)',pending:'var(--muted)'};
+  const STATUS_LABELS_P = {active:'Active',onhold:'On Hold',completed:'Completed',cancelled:'Cancelled',pending:'Pending Start'};
+  const status = p.status || 'active';
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:16px">
+      <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Project</div><div style="font-size:15px;font-weight:700">${p.name||'—'}</div></div>
+      <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Client</div><div style="font-size:15px;font-weight:700">${p.client||'—'}</div></div>
+      <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Code</div><div style="font-size:15px;font-weight:700;font-family:monospace">${p.code||'—'}</div></div>
+      <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Phase</div><div style="font-size:15px;font-weight:700;color:${PHASE_COLORS[p.phase]||'var(--text)'}">${p.phase||'—'}</div></div>
+      <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Status</div><div style="font-size:15px;font-weight:700;color:${STATUS_COLORS[status]}">${STATUS_LABELS_P[status]}</div></div>
+      <div><div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px">Start Date</div><div style="font-size:15px;font-weight:700">${p.date||'—'}</div></div>
+    </div>`;
+}
+
+// ── PARTIES ────────────────────────────────────────────────────────
+const PARTY_TYPE_MAP = {
+  cm:{label:'CM',cls:'pt-cm'}, odm:{label:'ODM',cls:'pt-odm'},
+  client:{label:'Client',cls:'pt-client'}, supplier:{label:'Supplier',cls:'pt-supplier'},
+  agency:{label:'Agency',cls:'pt-agency'}, internal:{label:'Internal',cls:'pt-internal'}
+};
+
+function addParty() {
+  const name = document.getElementById('np-name').value.trim();
+  if (!name) { alert('Party name is required.'); return; }
+  state.parties.push({
+    id: Date.now().toString(),
+    name, type: document.getElementById('np-type').value,
+    contact: document.getElementById('np-contact').value,
+    email: document.getElementById('np-email').value,
+    notes: document.getElementById('np-notes').value,
+  });
+  ['np-name','np-contact','np-email','np-notes'].forEach(id => document.getElementById(id).value = '');
+  save(); renderPartyGrid(); populatePartySelects(); updateBadges();
+}
+
+function deleteParty(id) {
+  if (!confirm('Remove this party? Their assets will remain but lose the party link.')) return;
+  state.parties = state.parties.filter(p => p.id !== id);
+  save(); renderPartyGrid(); populatePartySelects(); updateBadges();
+}
+
+function renderPartyGrid() {
+  const grid = document.getElementById('party-grid');
+  if (!state.parties.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="big">🏭</div><p>No parties added yet.<br>Add your CM, ODM, clients, and suppliers above.</p></div>`;
+    return;
+  }
+  grid.innerHTML = state.parties.map(p => {
+    const t = PARTY_TYPE_MAP[p.type] || {label:p.type,cls:'pt-internal'};
+    const assetCount = state.assets.filter(a => a.partyId === p.id).length;
+    return `
+      <div class="party-card">
+        <div class="party-card-header">
+          <div class="party-name">${p.name}</div>
+          <span class="party-type-badge ${t.cls}">${t.label}</span>
+        </div>
+        ${p.contact ? `<div class="party-contact">👤 ${p.contact}</div>` : ''}
+        ${p.email   ? `<div class="party-contact">✉ ${p.email}</div>` : ''}
+        ${p.notes   ? `<div class="party-contact" style="color:var(--muted);font-style:italic">${p.notes}</div>` : ''}
+        <div class="party-asset-count">${assetCount} asset${assetCount!==1?'s':''}</div>
+        <div class="party-actions">
+          <button class="icon-btn" onclick="deleteParty('${p.id}')" title="Remove">✕</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function populatePartySelects() {
+  const opts = '<option value="">— No party —</option>' +
+    state.parties.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('na-party').innerHTML = opts;
+  const filterOpts = '<option value="">All Parties</option>' +
+    state.parties.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+  document.getElementById('filter-party').innerHTML = filterOpts;
+}
+
+// ── ASSETS ─────────────────────────────────────────────────────────
+const STORAGE_LABELS = {gdrive:'Google Drive',sharepoint:'SharePoint',dropbox:'Dropbox',local:'Local / Network'};
+const STORAGE_CLS    = {gdrive:'sp-gdrive',sharepoint:'sp-sharepoint',dropbox:'sp-dropbox',local:'sp-local'};
+const STATUS_CLS     = {draft:'s-draft',review:'s-review',approved:'s-approved',sent:'s-sent',superseded:'s-superseded'};
+const STATUS_LABELS  = {draft:'Draft',review:'In Review',approved:'Approved',sent:'Sent',superseded:'Superseded'};
+const ACCESS_CLS     = {internal:'a-internal',nda:'a-nda',public:'a-public'};
+const ACCESS_LABELS  = {internal:'Internal',nda:'NDA Only',public:'External Safe'};
+
+function toggleAddForm() {
+  const form = document.getElementById('add-asset-form');
+  const btn  = document.getElementById('add-btn');
+  const open = form.classList.contains('open');
+  form.classList.toggle('open', !open);
+  btn.textContent = open ? '+ Add Asset' : '✕ Cancel';
+  populatePartySelects();
+}
+
+function addAsset() {
+  const name = document.getElementById('na-name').value.trim();
+  if (!name) { alert('Asset name is required.'); return; }
+  const partyId = document.getElementById('na-party').value;
+  const party   = state.parties.find(p => p.id === partyId);
+  state.assets.push({
+    id: Date.now().toString(),
+    name, fileType: document.getElementById('na-type').value,
+    category: document.getElementById('na-category').value,
+    partyId, partyName: party ? party.name : '',
+    version: document.getElementById('na-version').value,
+    storage: document.getElementById('na-storage').value,
+    path:    document.getElementById('na-path').value,
+    link:    document.getElementById('na-link').value,
+    status:  document.getElementById('na-status').value,
+    access:  document.getElementById('na-access').value,
+    notes:   document.getElementById('na-notes').value,
+    added:   new Date().toISOString().split('T')[0],
+  });
+  ['na-name','na-type','na-version','na-path','na-link','na-notes'].forEach(id => document.getElementById(id).value='');
+  save(); renderAssetTable(); renderOverview(); updateBadges(); renderPartyGrid();
+  toggleAddForm();
+}
+
+function deleteAsset(id) {
+  if (!confirm('Remove this asset?')) return;
+  state.assets = state.assets.filter(a => a.id !== id);
+  save(); renderAssetTable(); renderOverview(); updateBadges(); renderPartyGrid();
+}
+
+function updateAssetStatus(id, val) {
+  const a = state.assets.find(a => a.id === id);
+  if (a) { a.status = val; save(); renderAssetTable(); renderOverview(); }
+}
+
+function sortBy(col) {
+  if (sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = 1; }
+  renderAssetTable();
+}
+
+function getFilteredAssets() {
+  const fParty    = document.getElementById('filter-party')?.value || '';
+  const fCategory = document.getElementById('filter-category')?.value || '';
+  const fStatus   = document.getElementById('filter-status')?.value || '';
+  const fAccess   = document.getElementById('filter-access')?.value || '';
+  const fSearch   = (document.getElementById('filter-search')?.value || '').toLowerCase();
+  return state.assets.filter(a =>
+    (!fParty    || a.partyId   === fParty) &&
+    (!fCategory || a.category  === fCategory) &&
+    (!fStatus   || a.status    === fStatus) &&
+    (!fAccess   || a.access    === fAccess) &&
+    (!fSearch   || a.name.toLowerCase().includes(fSearch) ||
+                   (a.category||'').toLowerCase().includes(fSearch) ||
+                   (a.partyName||'').toLowerCase().includes(fSearch) ||
+                   (a.path||'').toLowerCase().includes(fSearch))
+  ).sort((a,b) => {
+    const va = (a[sortCol]||'').toString().toLowerCase();
+    const vb = (b[sortCol]||'').toString().toLowerCase();
+    return va < vb ? -sortDir : va > vb ? sortDir : 0;
+  });
+}
+
+function renderAssetTable() {
+  // populate category filter
+  const cats = [...new Set(state.assets.map(a=>a.category))].filter(Boolean).sort();
+  const catSel = document.getElementById('filter-category');
+  const curCat = catSel.value;
+  catSel.innerHTML = '<option value="">All Categories</option>' + cats.map(c=>`<option value="${c}" ${c===curCat?'selected':''}>${c}</option>`).join('');
+
+  const assets = getFilteredAssets();
+  const tbody = document.getElementById('asset-tbody');
+  document.getElementById('asset-count-lbl').textContent = `${assets.length} of ${state.assets.length} assets`;
+
+  if (!state.assets.length) {
+    tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><div class="big">📁</div><p>No assets yet.<br>Click "+ Add Asset" to start logging files.</p></div></td></tr>`;
+    return;
+  }
+  if (!assets.length) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--muted)">No assets match the current filters.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = assets.map(a => {
+    const storCls   = STORAGE_CLS[a.storage]   || 'sp-local';
+    const storLabel = STORAGE_LABELS[a.storage] || a.storage;
+    const stCls     = STATUS_CLS[a.status]      || 's-draft';
+    const stLabel   = STATUS_LABELS[a.status]   || a.status;
+    const acCls     = ACCESS_CLS[a.access]      || 'a-internal';
+    const acLabel   = ACCESS_LABELS[a.access]   || a.access;
+    const linkCell  = a.link
+      ? `<a href="${a.link}" target="_blank">${a.path || a.link.substring(0,30)+'…'}</a>`
+      : a.path ? `<span style="font-family:monospace;font-size:11px;color:var(--muted)">${a.path}</span>`
+               : `<span class="no-link">—</span>`;
+    return `<tr>
+      <td><strong>${a.name}</strong>${a.fileType?`<br><span style="font-size:10px;color:var(--muted);font-family:monospace">${a.fileType}</span>`:''}${a.added?`<br><span style="font-size:9px;color:var(--bdr)">${a.added}</span>`:''}</td>
+      <td style="font-size:11px;color:var(--muted)">${a.category||'—'}</td>
+      <td style="font-size:11px">${a.partyName||'<span style="color:var(--muted)">—</span>'}</td>
+      <td style="font-family:monospace;font-size:11px;color:var(--muted)">${a.version||'—'}</td>
+      <td><span class="storage-pill ${storCls}">${storLabel}</span></td>
+      <td class="link-cell">${linkCell}</td>
+      <td>
+        <select style="background:transparent;border:none;color:inherit;font-size:11px;font-weight:700;cursor:pointer;outline:none" onchange="updateAssetStatus('${a.id}',this.value)">
+          ${Object.entries(STATUS_LABELS).map(([v,l])=>`<option value="${v}" ${a.status===v?'selected':''}>${l}</option>`).join('')}
+        </select>
+      </td>
+      <td><span class="access-pill ${acCls}">${acLabel}</span></td>
+      <td style="font-size:11px;color:var(--muted);max-width:140px">${a.notes||'—'}</td>
+      <td><button class="icon-btn" onclick="deleteAsset('${a.id}')" title="Delete">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── OVERVIEW ───────────────────────────────────────────────────────
+function renderOverview() {
+  document.getElementById('st-assets').textContent  = state.assets.length;
+  document.getElementById('st-approved').textContent = state.assets.filter(a=>a.status==='approved').length;
+  document.getElementById('st-sent').textContent    = state.assets.filter(a=>a.status==='sent').length;
+  document.getElementById('st-parties').textContent = state.parties.length;
+
+  const byParty = document.getElementById('overview-by-party');
+  if (!state.parties.length && !state.assets.length) {
+    byParty.innerHTML = `<div class="empty-state"><div class="big">📋</div><p>No data yet.<br>Add parties and assets to see a project overview here.</p></div>`;
+    return;
+  }
+  let html = '';
+  // Assets with no party
+  const unassigned = state.assets.filter(a => !a.partyId || !state.parties.find(p=>p.id===a.partyId));
+  const allParties = [...state.parties];
+  if (unassigned.length) allParties.push({id:'__unassigned',name:'Unassigned',type:'internal'});
+
+  allParties.forEach(party => {
+    const assets = party.id === '__unassigned'
+      ? unassigned
+      : state.assets.filter(a => a.partyId === party.id);
+    if (!assets.length) return;
+    const t = PARTY_TYPE_MAP[party.type] || {label:'',cls:'pt-internal'};
+    html += `<div class="card" style="margin-bottom:16px">
+      <div class="card-title">
+        <div class="card-title-left">${party.name} <span class="party-type-badge ${t.cls}" style="margin-left:8px">${t.label}</span></div>
+        <span style="font-size:12px;color:var(--muted)">${assets.length} asset${assets.length!==1?'s':''}</span>
+      </div>
+      <table class="asset-table" style="margin-top:0">
+        <thead><tr><th>Asset</th><th>Category</th><th>Storage</th><th>Status</th><th>Access</th><th>Version</th></tr></thead>
+        <tbody>
+          ${assets.map(a=>`<tr>
+            <td><strong style="font-size:12px">${a.name}</strong>${a.fileType?` <span style="font-family:monospace;font-size:10px;color:var(--muted)">${a.fileType}</span>`:''}</td>
+            <td style="font-size:11px;color:var(--muted)">${a.category||'—'}</td>
+            <td><span class="storage-pill ${STORAGE_CLS[a.storage]||'sp-local'}">${STORAGE_LABELS[a.storage]||a.storage}</span></td>
+            <td><span class="status-pill ${STATUS_CLS[a.status]||'s-draft'}">${STATUS_LABELS[a.status]||a.status}</span></td>
+            <td><span class="access-pill ${ACCESS_CLS[a.access]||'a-internal'}">${ACCESS_LABELS[a.access]||a.access}</span></td>
+            <td style="font-family:monospace;font-size:11px;color:var(--muted)">${a.version||'—'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  });
+  byParty.innerHTML = html || `<div class="empty-state"><div class="big">📋</div><p>Add assets and assign them to parties to see the overview.</p></div>`;
+}
+
+// ── EXPORT ─────────────────────────────────────────────────────────
+function generateExport(format) {
+  const out = document.getElementById('export-out');
+  const p = state.project;
+
+  if (format === 'json') {
+    const data = {
+      project: p,
+      parties: state.parties,
+      assets: state.assets.map(a => ({...a, partyName: state.parties.find(p=>p.id===a.partyId)?.name || ''})),
+      exported: new Date().toISOString()
+    };
+    out.innerHTML = `<div class="code-block">${JSON.stringify(data, null, 2)}</div>
+      <div class="btn-row"><button class="btn btn-ghost" onclick="copyExport()">⎘ Copy JSON</button></div>`;
+  } else if (format === 'csv') {
+    const headers = ['Name','File Type','Category','Party','Version','Storage','Path','Link','Status','Access','Notes','Date Added'];
+    const rows = state.assets.map(a => [
+      a.name, a.fileType, a.category,
+      state.parties.find(p=>p.id===a.partyId)?.name || '',
+      a.version, STORAGE_LABELS[a.storage]||a.storage,
+      a.path, a.link, STATUS_LABELS[a.status]||a.status,
+      ACCESS_LABELS[a.access]||a.access, a.notes, a.added
+    ].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','));
+    const csv = [headers.join(','), ...rows].join('\n');
+    out.innerHTML = `<div class="code-block">${csv}</div>
+      <div class="btn-row"><button class="btn btn-ghost" onclick="copyExport()">⎘ Copy CSV</button>
+      <button class="btn btn-primary" onclick="downloadCSV()">⬇ Download CSV</button></div>`;
+    window._csvData = csv;
+  } else {
+    out.innerHTML = `<div class="code-block">&lt;!-- SCM Asset Registry: ${p.name} --&gt;\n[HTML table export — switch to JSON for structured data]</div>`;
+  }
+}
+
+function copyExport() {
+  const block = document.querySelector('#export-out .code-block');
+  if (block) navigator.clipboard.writeText(block.textContent).then(()=>alert('Copied!'));
+}
+
+function downloadCSV() {
+  if (!window._csvData) return;
+  const blob = new Blob([window._csvData], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `asset-registry-${state.project.code||'export'}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
