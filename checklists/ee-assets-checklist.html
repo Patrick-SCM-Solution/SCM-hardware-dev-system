@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EE Asset Checklist — SCM Hardware System</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --scm-blue: #1B9BD4;
+    --scm-green: #7DC242;
+    --scm-dark: #0D1B2E;
+    --scm-mid: #132238;
+    --scm-surface: #1A2D45;
+    --scm-border: #1E3A55;
+    --text: #E8F1F8;
+    --muted: #7A9BB5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--scm-dark); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(27,155,212,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(27,155,212,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 40px 32px 80px; }
+  nav { display: flex; align-items: center; gap: 8px; margin-bottom: 36px; font-size: 12px; color: var(--muted); }
+  nav a { color: var(--scm-blue); text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  nav span { color: var(--scm-border); }
+  header { margin-bottom: 36px; }
+  .phase-tag {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--scm-blue);
+    border: 1px solid rgba(27,155,212,0.3);
+    background: rgba(27,155,212,0.08);
+    padding: 3px 10px; border-radius: 3px; margin-bottom: 12px;
+  }
+  h1 { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.1; margin-bottom: 8px; }
+  .subtitle { font-size: 14px; color: var(--muted); max-width: 600px; line-height: 1.6; }
+  .progress-wrap { background: var(--scm-surface); border: 1px solid var(--scm-border); border-radius: 6px; padding: 16px 20px; margin-bottom: 32px; display: flex; align-items: center; gap: 16px; }
+  .progress-track { flex: 1; height: 6px; background: var(--scm-border); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--scm-blue), var(--scm-green)); border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+  .progress-label { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; color: var(--scm-blue); white-space: nowrap; min-width: 80px; text-align: right; }
+  .reset-btn { font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; background: transparent; border: 1px solid var(--scm-border); color: var(--muted); border-radius: 4px; cursor: pointer; transition: all 0.15s; }
+  .reset-btn:hover { border-color: #fc8181; color: #fc8181; }
+  .section { margin-bottom: 20px; border-radius: 6px; overflow: hidden; border: 1px solid var(--scm-border); }
+  .section-header { display: flex; align-items: center; gap: 12px; padding: 14px 20px; background: var(--scm-surface); cursor: pointer; user-select: none; transition: background 0.15s; }
+  .section-header:hover { background: #1f3550; }
+  .section-num { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--scm-blue); background: rgba(27,155,212,0.1); border: 1px solid rgba(27,155,212,0.2); padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
+  .section-title-text { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; flex: 1; }
+  .section-progress { font-size: 11px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  .chevron { color: var(--muted); font-size: 12px; transition: transform 0.2s; }
+  .section.collapsed .chevron { transform: rotate(-90deg); }
+  .section.collapsed .items { display: none; }
+  .items { background: var(--scm-mid); }
+  .item { display: flex; align-items: flex-start; gap: 14px; padding: 12px 20px; border-bottom: 1px solid rgba(30,58,85,0.6); cursor: pointer; transition: background 0.12s; }
+  .item:last-child { border-bottom: none; }
+  .item:hover { background: rgba(27,155,212,0.04); }
+  .item.checked { opacity: 0.5; }
+  .item.checked .item-name { text-decoration: line-through; color: var(--muted); }
+  .checkbox { width: 18px; height: 18px; min-width: 18px; border: 2px solid var(--scm-border); border-radius: 3px; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; background: var(--scm-dark); }
+  .item.checked .checkbox { background: var(--scm-green); border-color: var(--scm-green); }
+  .tick { display: none; color: white; font-size: 11px; font-weight: 700; }
+  .item.checked .tick { display: block; }
+  .item-body { flex: 1; }
+  .item-name { font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 2px; }
+  .item-ext { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; color: var(--scm-blue); margin-right: 6px; letter-spacing: 0.04em; }
+  .item-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .item-badges { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .badge { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; border: 1px solid; }
+  .badge-cm    { color: var(--scm-blue);  border-color: rgba(27,155,212,0.4); }
+  .badge-odm   { color: #f6ad55;          border-color: rgba(246,173,85,0.4); }
+  .badge-ip    { color: #fc8181;          border-color: rgba(252,129,129,0.4); }
+  .badge-safe  { color: var(--scm-green); border-color: rgba(125,194,66,0.4); }
+  .badge-rev   { color: #b794f4;          border-color: rgba(183,148,244,0.4); }
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--scm-border); display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a href="../index.html">← Phase Map</a>
+    <span>/</span>
+    <span>Checklists</span>
+    <span>/</span>
+    <span>EE Asset Checklist</span>
+  </nav>
+
+  <header>
+    <div class="phase-tag">Design Phase — DR2</div>
+    <h1>Electrical Engineering<br>Asset Checklist</h1>
+    <p class="subtitle">All EE files must be checked off before the DR2 gate can be passed. Native schematic and layout files are IP sensitive — confirm NDA before sending to any external partner.</p>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 0</div>
+    <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
+  </div>
+
+  <div id="sections"></div>
+
+  <footer>
+    <span>SCM Solution LTD. — Hardware Development System</span>
+    <span>EE Asset Checklist · Rev 1.0</span>
+  </footer>
+</div>
+
+<script>
+const data = [
+  {
+    num: "01", title: "Schematic Files",
+    items: [
+      { name: "Native Schematic", ext: ".sch / .SchDoc / .kicad_sch", desc: "Native schematic file from EE CAD tool (KiCad, Altium, Eagle). Full circuit design with net names and component references.", badges: ["ip"] },
+      { name: "Schematic PDF Export", ext: ".pdf", desc: "PDF export of all schematic sheets. Standard format sent to CM and ODM for troubleshooting and DFM review.", badges: ["cm","odm","safe"] },
+      { name: "Schematic Hierarchy Diagram", ext: ".pdf", desc: "Top-level block diagram showing schematic sheet hierarchy for complex multi-sheet designs.", badges: ["cm","odm","safe"] },
+    ]
+  },
+  {
+    num: "02", title: "PCB Layout Files",
+    items: [
+      { name: "Native PCB Layout", ext: ".brd / .PcbDoc / .kicad_pcb", desc: "Native PCB layout file. Full board design with copper layers, vias, silkscreen, and courtyard definitions.", badges: ["ip"] },
+      { name: "PCB Layout PDF / Image", ext: ".pdf / .png", desc: "Visual export of PCB layout for review. Include top and bottom copper layers at minimum.", badges: ["cm","odm","safe"] },
+      { name: "Board Outline / Mechanical Layer", ext: ".dxf / .dwg", desc: "PCB board outline exported as DXF for mechanical team integration and enclosure design.", badges: ["cm","odm","safe"] },
+      { name: "3D PCB Model", ext: ".step / .stp", desc: "3D export of PCB with component heights for mechanical clearance checking.", badges: ["cm","odm","safe"] },
+    ]
+  },
+  {
+    num: "03", title: "Fabrication Package — PCB Fab",
+    items: [
+      { name: "Gerber Files", ext: ".gbr / .ger", desc: "Full Gerber set: copper layers, silkscreen, soldermask, paste layers. Primary PCB fabrication format.", badges: ["cm","odm","safe"] },
+      { name: "Drill Files", ext: ".drl / .xln", desc: "NC drill file with plated and non-plated holes. Must accompany Gerber files.", badges: ["cm","odm","safe"] },
+      { name: "ODB++", ext: ".tgz / .zip", desc: "Richer alternative to Gerbers preferred by some CMs. Includes all fab data in one package.", badges: ["cm","odm","safe"] },
+      { name: "PCB Fab Spec", ext: ".pdf", desc: "Board stackup, layer count, finished copper weights, surface finish (HASL/ENIG), impedance requirements, controlled depth drilling.", badges: ["cm","odm","safe"] },
+      { name: "IPC Netlist", ext: ".ipc / .txt", desc: "IPC-D-356 netlist for electrical testing. Confirms net connectivity after fabrication.", badges: ["cm","odm","safe"] },
+    ]
+  },
+  {
+    num: "04", title: "Bill of Materials + AVL",
+    items: [
+      { name: "BOM — Full with MPNs", ext: ".xlsx / .csv", desc: "Complete BOM with Manufacturer Part Numbers (MPNs), reference designators, quantities, descriptions, and footprints.", badges: ["cm","odm","safe"] },
+      { name: "BOM — DNP Callouts", ext: ".xlsx / .csv", desc: "Clearly marks all Do Not Populate (DNP) components. Critical for assembly — errors here cause board failures.", badges: ["cm","odm","safe"] },
+      { name: "Approved Vendor List (AVL)", ext: ".xlsx", desc: "Approved manufacturers and distributors per component. Includes approved alternates where available.", badges: ["cm","odm","safe"] },
+      { name: "BOM Costing Sheet", ext: ".xlsx", desc: "Internal costing version of BOM. Strip pricing before sending externally.", badges: ["rev"] },
+    ]
+  },
+  {
+    num: "05", title: "Component Placement List (CPL)",
+    items: [
+      { name: "Pick and Place File", ext: ".csv / .txt", desc: "XY coordinates, rotation, and side (top/bottom) for every component. Used by CM to program pick-and-place machines.", badges: ["cm","odm","safe"] },
+      { name: "Assembly Drawing — Top", ext: ".pdf", desc: "Top-side assembly drawing showing component placement, reference designators, and polarity markers.", badges: ["cm","odm","safe"] },
+      { name: "Assembly Drawing — Bottom", ext: ".pdf", desc: "Bottom-side assembly drawing if components are placed on both sides.", badges: ["cm","odm","safe"] },
+    ]
+  },
+  {
+    num: "06", title: "Test Scripts + Firmware",
+    items: [
+      { name: "Functional Test Script", ext: ".py / .js / .exe", desc: "Post-assembly functional test procedure. CM runs this on every board after assembly to verify pass/fail.", badges: ["cm","odm","safe"] },
+      { name: "ICT / Bed-of-Nails Fixture Spec", ext: ".pdf / .xlsx", desc: "In-circuit test fixture requirements. Defines test points, fixture design, and test coverage.", badges: ["cm","safe"] },
+      { name: "Firmware Binary", ext: ".bin / .hex / .elf", desc: "Production firmware binary to be flashed during manufacture.", badges: ["cm","odm","safe"] },
+      { name: "Flashing Instructions", ext: ".pdf / .md", desc: "Step-by-step firmware flashing procedure for the production line. Include tool requirements and verification steps.", badges: ["cm","odm","safe"] },
+      { name: "Test Coverage Report", ext: ".pdf / .xlsx", desc: "Documents what percentage of nets and components are covered by test. Flags any untestable areas.", badges: ["cm","odm","safe"] },
+    ]
+  },
+  {
+    num: "07", title: "Supporting Documents",
+    items: [
+      { name: "Design Rules Check (DRC) Report", ext: ".pdf / .txt", desc: "Confirmed zero DRC errors on final layout before release. Document and file the clean DRC report.", badges: ["rev"] },
+      { name: "Signal Integrity / Power Analysis", ext: ".pdf", desc: "SI and PI simulation results for high-speed or power-sensitive designs.", badges: ["rev"] },
+      { name: "Thermal Analysis", ext: ".pdf", desc: "Thermal simulation or calculation for heat-generating components. Required if any component runs hot.", badges: ["rev"] },
+      { name: "FMEA — EE", ext: ".xlsx / .pdf", desc: "Failure Mode and Effects Analysis for critical electrical subsystems.", badges: ["rev"] },
+      { name: "Certification Pre-compliance Report", ext: ".pdf", desc: "Pre-compliance EMC/safety test results. Required before submitting for formal certification.", badges: ["cm","odm","safe"] },
+      { name: "Revision History Log", ext: ".xlsx / .docx", desc: "Tracks all design changes by revision, date, author, and reason. Always include with any file package.", badges: ["cm","odm","safe"] },
+    ]
+  }
+];
+
+const badgeMap = {
+  cm:   { label: "→ CM",         cls: "badge-cm" },
+  odm:  { label: "→ ODM",        cls: "badge-odm" },
+  ip:   { label: "IP Sensitive",  cls: "badge-ip" },
+  safe: { label: "External Safe", cls: "badge-safe" },
+  rev:  { label: "Review First",  cls: "badge-rev" },
+};
+
+let state = {};
+function saveState() { try { localStorage.setItem('ee-checklist', JSON.stringify(state)); } catch(e) {} }
+function loadState() { try { const s = localStorage.getItem('ee-checklist'); if (s) state = JSON.parse(s); } catch(e) {} }
+
+function updateProgress() {
+  let total = 0, checked = 0;
+  Object.values(state).forEach(v => { total++; if (v) checked++; });
+  const pct = total ? Math.round(checked / total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = checked + ' / ' + total + ' (' + pct + '%)';
+  data.forEach(sec => {
+    const secChecked = sec.items.filter((_, i) => state[sec.num + '-' + i]).length;
+    const el = document.getElementById('sec-progress-' + sec.num);
+    if (el) el.textContent = secChecked + ' / ' + sec.items.length;
+  });
+}
+
+function toggleItem(key) {
+  state[key] = !state[key];
+  const el = document.getElementById('item-' + key);
+  if (state[key]) el.classList.add('checked'); else el.classList.remove('checked');
+  saveState(); updateProgress();
+}
+
+function toggleSection(num) { document.getElementById('section-' + num).classList.toggle('collapsed'); }
+
+function resetAll() {
+  if (!confirm('Reset all checkboxes?')) return;
+  state = {};
+  document.querySelectorAll('.item').forEach(el => el.classList.remove('checked'));
+  saveState(); updateProgress();
+}
+
+function render() {
+  loadState();
+  const container = document.getElementById('sections');
+  data.forEach(sec => {
+    const div = document.createElement('div');
+    div.className = 'section'; div.id = 'section-' + sec.num;
+    const secChecked = sec.items.filter((_, i) => state[sec.num + '-' + i]).length;
+    div.innerHTML = `
+      <div class="section-header" onclick="toggleSection('${sec.num}')">
+        <span class="section-num">${sec.num}</span>
+        <span class="section-title-text">${sec.title}</span>
+        <span class="section-progress" id="sec-progress-${sec.num}">${secChecked} / ${sec.items.length}</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="items">
+        ${sec.items.map((item, i) => {
+          const key = sec.num + '-' + i;
+          const checked = state[key] ? 'checked' : '';
+          const badges = item.badges.map(b => `<span class="badge ${badgeMap[b].cls}">${badgeMap[b].label}</span>`).join('');
+          return `
+            <div class="item ${checked}" id="item-${key}" onclick="toggleItem('${key}')">
+              <div class="checkbox"><span class="tick">✓</span></div>
+              <div class="item-body">
+                <div class="item-name"><span class="item-ext">${item.ext}</span>${item.name}</div>
+                <div class="item-desc">${item.desc}</div>
+                <div class="item-badges">${badges}</div>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>`;
+    container.appendChild(div);
+  });
+  updateProgress();
+}
+render();
+</script>
+</body>
+</html>
