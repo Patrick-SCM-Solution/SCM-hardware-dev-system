@@ -34,9 +34,13 @@ Interactive overview of all six development phases — Idea, PoC, Design, Test, 
 - `templates/rfi.html` — Request for Information template
 - `templates/rfp.html` — Request for Proposal Document template
 - `templates/rfq.html` — Request for Quoatation Document template
+- `templates/NDA.html` — Non Disclosure Agreement template
 - `templates/handoff-manifest.html` — Handoff manifest template ^^ See Tools Above
 - `sops/file-release.html` — File release SOP
 - `sops/revision-control.html` — Revision control SOP
+- `templates/manufacturing-sop.html` — Manufacturing template
+- `templates/factory-audit.html` — Factory Audit template
+- `templates/QC-QA.html` — QC-QA templates
 
 ---
 
