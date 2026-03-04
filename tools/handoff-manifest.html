@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handoff Manifest — SCM Hardware System</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1B9BD4;--green:#7DC242;--dark:#0D1B2E;--mid:#132238;
+  --surf:#1A2D45;--bdr:#1E3A55;--text:#E8F1F8;--muted:#7A9BB5;
+  --warn:#FC8181;--amber:#F6AD55;--purple:#B794F4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--dark);color:var(--text);font-family:Barlow,sans-serif;min-height:100vh}
+body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(27,155,212,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(27,155,212,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:40px 32px 80px}
+
+/* NAV */
+nav{display:flex;align-items:center;gap:8px;margin-bottom:36px;font-size:12px;color:var(--muted)}
+nav a{color:var(--blue);text-decoration:none}nav a:hover{text-decoration:underline}
+nav span{color:var(--bdr)}
+
+/* HEADER */
+.phase-tag{display:inline-block;font-family:"Barlow Condensed",sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green);border:1px solid rgba(125,194,66,.3);background:rgba(125,194,66,.08);padding:3px 10px;border-radius:3px;margin-bottom:12px}
+h1{font-family:"Barlow Condensed",sans-serif;font-size:32px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;line-height:1.1;margin-bottom:8px}
+.subtitle{font-size:14px;color:var(--muted);max-width:640px;line-height:1.6;margin-bottom:32px}
+
+/* STEPS */
+.steps{display:flex;gap:0;margin-bottom:40px}
+.step{flex:1;padding:12px 16px;background:var(--surf);border:1px solid var(--bdr);cursor:pointer;transition:all .15s;position:relative}
+.step:first-child{border-radius:6px 0 0 6px}
+.step:last-child{border-radius:0 6px 6px 0}
+.step+.step{border-left:none}
+.step.active{background:rgba(27,155,212,.12);border-color:var(--blue);z-index:1}
+.step.done{background:rgba(125,194,66,.08);border-color:rgba(125,194,66,.3)}
+.step-num{font-family:"Barlow Condensed",sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.step.active .step-num{color:var(--blue)}
+.step.done .step-num{color:var(--green)}
+.step-label{font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+
+/* PANELS */
+.panel{display:none}.panel.active{display:block}
+
+/* CARD */
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:28px 32px;margin-bottom:20px}
+.card-title{font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px;color:var(--text);display:flex;align-items:center;gap:10px}
+.card-title::before{content:"";display:block;width:3px;height:18px;border-radius:2px;background:var(--blue)}
+
+/* FORM FIELDS */
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.field-grid.thirds{grid-template-columns:1fr 1fr 1fr}
+.field-grid.full{grid-template-columns:1fr}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.field input,.field select,.field textarea{background:var(--mid);border:1px solid var(--bdr);border-radius:4px;padding:10px 12px;color:var(--text);font-family:Barlow,sans-serif;font-size:13px;outline:none;transition:border-color .15s;width:100%}
+.field input:focus,.field select,.field textarea:focus{border-color:var(--blue)}
+.field select option{background:var(--mid)}
+.field textarea{resize:vertical;min-height:80px}
+
+/* NDA checkbox */
+.nda-wrap{display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(252,129,129,.06);border:1px solid rgba(252,129,129,.2);border-radius:6px;cursor:pointer;margin-top:8px}
+.nda-wrap input[type=checkbox]{width:18px;height:18px;accent-color:var(--green);cursor:pointer}
+.nda-label{font-size:13px;font-weight:600;color:var(--text)}
+.nda-sub{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* PACK SELECTOR */
+.pack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.pack-card{background:var(--mid);border:2px solid var(--bdr);border-radius:6px;padding:18px;cursor:pointer;transition:all .15s;user-select:none}
+.pack-card:hover{border-color:var(--blue);background:rgba(27,155,212,.06)}
+.pack-card.selected{border-color:var(--blue);background:rgba(27,155,212,.1)}
+.pack-card.selected .pack-icon{color:var(--blue)}
+.pack-icon{font-size:22px;margin-bottom:8px;color:var(--muted);transition:color .15s}
+.pack-name{font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.pack-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.pack-count{font-size:10px;font-weight:700;color:var(--muted);margin-top:6px;letter-spacing:.08em;text-transform:uppercase}
+.pack-card.selected .pack-count{color:var(--blue)}
+
+/* ASSET SECTIONS */
+.asset-section{margin-bottom:24px;border:1px solid var(--bdr);border-radius:6px;overflow:hidden}
+.asset-section-header{padding:12px 20px;background:var(--mid);display:flex;align-items:center;gap:10px;cursor:pointer}
+.asset-section-num{font-family:"Barlow Condensed",sans-serif;font-size:10px;font-weight:700;color:var(--blue);background:rgba(27,155,212,.1);border:1px solid rgba(27,155,212,.2);padding:2px 8px;border-radius:3px}
+.asset-section-title{font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;flex:1}
+.asset-section-count{font-size:11px;color:var(--muted)}
+.chev{color:var(--muted);font-size:11px;transition:transform .2s}
+.asset-section.collapsed .chev{transform:rotate(-90deg)}
+.asset-section.collapsed .asset-rows{display:none}
+.asset-rows{background:var(--dark)}
+
+/* ASSET ROW */
+.asset-row{border-bottom:1px solid rgba(30,58,85,.5);transition:background .12s}
+.asset-row:last-child{border-bottom:none}
+.asset-row-top{display:flex;align-items:center;gap:14px;padding:12px 20px;cursor:pointer}
+.asset-row-top:hover{background:rgba(27,155,212,.03)}
+.asset-cb{width:18px;height:18px;min-width:18px;border:2px solid var(--bdr);border-radius:3px;display:flex;align-items:center;justify-content:center;background:var(--dark);transition:all .15s;flex-shrink:0}
+.asset-row.checked .asset-cb{background:var(--green);border-color:var(--green)}
+.asset-tick{display:none;color:#fff;font-size:11px;font-weight:700}
+.asset-row.checked .asset-tick{display:block}
+.asset-info{flex:1}
+.asset-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.asset-ext{font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;color:var(--blue);margin-right:6px}
+.asset-desc{font-size:11px;color:var(--muted)}
+.asset-badges{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap}
+.badge{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:1px 7px;border-radius:99px;border:1px solid}
+.b-cm{color:var(--blue);border-color:rgba(27,155,212,.4)}
+.b-odm{color:var(--amber);border-color:rgba(246,173,85,.4)}
+.b-ip{color:var(--warn);border-color:rgba(252,129,129,.4)}
+.b-safe{color:var(--green);border-color:rgba(125,194,66,.4)}
+
+/* ASSET FORM (expands when checked) */
+.asset-form{display:none;padding:0 20px 16px 52px;background:rgba(27,155,212,.03)}
+.asset-row.checked .asset-form{display:block}
+.asset-form-grid{display:grid;grid-template-columns:160px 1fr 1fr;gap:10px;margin-top:10px}
+.af-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.af-select,.af-input{width:100%;background:var(--mid);border:1px solid var(--bdr);border-radius:4px;padding:8px 10px;color:var(--text);font-family:Barlow,sans-serif;font-size:12px;outline:none;transition:border-color .15s}
+.af-select:focus,.af-input:focus{border-color:var(--blue)}
+.af-select option{background:var(--mid)}
+.storage-icon{display:inline-block;margin-right:4px}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:12px;margin-top:28px;align-items:center}
+.btn{font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:12px 24px;border-radius:5px;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#1688bb}
+.btn-secondary{background:transparent;border:1px solid var(--bdr);color:var(--muted)}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue)}
+.btn-green{background:var(--green);color:#0D1B2E}
+.btn-green:hover{background:#6ab636}
+.btn-warn{background:transparent;border:1px solid var(--bdr);color:var(--warn)}
+.btn-warn:hover{border-color:var(--warn)}
+
+/* PROGRESS */
+.prog-bar{background:var(--surf);border:1px solid var(--bdr);border-radius:6px;padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;gap:14px}
+.prog-track{flex:1;height:5px;background:var(--bdr);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;transition:width .4s;width:0%}
+.prog-lbl{font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:700;color:var(--blue);white-space:nowrap}
+
+/* EXPORT PANEL */
+.export-tabs{display:flex;gap:0;margin-bottom:0;border-bottom:1px solid var(--bdr)}
+.export-tab{padding:10px 20px;font-family:"Barlow Condensed",sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.export-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.export-content{display:none;padding:20px 0 0}
+.export-content.active{display:block}
+.code-block{background:var(--dark);border:1px solid var(--bdr);border-radius:6px;padding:16px;font-family:monospace;font-size:11px;color:var(--text);white-space:pre-wrap;word-break:break-all;max-height:400px;overflow-y:auto;line-height:1.6}
+
+/* MANIFEST TABLE */
+.manifest-table{width:100%;border-collapse:collapse;font-size:12px}
+.manifest-table th{background:var(--mid);color:var(--blue);font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid var(--bdr)}
+.manifest-table td{padding:10px 14px;border-bottom:1px solid rgba(30,58,85,.4);color:var(--text);vertical-align:top}
+.manifest-table tr:hover td{background:rgba(27,155,212,.03)}
+.manifest-table .section-row td{background:var(--surf);color:var(--muted);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.tag-cm{color:var(--blue);font-weight:700;font-size:10px}
+.tag-odm{color:var(--amber);font-weight:700;font-size:10px}
+.path-cell{font-family:monospace;font-size:11px;color:var(--green)}
+.storage-pill{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-right:4px}
+.sp-gdrive{background:rgba(27,155,212,.15);color:var(--blue)}
+.sp-sharepoint{background:rgba(246,173,85,.15);color:var(--amber)}
+.sp-dropbox{background:rgba(125,194,66,.15);color:var(--green)}
+.sp-local{background:rgba(183,148,244,.15);color:var(--purple)}
+
+/* SUMMARY HEADER */
+.manifest-header{background:var(--surf);border:1px solid var(--bdr);border-radius:6px;padding:20px 24px;margin-bottom:20px}
+.mh-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+.mh-item label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px}
+.mh-item span{font-size:13px;font-weight:600;color:var(--text)}
+.nda-confirmed{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--green);background:rgba(125,194,66,.1);border:1px solid rgba(125,194,66,.3);padding:4px 10px;border-radius:4px}
+
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--bdr);display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <a href="../index.html">← Phase Map</a>
+  <span>/</span><span>Tools</span>
+  <span>/</span><span>Handoff Manifest Builder</span>
+</nav>
+
+<div class="phase-tag">Handoff Tool — DR2 · DR3 · DR4</div>
+<h1>Handoff Manifest<br>Builder</h1>
+<p class="subtitle">Build a complete file handoff package for any partner. Select the asset packs you need, check off what's included, and log where each file lives. Export as a manifest document or JSON.</p>
+
+<!-- STEP INDICATORS -->
+<div class="steps">
+  <div class="step active" id="step-tab-1" onclick="goStep(1)">
+    <div class="step-num">Step 1</div>
+    <div class="step-label">Project Details</div>
+  </div>
+  <div class="step" id="step-tab-2" onclick="goStep(2)">
+    <div class="step-num">Step 2</div>
+    <div class="step-label">Select Packs</div>
+  </div>
+  <div class="step" id="step-tab-3" onclick="goStep(3)">
+    <div class="step-num">Step 3</div>
+    <div class="step-label">File Details</div>
+  </div>
+  <div class="step" id="step-tab-4" onclick="goStep(4)">
+    <div class="step-num">Step 4</div>
+    <div class="step-label">Export Manifest</div>
+  </div>
+</div>
+
+<!-- ─── STEP 1: PROJECT DETAILS ─────────────────────────────────── -->
+<div class="panel active" id="panel-1">
+  <div class="card">
+    <div class="card-title">Project Information</div>
+    <div class="field-grid">
+      <div class="field"><label>Project Name</label><input id="f-project" type="text" placeholder="e.g. Playtomo Rev A"></div>
+      <div class="field"><label>Client Name</label><input id="f-client" type="text" placeholder="e.g. Acme Corp"></div>
+    </div>
+    <div class="field-grid thirds">
+      <div class="field"><label>Revision</label><input id="f-revision" type="text" placeholder="e.g. Rev A"></div>
+      <div class="field"><label>Date</label><input id="f-date" type="date"></div>
+      <div class="field"><label>Lead Engineer</label><input id="f-engineer" type="text" placeholder="e.g. Patrick"></div>
+    </div>
+    <div class="field-grid">
+      <div class="field">
+        <label>Recipient</label>
+        <select id="f-recipient">
+          <option value="">— Select recipient —</option>
+          <option>Contract Manufacturer (CM)</option>
+          <option>ODM Partner</option>
+          <option>Supply Chain</option>
+          <option>Client</option>
+          <option>Internal Review</option>
+        </select>
+      </div>
+      <div class="field"><label>Notes / Special Instructions</label><textarea id="f-notes" placeholder="Any special handling, restrictions, or context for this package..."></textarea></div>
+    </div>
+    <label class="nda-wrap" onclick="toggleNDA()">
+      <input type="checkbox" id="f-nda">
+      <div>
+        <div class="nda-label">NDA Confirmed ✓</div>
+        <div class="nda-sub">I confirm a signed NDA is on file for this recipient before sending any IP-sensitive files.</div>
+      </div>
+    </label>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="goStep(2)">Next — Select Asset Packs →</button>
+    <button class="btn btn-secondary" onclick="resetAll()">↺ Reset All</button>
+  </div>
+</div>
+
+<!-- ─── STEP 2: SELECT PACKS ─────────────────────────────────────── -->
+<div class="panel" id="panel-2">
+  <div class="card">
+    <div class="card-title">Select Asset Packs</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Choose which asset types are included in this handoff package. You can select multiple.</p>
+    <div class="pack-grid" id="pack-grid"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="goStep(3)">Next — File Details →</button>
+    <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
+  </div>
+</div>
+
+<!-- ─── STEP 3: FILE DETAILS ─────────────────────────────────────── -->
+<div class="panel" id="panel-3">
+  <div class="prog-bar">
+    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+    <div class="prog-lbl" id="prog-lbl">0 assets logged</div>
+  </div>
+  <div id="asset-panels"></div>
+  <div class="btn-row">
+    <button class="btn btn-green" onclick="goStep(4)">Generate Manifest →</button>
+    <button class="btn btn-secondary" onclick="goStep(2)">← Back</button>
+  </div>
+</div>
+
+<!-- ─── STEP 4: EXPORT ────────────────────────────────────────────── -->
+<div class="panel" id="panel-4">
+  <div class="manifest-header" id="manifest-header"></div>
+  <div class="export-tabs">
+    <div class="export-tab active" onclick="switchTab('table')">Manifest Table</div>
+    <div class="export-tab" onclick="switchTab('json')">JSON Export</div>
+    <div class="export-tab" onclick="switchTab('html')">HTML (copy)</div>
+  </div>
+  <div class="export-content active" id="tab-table"></div>
+  <div class="export-content" id="tab-json"><div class="code-block" id="json-out"></div></div>
+  <div class="export-content" id="tab-html"><div class="code-block" id="html-out"></div></div>
+  <div class="btn-row">
+    <button class="btn btn-green" onclick="copyActive()">⎘ Copy to Clipboard</button>
+    <button class="btn btn-primary" onclick="printManifest()">⎙ Print / Save PDF</button>
+    <button class="btn btn-secondary" onclick="goStep(3)">← Back</button>
+  </div>
+</div>
+
+<footer>
+  <span>SCM Solution LTD. — Hardware Development System</span>
+  <span>Handoff Manifest Builder · Rev 1.0</span>
+</footer>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+const PACKS = [
+  {
+    id:"me", name:"Mechanical Engineering", icon:"⚙️",
+    desc:"CAD files, drawings, STEP exports, BOM",
+    color:"#4FD1C5",
+    sections:[
+      {num:"01",title:"Master Assembly",items:[
+        {name:"Master Assembly File",ext:".sldasm/.iam/.f3d",desc:"Top-level assembly file",cm:true,odm:true,ip:true},
+        {name:"Assembly Drawing (2D)",ext:".dwg/.pdf",desc:"Overall dimensions and BOM table",cm:true,odm:true,ip:false},
+        {name:"Exploded View",ext:".pdf/image",desc:"Assembly instructions reference",cm:true,odm:true,ip:false},
+        {name:"Top-Level BOM",ext:".xlsx/.csv",desc:"Full bill of materials — strip pricing",cm:true,odm:true,ip:false},
+      ]},
+      {num:"02",title:"Part Files",items:[
+        {name:"Enclosure / Housing",ext:"STEP export",desc:"Main enclosure 3D model",cm:true,odm:true,ip:true},
+        {name:"Internal Brackets",ext:"STEP export",desc:"Structural brackets and standoffs",cm:true,odm:true,ip:true},
+        {name:"PCB Mechanical Keepout",ext:".dxf/.step",desc:"Keepouts and connector cutouts",cm:true,odm:true,ip:false},
+        {name:"Buttons / Controls",ext:"STEP export",desc:"User-facing physical controls",cm:true,odm:false,ip:true},
+        {name:"Gaskets / Seals",ext:"STEP export",desc:"IP-rated sealing components",cm:true,odm:false,ip:true},
+        {name:"Off-the-Shelf Part Models",ext:".step",desc:"Standard hardware models",cm:true,odm:true,ip:false},
+      ]},
+      {num:"03",title:"Exports & Drawings",items:[
+        {name:"STEP — Full Assembly",ext:".step/.stp",desc:"Primary 3D format for CM",cm:true,odm:true,ip:false},
+        {name:"STEP — Individual Parts",ext:".step/.stp",desc:"Individual part exports",cm:true,odm:true,ip:false},
+        {name:"DXF — 2D Profiles",ext:".dxf",desc:"Sheet metal and laser cut profiles",cm:true,odm:true,ip:false},
+        {name:"PDF — All Drawings",ext:".pdf",desc:"All engineering drawings as PDF",cm:true,odm:true,ip:false},
+        {name:"Part Drawings with GD&T",ext:".dwg/.pdf",desc:"Per-part 2D drawings",cm:true,odm:true,ip:false},
+      ]},
+      {num:"04",title:"Supporting Docs",items:[
+        {name:"Tolerance Stackup Analysis",ext:".xlsx/.pdf",desc:"Critical fit/clearance analysis",cm:true,odm:true,ip:false},
+        {name:"DFM Feedback Log",ext:".xlsx/.docx",desc:"DFM review feedback and responses",cm:true,odm:true,ip:false},
+        {name:"Material Spec Sheets",ext:"TDS/.pdf",desc:"Material standards and data sheets",cm:true,odm:true,ip:false},
+        {name:"Approved Vendor List — ME",ext:".xlsx",desc:"Approved ME component suppliers",cm:true,odm:true,ip:false},
+        {name:"Revision History Log",ext:".xlsx/.docx",desc:"Design change history",cm:true,odm:true,ip:false},
+      ]},
+    ]
+  },
+  {
+    id:"ee", name:"Electrical Engineering", icon:"⚡",
+    desc:"Schematics, Gerbers, BOM, CPL, firmware",
+    color:"#63B3ED",
+    sections:[
+      {num:"01",title:"Schematics",items:[
+        {name:"Schematic PDF — All Sheets",ext:".pdf",desc:"Full schematic export",cm:true,odm:true,ip:false},
+        {name:"Native Schematic",ext:".sch/.SchDoc",desc:"Native CAD schematic — NDA required",cm:false,odm:false,ip:true},
+        {name:"Block Diagram",ext:".pdf",desc:"System architecture overview",cm:true,odm:true,ip:false},
+      ]},
+      {num:"02",title:"PCB Layout",items:[
+        {name:"Gerber Files — Full Set",ext:".gbr/.ger",desc:"All copper and mask layers",cm:true,odm:true,ip:false},
+        {name:"Drill Files",ext:".drl/.xln",desc:"NC drill — plated and NPTH",cm:true,odm:true,ip:false},
+        {name:"PCB Fab Specification",ext:".pdf",desc:"Stackup, surface finish, impedance",cm:true,odm:true,ip:false},
+        {name:"Board Outline",ext:".dxf",desc:"PCB outline for ME integration",cm:true,odm:true,ip:false},
+        {name:"3D PCB Model",ext:".step",desc:"Component heights for clearance check",cm:true,odm:true,ip:false},
+      ]},
+      {num:"03",title:"BOM + CPL",items:[
+        {name:"BOM — Full with MPNs",ext:".xlsx/.csv",desc:"Complete BOM with manufacturer part numbers",cm:true,odm:true,ip:false},
+        {name:"BOM — DNP Callouts",ext:".xlsx/.csv",desc:"Do Not Populate components marked",cm:true,odm:true,ip:false},
+        {name:"Approved Vendor List",ext:".xlsx",desc:"Approved component suppliers",cm:true,odm:true,ip:false},
+        {name:"Pick and Place File",ext:".csv/.txt",desc:"XY coordinates and rotation",cm:true,odm:true,ip:false},
+        {name:"Assembly Drawing — Top",ext:".pdf",desc:"Top-side component placement",cm:true,odm:true,ip:false},
+      ]},
+      {num:"04",title:"Test + Firmware",items:[
+        {name:"Functional Test Script",ext:".py/.js/.exe",desc:"Post-assembly pass/fail test",cm:true,odm:true,ip:false},
+        {name:"Firmware Binary",ext:".bin/.hex/.elf",desc:"Production firmware to flash",cm:true,odm:true,ip:false},
+        {name:"Flashing Instructions",ext:".pdf/.md",desc:"Step-by-step flashing procedure",cm:true,odm:true,ip:false},
+      ]},
+    ]
+  },
+  {
+    id:"cmf", name:"CMF & Materials", icon:"🎨",
+    desc:"Colors, materials, finish specs",
+    color:"#E8624A",
+    sections:[
+      {num:"01",title:"Color Spec",items:[
+        {name:"CMF Drawing — Full Product",ext:".pdf",desc:"All colors/materials/finishes called out",cm:true,odm:true,ip:false},
+        {name:"Primary Color Callout",ext:".pdf",desc:"Pantone/RAL codes for all colors",cm:true,odm:true,ip:false},
+        {name:"Cosmetic Defect Standard",ext:".pdf",desc:"Acceptable vs rejectable defects",cm:true,odm:true,ip:false},
+      ]},
+      {num:"02",title:"Material Specs",items:[
+        {name:"Resin Specification",ext:"TDS/.pdf",desc:"Polymer type, grade, manufacturer",cm:true,odm:true,ip:false},
+        {name:"Material Safety Data Sheets",ext:".pdf",desc:"MSDS/SDS for all materials",cm:true,odm:true,ip:false},
+        {name:"Surface Finish Spec",ext:".pdf",desc:"Gloss levels, texture codes",cm:true,odm:true,ip:false},
+        {name:"Coating Specification",ext:".pdf",desc:"Paint, anodize, powder coat spec",cm:true,odm:true,ip:false},
+      ]},
+      {num:"03",title:"Compliance",items:[
+        {name:"RoHS Declaration",ext:".pdf",desc:"RoHS compliance confirmation",cm:true,odm:true,ip:false},
+        {name:"REACH SVHC Check",ext:".pdf",desc:"EU REACH compliance",cm:true,odm:true,ip:false},
+      ]},
+    ]
+  },
+  {
+    id:"tooling", name:"Tooling & Molds", icon:"🔧",
+    desc:"Mold design, T1/T2/T3, tool docs",
+    color:"#9B6BD4",
+    sections:[
+      {num:"01",title:"Tool Documents",items:[
+        {name:"Mold Flow Analysis",ext:".pdf",desc:"Simulated plastic flow results",cm:true,odm:false,ip:false},
+        {name:"Gate Location Approval",ext:".pdf",desc:"Gate type and placement",cm:true,odm:false,ip:false},
+        {name:"Parting Line Drawing",ext:".pdf",desc:"Parting line locations",cm:true,odm:false,ip:false},
+        {name:"Tooling Quote (RFQ)",ext:".xlsx",desc:"Itemized tooling costs",cm:false,odm:false,ip:true},
+      ]},
+      {num:"02",title:"Sample Reviews",items:[
+        {name:"T1 Dimensional Report",ext:".xlsx",desc:"T1 sample measurement results",cm:true,odm:false,ip:false},
+        {name:"T1 Issue Log",ext:".xlsx",desc:"T1 issues and corrections required",cm:true,odm:false,ip:false},
+        {name:"T2/T3 Sign-off",ext:".pdf",desc:"Final tool approval",cm:true,odm:false,ip:false},
+      ]},
+    ]
+  },
+  {
+    id:"packaging", name:"Packaging", icon:"📦",
+    desc:"Box, insert, carton, labelling specs",
+    color:"#1B9BD4",
+    sections:[
+      {num:"01",title:"Package Design",items:[
+        {name:"Structural Dieline",ext:".pdf/.dxf/.ai",desc:"Box flat pattern for printing",cm:true,odm:true,ip:false},
+        {name:"Box Dimensions",ext:".pdf/.xlsx",desc:"Internal and external dimensions",cm:true,odm:true,ip:false},
+        {name:"Print Artwork Files",ext:".ai/.pdf",desc:"Print-ready packaging artwork",cm:true,odm:true,ip:false},
+        {name:"Insert / Tray Design",ext:".pdf/CAD",desc:"Inner insert holding product",cm:true,odm:true,ip:false},
+      ]},
+      {num:"02",title:"Shipping & Labels",items:[
+        {name:"Master Carton Spec",ext:".pdf",desc:"Carton dimensions and markings",cm:true,odm:true,ip:false},
+        {name:"Label Specification",ext:".pdf/.ai",desc:"Product label artwork and placement",cm:true,odm:true,ip:false},
+        {name:"Barcode Specification",ext:".pdf/.xlsx",desc:"UPC/EAN codes and placement",cm:true,odm:true,ip:false},
+      ]},
+    ]
+  },
+  {
+    id:"trd", name:"TRD + Requirements", icon:"📋",
+    desc:"Technical requirements, PRD, handoff docs",
+    color:"#7DC242",
+    sections:[
+      {num:"01",title:"Requirements Docs",items:[
+        {name:"Technical Requirements Doc (TRD)",ext:".pdf/.docx",desc:"Full technical specs for manufacturer",cm:true,odm:true,ip:false},
+        {name:"Product Requirements Doc (PRD)",ext:".pdf/.docx",desc:"What the product must do",cm:false,odm:false,ip:false},
+        {name:"Revision History",ext:".xlsx/.pdf",desc:"All design changes logged",cm:true,odm:true,ip:false},
+      ]},
+    ]
+  },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────
+let selectedPacks = new Set();
+let checkedAssets = {}; // key: packId-secNum-itemIdx → {checked, storage, path, link}
+let currentStep = 1;
+
+// ── INIT ──────────────────────────────────────────────────────────────
+window.onload = () => {
+  renderPackGrid();
+  // Set today's date
+  document.getElementById('f-date').valueAsDate = new Date();
+};
+
+// ── STEP NAVIGATION ───────────────────────────────────────────────────
+function goStep(n) {
+  if (n === 3) renderAssetPanels();
+  if (n === 4) generateManifest();
+  currentStep = n;
+  document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i+1===n));
+  document.querySelectorAll('.step').forEach((s,i) => {
+    s.classList.toggle('active', i+1===n);
+    s.classList.toggle('done', i+1<n);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleNDA() {
+  // checkbox toggles itself via label
+}
+
+// ── PACK GRID ─────────────────────────────────────────────────────────
+function renderPackGrid() {
+  const grid = document.getElementById('pack-grid');
+  grid.innerHTML = PACKS.map(p => `
+    <div class="pack-card ${selectedPacks.has(p.id)?'selected':''}" onclick="togglePack('${p.id}')" id="pack-${p.id}">
+      <div class="pack-icon" style="${selectedPacks.has(p.id)?'color:'+p.color:''}">${p.icon}</div>
+      <div class="pack-name" style="${selectedPacks.has(p.id)?'color:'+p.color:''}">${p.name}</div>
+      <div class="pack-desc">${p.desc}</div>
+      <div class="pack-count">${p.sections.reduce((a,s)=>a+s.items.length,0)} assets</div>
+    </div>
+  `).join('');
+}
+
+function togglePack(id) {
+  if (selectedPacks.has(id)) selectedPacks.delete(id);
+  else selectedPacks.add(id);
+  renderPackGrid();
+}
+
+// ── ASSET PANELS ──────────────────────────────────────────────────────
+function renderAssetPanels() {
+  const container = document.getElementById('asset-panels');
+  if (selectedPacks.size === 0) {
+    container.innerHTML = '<div style="color:var(--muted);font-size:14px;padding:40px;text-align:center">No packs selected — go back and choose at least one.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  selectedPacks.forEach(packId => {
+    const pack = PACKS.find(p => p.id === packId);
+    if (!pack) return;
+    const packDiv = document.createElement('div');
+    packDiv.className = 'card';
+    packDiv.style.marginBottom = '20px';
+    packDiv.innerHTML = `<div class="card-title" style="--ct-color:${pack.color}"><span style="font-size:18px">${pack.icon}</span> ${pack.name}</div>`;
+    pack.sections.forEach(sec => {
+      const secDiv = document.createElement('div');
+      secDiv.className = 'asset-section';
+      secDiv.id = `sec-${packId}-${sec.num}`;
+      const checkedCount = sec.items.filter((_,i) => checkedAssets[`${packId}-${sec.num}-${i}`]?.checked).length;
+      secDiv.innerHTML = `
+        <div class="asset-section-header" onclick="toggleSec('${packId}-${sec.num}')">
+          <span class="asset-section-num">${sec.num}</span>
+          <span class="asset-section-title">${sec.title}</span>
+          <span class="asset-section-count" id="sc-${packId}-${sec.num}">${checkedCount}/${sec.items.length} selected</span>
+          <span class="chev">▾</span>
+        </div>
+        <div class="asset-rows">
+          ${sec.items.map((item,i) => renderAssetRow(packId, sec.num, i, item)).join('')}
+        </div>`;
+      packDiv.appendChild(secDiv);
+    });
+    container.appendChild(packDiv);
+  });
+  updateProgress();
+}
+
+function renderAssetRow(packId, secNum, idx, item) {
+  const key = `${packId}-${secNum}-${idx}`;
+  const state = checkedAssets[key] || {};
+  const checked = state.checked ? 'checked' : '';
+  const storage = state.storage || 'gdrive';
+  const path = state.path || '';
+  const link = state.link || '';
+  const badges = [
+    item.cm ? '<span class="badge b-cm">→ CM</span>' : '',
+    item.odm ? '<span class="badge b-odm">→ ODM</span>' : '',
+    item.ip ? '<span class="badge b-ip">IP Sensitive</span>' : '<span class="badge b-safe">External Safe</span>',
+  ].join('');
+  return `
+    <div class="asset-row ${checked}" id="row-${key}">
+      <div class="asset-row-top" onclick="toggleAsset('${packId}','${secNum}',${idx})">
+        <div class="asset-cb"><span class="asset-tick">✓</span></div>
+        <div class="asset-info">
+          <div class="asset-name"><span class="asset-ext">${item.ext}</span>${item.name}</div>
+          <div class="asset-desc">${item.desc}</div>
+          <div class="asset-badges">${badges}</div>
+        </div>
+      </div>
+      <div class="asset-form">
+        <div class="asset-form-grid">
+          <div>
+            <div class="af-label">Storage Type</div>
+            <select class="af-select" id="stor-${key}" onchange="updateField('${key}','storage',this.value)">
+              <option value="gdrive" ${storage==='gdrive'?'selected':''}>Google Drive</option>
+              <option value="sharepoint" ${storage==='sharepoint'?'selected':''}>SharePoint</option>
+              <option value="dropbox" ${storage==='dropbox'?'selected':''}>Dropbox</option>
+              <option value="local" ${storage==='local'?'selected':''}>Local / Network</option>
+            </select>
+          </div>
+          <div>
+            <div class="af-label">File Path / Folder</div>
+            <input class="af-input" id="path-${key}" type="text" placeholder="/04_Exports/assembly.step" value="${path}" onchange="updateField('${key}','path',this.value)" oninput="updateField('${key}','path',this.value)">
+          </div>
+          <div>
+            <div class="af-label">Link (optional)</div>
+            <input class="af-input" id="link-${key}" type="text" placeholder="Paste share URL..." value="${link}" onchange="updateField('${key}','link',this.value)" oninput="updateField('${key}','link',this.value)">
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleSec(id) {
+  document.getElementById(`sec-${id}`).classList.toggle('collapsed');
+}
+
+function toggleAsset(packId, secNum, idx) {
+  const key = `${packId}-${secNum}-${idx}`;
+  const cur = checkedAssets[key] || {};
+  checkedAssets[key] = {...cur, checked: !cur.checked, storage: cur.storage||'gdrive'};
+  const row = document.getElementById(`row-${key}`);
+  row.classList.toggle('checked', checkedAssets[key].checked);
+  updateSecCount(packId, secNum);
+  updateProgress();
+}
+
+function updateField(key, field, val) {
+  checkedAssets[key] = {...(checkedAssets[key]||{}), [field]: val};
+}
+
+function updateSecCount(packId, secNum) {
+  const pack = PACKS.find(p => p.id === packId);
+  const sec = pack.sections.find(s => s.num === secNum);
+  const count = sec.items.filter((_,i) => checkedAssets[`${packId}-${secNum}-${i}`]?.checked).length;
+  const el = document.getElementById(`sc-${packId}-${secNum}`);
+  if (el) el.textContent = `${count}/${sec.items.length} selected`;
+}
+
+function updateProgress() {
+  let total = 0, checked = 0;
+  selectedPacks.forEach(packId => {
+    const pack = PACKS.find(p => p.id === packId);
+    pack.sections.forEach(sec => {
+      sec.items.forEach((_,i) => {
+        total++;
+        if (checkedAssets[`${packId}-${sec.num}-${i}`]?.checked) checked++;
+      });
+    });
+  });
+  const pct = total ? Math.round(checked/total*100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-lbl').textContent = `${checked} of ${total} assets selected`;
+}
+
+// ── GENERATE MANIFEST ─────────────────────────────────────────────────
+function getHeaderData() {
+  return {
+    project:   document.getElementById('f-project').value || '—',
+    client:    document.getElementById('f-client').value  || '—',
+    revision:  document.getElementById('f-revision').value|| '—',
+    date:      document.getElementById('f-date').value    || '—',
+    engineer:  document.getElementById('f-engineer').value|| '—',
+    recipient: document.getElementById('f-recipient').value|| '—',
+    notes:     document.getElementById('f-notes').value   || '',
+    nda:       document.getElementById('f-nda').checked,
+  };
+}
+
+const STORAGE_LABELS = {gdrive:'Google Drive', sharepoint:'SharePoint', dropbox:'Dropbox', local:'Local / Network'};
+const STORAGE_CLS    = {gdrive:'sp-gdrive', sharepoint:'sp-sharepoint', dropbox:'sp-dropbox', local:'sp-local'};
+
+function generateManifest() {
+  const h = getHeaderData();
+
+  // Header
+  document.getElementById('manifest-header').innerHTML = `
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Handoff Manifest</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:16px">${h.project} — ${h.revision}</div>
+    <div class="mh-grid">
+      <div class="mh-item"><label>Client</label><span>${h.client}</span></div>
+      <div class="mh-item"><label>Recipient</label><span>${h.recipient}</span></div>
+      <div class="mh-item"><label>Lead Engineer</label><span>${h.engineer}</span></div>
+      <div class="mh-item"><label>Date</label><span>${h.date}</span></div>
+    </div>
+    ${h.nda ? '<div style="margin-top:12px"><span class="nda-confirmed">✓ NDA Confirmed</span></div>' : '<div style="margin-top:12px;font-size:12px;color:var(--warn)">⚠ NDA not confirmed — review before sending IP-sensitive files</div>'}
+    ${h.notes ? `<div style="margin-top:12px;font-size:12px;color:var(--muted);border-top:1px solid var(--bdr);padding-top:10px"><strong style="color:var(--text)">Notes:</strong> ${h.notes}</div>` : ''}
+  `;
+
+  // Collect checked items
+  const rows = [];
+  selectedPacks.forEach(packId => {
+    const pack = PACKS.find(p => p.id === packId);
+    pack.sections.forEach(sec => {
+      sec.items.forEach((item, i) => {
+        const key = `${packId}-${sec.num}-${i}`;
+        const state = checkedAssets[key];
+        if (state?.checked) {
+          rows.push({
+            pack: pack.name, packIcon: pack.icon,
+            section: sec.title,
+            name: item.name, ext: item.ext, desc: item.desc,
+            cm: item.cm, odm: item.odm, ip: item.ip,
+            storage: state.storage || 'gdrive',
+            path: state.path || '',
+            link: state.link || '',
+          });
+        }
+      });
+    });
+  });
+
+  // ── HTML TABLE ──
+  let lastPack = '', lastSec = '';
+  let tableHtml = `<div style="overflow-x:auto"><table class="manifest-table">
+    <thead><tr>
+      <th>Asset</th><th>Format</th><th>Storage</th><th>Path / Link</th><th>CM</th><th>ODM</th>
+    </tr></thead><tbody>`;
+  rows.forEach(r => {
+    if (r.pack !== lastPack) {
+      tableHtml += `<tr class="section-row"><td colspan="6">${r.packIcon} ${r.pack} — ${r.section}</td></tr>`;
+      lastPack = r.pack; lastSec = r.section;
+    } else if (r.section !== lastSec) {
+      tableHtml += `<tr class="section-row"><td colspan="6" style="padding-left:28px">↳ ${r.section}</td></tr>`;
+      lastSec = r.section;
+    }
+    const pathDisplay = r.link
+      ? `<a href="${r.link}" target="_blank" style="color:var(--blue);text-decoration:none">${r.path||r.link}</a>`
+      : `<span class="path-cell">${r.path||'—'}</span>`;
+    tableHtml += `<tr>
+      <td><strong>${r.name}</strong><br><span style="font-size:10px;color:var(--muted)">${r.desc}</span></td>
+      <td style="font-family:monospace;font-size:11px;color:var(--muted)">${r.ext}</td>
+      <td><span class="storage-pill ${STORAGE_CLS[r.storage]}">${STORAGE_LABELS[r.storage]}</span></td>
+      <td>${pathDisplay}</td>
+      <td class="tag-cm">${r.cm?'✓':'—'}</td>
+      <td class="tag-odm">${r.odm?'✓':'—'}</td>
+    </tr>`;
+  });
+  if (rows.length === 0) tableHtml += `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:40px">No assets selected — go back and check off the files included in this package.</td></tr>`;
+  tableHtml += '</tbody></table></div>';
+  document.getElementById('tab-table').innerHTML = tableHtml;
+
+  // ── JSON ──
+  const jsonData = {
+    manifest: {
+      project: h.project, client: h.client, revision: h.revision,
+      date: h.date, engineer: h.engineer, recipient: h.recipient,
+      nda_confirmed: h.nda, notes: h.notes,
+      generated: new Date().toISOString(),
+    },
+    assets: rows.map(r => ({
+      pack: r.pack, section: r.section, name: r.name,
+      format: r.ext, description: r.desc,
+      storage: STORAGE_LABELS[r.storage],
+      path: r.path, link: r.link,
+      send_to_cm: r.cm, send_to_odm: r.odm, ip_sensitive: r.ip,
+    }))
+  };
+  document.getElementById('json-out').textContent = JSON.stringify(jsonData, null, 2);
+
+  // ── HTML COPY ──
+  document.getElementById('html-out').textContent = `<!-- SCM Handoff Manifest: ${h.project} ${h.revision} -->
+` + tableHtml;
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.export-tab').forEach((t,i) => t.classList.toggle('active', ['table','json','html'][i]===name));
+  document.querySelectorAll('.export-content').forEach((c,i) => c.classList.toggle('active', ['tab-table','tab-json','tab-html'][i]===`tab-${name}`));
+}
+
+function copyActive() {
+  const active = document.querySelector('.export-content.active');
+  const text = active.id === 'tab-table'
+    ? active.innerHTML
+    : active.querySelector('.code-block').textContent;
+  navigator.clipboard.writeText(text).then(() => alert('Copied to clipboard!'));
+}
+
+function printManifest() {
+  window.print();
+}
+
+function resetAll() {
+  if (!confirm('Reset everything and start over?')) return;
+  selectedPacks.clear();
+  checkedAssets = {};
+  ['f-project','f-client','f-revision','f-engineer','f-notes'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('f-recipient').selectedIndex = 0;
+  document.getElementById('f-nda').checked = false;
+  document.getElementById('f-date').valueAsDate = new Date();
+  goStep(1);
+  renderPackGrid();
+}
+</script>
+</body>
+</html>
