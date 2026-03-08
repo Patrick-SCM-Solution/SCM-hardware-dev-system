@@ -1,25 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CMF & Materials — SCM Hardware System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/scm-styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMF & Materials Checklist — SCM Hardware System</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/scm-styles.css">
+<style>
+  
+  /* CMF amber accent */
+  .section-num { color: var(--scm-amber); background: rgba(246,173,85,.1); border-color: rgba(246,173,85,.2); }
+  .item-ext { color: var(--scm-amber); }
+  .progress-fill { background: linear-gradient(90deg, var(--scm-amber), var(--scm-green)); }
+  .progress-label { color: var(--scm-amber); }
+  .item:hover { background: rgba(246,173,85,.04); }
+  .cl-item-note { font-size: 11px; color: var(--scm-blue); margin-top: 4px; font-style: italic; }
+</style>
 </head>
 <body>
 <div class="wrap">
-<nav><a href="../../index.html">← Phase Map</a><span>/</span><span>Checklists</span><span>/</span><span>CMF & Materials</span></nav>
+
+<nav class="nav-breadcrumb">
+  <a href="../index.html">← Phase Map</a>
+  <span>/</span><span>Checklists</span>
+  <span>/</span><span>CMF & Materials</span>
+</nav>
+
 <div class="phase-tag">Design Phase — DR2 · Factory — DR4</div>
-<h1>Color, Material &amp; Finish<br>+ Materials Specification</h1>
+<h1>CMF &amp; Materials<br>Checklist</h1>
 <p class="subtitle">CMF defines how the product looks, feels, and is finished. Lock every spec before tooling is cut and confirm again at FAI. Ambiguous CMF is one of the most common causes of expensive late-stage rework.</p>
+
 <div class="ref-panel">
   <div class="ref-card"><div class="rct">Color Systems</div><div class="ri">Pantone PMS — plastics &amp; print</div><div class="ri">RAL — industrial coatings</div><div class="ri">NCS — Scandinavian standard</div><div class="ri">Delta-E (ΔE) — tolerance measure</div></div>
   <div class="ref-card"><div class="rct">Surface Finish</div><div class="ri">Gloss — 85+ GU (gloss units)</div><div class="ri">Semi-gloss — 30–70 GU</div><div class="ri">Matte — under 10 GU</div><div class="ri">Texture — SPI / VDI / Mold-Tech</div></div>
   <div class="ref-card"><div class="rct">Common Coatings</div><div class="ri">UV coating — scratch resistance</div><div class="ri">Anodizing — aluminum parts</div><div class="ri">Powder coat — metal enclosures</div><div class="ri">PVD — thin film, premium finish</div></div>
 </div>
-<div class="pw"><div class="pt"><div class="pf" id="pF"></div></div><div class="pl" id="pL">0 / 0</div><button class="rb" onclick="resetAll()">&#8635; Reset</button></div>
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">0 / 0</div>
+  <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
+</div>
+
 <div id="sections"></div>
-<footer><span>SCM Solution LTD. — Hardware Development System</span><span>CMF & Materials · Rev 1.0</span></footer>
+
+<footer>
+  <span>SCM Solution LTD. — Hardware Development System</span>
+  <span>CMF & Materials · Rev 1.0</span>
+</footer>
 </div>
 <script>
 const D=[
@@ -71,42 +98,77 @@ const D=[
     {nm:"Conflict Minerals Declaration",ex:".pdf",ds:"Dodd-Frank 3TG declaration (tin, tantalum, tungsten, gold) from supply chain.",b:["c","r"]},
   ]}
 ];
-const BM={c:{l:"\u2192 CM",k:"bc"},o:{l:"\u2192 ODM",k:"bo"},s:{l:"External Safe",k:"bs"},r:{l:"Review First",k:"br"},i:{l:"Internal Only",k:"bi"}};
+const BM={
+  c:{label:"→ CM",      cls:"badge-cm"},
+  o:{label:"→ ODM",     cls:"badge-odm"},
+  s:{label:"External Safe", cls:"badge-safe"},
+  r:{label:"Review First",  cls:"badge-review"},
+  i:{label:"Internal Only", cls:"badge-int"}
+};
 let S={};
 const KEY="cmf-v1";
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 function load(){try{const s=localStorage.getItem(KEY);if(s)S=JSON.parse(s);}catch(e){}}
-function upd(){
+function updateProgress(){
   let tot=0,chk=0;
   D.forEach(sec=>sec.items.forEach((_,i)=>{tot++;if(S[sec.n+i])chk++;}));
   const p=tot?Math.round(chk/tot*100):0;
-  document.getElementById("pF").style.width=p+"%";
-  document.getElementById("pL").textContent=chk+" / "+tot+" ("+p+"%)";
+  document.getElementById("progressFill").style.width=p+"%";
+  document.getElementById("progressLabel").textContent=chk+" / "+tot+" ("+p+"%)";
   D.forEach(sec=>{
     const c=sec.items.filter((_,i)=>S[sec.n+i]).length;
-    const el=document.getElementById("sp"+sec.n);
+    const el=document.getElementById("sec-progress-"+sec.n);
     if(el)el.textContent=c+" / "+sec.items.length;
   });
 }
-function tog(n,i){const k=n+i;S[k]=!S[k];const el=document.getElementById("it"+k);if(S[k])el.classList.add("checked");else el.classList.remove("checked");save();upd();}
-function togS(n){document.getElementById("sec"+n).classList.toggle("collapsed");}
-function resetAll(){if(!confirm("Reset all?"))return;S={};document.querySelectorAll(".item").forEach(e=>e.classList.remove("checked"));save();upd();}
+function toggleItem(key){
+  S[key]=!S[key];
+  const el=document.getElementById("item-"+key);
+  if(S[key])el.classList.add("checked");
+  else el.classList.remove("checked");
+  save();updateProgress();
+}
+function toggleSection(n){document.getElementById("sec"+n).classList.toggle("collapsed");}
+function resetAll(){
+  if(!confirm("Reset all checklist items?"))return;
+  S={};
+  document.querySelectorAll(".item").forEach(e=>e.classList.remove("checked"));
+  save();updateProgress();
+}
 function render(){
   load();
-  const c=document.getElementById("sections");
+  const container=document.getElementById("sections");
   D.forEach(sec=>{
-    const d=document.createElement("div");d.className="section";d.id="sec"+sec.n;
-    const sc=sec.items.filter((_,i)=>S[sec.n+i]).length;
-    d.innerHTML="<div class=\"sh\" onclick=\"togS('"+sec.n+"')\"><span class=\"sn\">"+sec.n+"</span><span class=\"st\">"+sec.t+"</span><span class=\"sp\" id=\"sp"+sec.n+"\">"+sc+" / "+sec.items.length+"</span><span class=\"cv\">&#9662;</span></div><div class=\"items\">"+
-    sec.items.map((it,i)=>{
-      const k=sec.n+i;const ck=S[k]?"checked":"";
-      const bg=it.b.map(b=>"<span class=\"badge "+BM[b].k+"\">"+BM[b].l+"</span>").join("");
-      const nt=it.nt?"<div class=\"ino\">&#128161; "+it.nt+"</div>":"";
-      return "<div class=\"item "+ck+"\" id=\"it"+k+"\" onclick=\"tog('"+sec.n+"',"+i+")\"><div class=\"cb\"><span class=\"tk\">&#10003;</span></div><div class=\"ib\"><div class=\"in\"><span class=\"ix\">"+it.ex+"</span>"+it.nm+"</div><div class=\"id\">"+it.ds+"</div>"+nt+"<div class=\"bd\">"+bg+"</div></div></div>";
-    }).join("")+"</div>";
-    c.appendChild(d);
+    const secEl=document.createElement("div");
+    secEl.className="cl-section";
+    secEl.id="sec"+sec.n;
+    const secChecked=sec.items.filter((_,i)=>S[sec.n+i]).length;
+    const itemsHTML=sec.items.map((it,i)=>{
+      const key=sec.n+i;
+      const checked=S[key]?"checked":"";
+      const badges=it.b.map(b=>`<span class="badge ${BM[b].cls}">${BM[b].label}</span>`).join("");
+      const note=it.nt?`<div class="cl-item-note">💡 ${it.nt}</div>`:"";
+      return `<div class="item ${checked}" id="item-${key}" onclick="toggleItem('${key}')">
+        <div class="checkbox"><span class="tick">✓</span></div>
+        <div class="item-body">
+          <div class="item-name"><span class="item-ext">${it.ex}</span>${it.nm}</div>
+          <div class="item-desc">${it.ds}</div>
+          ${note}
+          <div class="item-badges">${badges}</div>
+        </div>
+      </div>`;
+    }).join("");
+    secEl.innerHTML=`
+      <div class="section-header" onclick="toggleSection('${sec.n}')">
+        <span class="section-num">${sec.n}</span>
+        <span class="section-title-text">${sec.t}</span>
+        <span class="section-progress" id="sec-progress-${sec.n}">${secChecked} / ${sec.items.length}</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="items">${itemsHTML}</div>`;
+    container.appendChild(secEl);
   });
-  upd();
+  updateProgress();
 }
 render();
 </script>
