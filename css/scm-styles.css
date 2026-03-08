@@ -691,3 +691,86 @@ footer {
   .ref-panel { grid-template-columns: 1fr; }
   .stats-bar { grid-template-columns: 1fr 1fr; }
 }
+
+/* ── COMPATIBILITY ALIASES ───────────────────────────────────────
+   Maps legacy class names from older HTML files to shared styles.
+   Keeps HTML untouched while ensuring consistent rendering.
+   ─────────────────────────────────────────────────────────────── */
+
+/* Checklist section (me/ee used short names) */
+.section-header   { display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--surf);cursor:pointer;user-select:none;transition:background .15s; }
+.section-header:hover { background:#1f3550; }
+.section-num      { font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--scm-accent);background:rgba(232,98,74,.1);border:1px solid rgba(232,98,74,.2);padding:2px 8px;border-radius:3px;white-space:nowrap; }
+.section-title-text { font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;flex:1; }
+.section-progress { font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap; }
+.items            { background:var(--mid); }
+.item             { display:flex;align-items:flex-start;gap:14px;padding:12px 20px;border-bottom:1px solid rgba(30,58,85,.6);cursor:pointer;transition:background .12s; }
+.item:last-child  { border-bottom:none; }
+.item.checked     { opacity:.5; }
+.item.checked .item-name { text-decoration:line-through;color:var(--muted); }
+.checkbox         { width:18px;height:18px;min-width:18px;border:2px solid var(--bdr);border-radius:3px;margin-top:1px;display:flex;align-items:center;justify-content:center;background:var(--dark);transition:all .15s;flex-shrink:0; }
+.item.checked .checkbox { background:var(--scm-green);border-color:var(--scm-green); }
+.tick             { display:none;color:#fff;font-size:11px;font-weight:700; }
+.item.checked .tick { display:block; }
+.chevron          { color:var(--muted);font-size:12px;transition:transform .2s; }
+.collapsed .chevron { transform:rotate(-90deg); }
+.collapsed .items { display:none; }
+.item-body        { flex:1; }
+.item-name        { font-size:13px;font-weight:600;line-height:1.4;margin-bottom:2px; }
+.item-ext         { font-family:"Barlow Condensed",sans-serif;font-size:12px;font-weight:700;color:var(--scm-accent);margin-right:6px; }
+.item-desc        { font-size:12px;color:var(--muted);line-height:1.5; }
+.item-badges      { display:flex;gap:6px;margin-top:6px;flex-wrap:wrap; }
+
+/* Progress bar (me/ee short names) */
+.progress-wrap    { background:var(--surf);border:1px solid var(--bdr);border-radius:6px;padding:16px 20px;margin-bottom:32px;display:flex;align-items:center;gap:16px; }
+.progress-track   { flex:1;height:6px;background:var(--bdr);border-radius:99px;overflow:hidden; }
+.progress-fill    { height:100%;background:linear-gradient(90deg,var(--scm-accent),var(--scm-green));border-radius:99px;transition:width .4s ease;width:0%; }
+.progress-label   { font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;color:var(--scm-accent);white-space:nowrap;min-width:80px;text-align:right; }
+.reset-btn        { font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;background:transparent;border:1px solid var(--bdr);color:var(--muted);border-radius:4px;cursor:pointer;transition:all .15s; }
+.reset-btn:hover  { border-color:var(--warn);color:var(--warn); }
+
+/* CMF / tooling / packaging short names */
+.pw  { background:var(--surf);border:1px solid var(--bdr);border-radius:6px;padding:16px 20px;margin-bottom:32px;display:flex;align-items:center;gap:16px; }
+.pt  { flex:1;height:6px;background:var(--bdr);border-radius:99px;overflow:hidden; }
+.pf  { height:100%;background:linear-gradient(90deg,var(--scm-accent),var(--scm-green));border-radius:99px;transition:width .4s ease;width:0%; }
+.pl  { font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;color:var(--scm-accent);white-space:nowrap;min-width:80px;text-align:right; }
+.rb  { font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;background:transparent;border:1px solid var(--bdr);color:var(--muted);border-radius:4px;cursor:pointer;transition:all .15s; }
+.rb:hover { border-color:var(--warn);color:var(--warn); }
+.rct { font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px; }
+.ri  { font-size:12px;color:var(--text);margin-bottom:5px;display:flex;gap:8px; }
+.ri::before { content:"→";color:var(--scm-accent);flex-shrink:0; }
+
+/* Index page missing classes */
+.bridge-col { }
+.dp-body    { }
+.dp-col     { display:flex;flex-direction:column;gap:4px; }
+.dp-col-title { font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px; }
+.dp-dot     { width:6px;height:6px;border-radius:50%;background:var(--scm-blue);flex-shrink:0;margin-top:5px; }
+.dp-gate-badge { display:inline-block;font-family:"Barlow Condensed",sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;color:var(--scm-blue);border:1px solid rgba(27,155,212,.3);background:rgba(27,155,212,.08); }
+.dp-header  { margin-bottom:16px; }
+.dp-title   { font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px; }
+.header-badge { display:inline-block;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:3px;background:rgba(27,155,212,.1);color:var(--scm-blue);border:1px solid rgba(27,155,212,.2); }
+.pa-gate    { font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px; }
+.s          { color:var(--scm-blue); }
+.c          { color:var(--scm-green); }
+.m          { color:var(--scm-blue); }
+
+/* Handoff manifest missing */
+.asset-badges { display:flex;gap:6px;flex-wrap:wrap;margin-top:4px; }
+.b-cm   { font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;color:var(--scm-blue);background:rgba(27,155,212,.1);border:1px solid rgba(27,155,212,.25); }
+.b-odm  { font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;color:var(--scm-amber);background:rgba(246,173,85,.1);border:1px solid rgba(246,173,85,.25); }
+.b-ip   { font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;color:var(--warn);background:rgba(252,129,129,.1);border:1px solid rgba(252,129,129,.25); }
+.b-safe { font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;color:var(--scm-green);background:rgba(125,194,66,.1);border:1px solid rgba(125,194,66,.25); }
+.btn-secondary { background:transparent;border:1px solid var(--scm-blue);color:var(--scm-blue);font-family:"Barlow Condensed",sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:9px 18px;border-radius:4px;cursor:pointer;transition:all .15s; }
+.btn-secondary:hover { background:rgba(27,155,212,.1); }
+.path-cell  { font-family:monospace;font-size:11px;color:var(--muted); }
+.prog-bar   { flex:1;height:6px;background:var(--bdr);border-radius:99px;overflow:hidden; }
+.storage-pill { display:inline-block;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-right:3px; }
+.tag-cm  { color:var(--scm-blue);background:rgba(27,155,212,.1);border:1px solid rgba(27,155,212,.25); }
+.tag-odm { color:var(--scm-amber);background:rgba(246,173,85,.1);border:1px solid rgba(246,173,85,.25); }
+.thirds  { display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px; }
+
+/* Registry missing */
+.big            { font-size:40px;margin-bottom:12px; }
+.card-title-left { display:flex;align-items:center;gap:10px; }
+.card-title-left::before { content:"";display:block;width:3px;height:16px;border-radius:2px;background:var(--scm-amber); }
