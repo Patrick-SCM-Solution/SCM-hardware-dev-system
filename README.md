@@ -41,7 +41,8 @@ SCM-hardware-dev-system/
 │   └── packaging.html                ← Packaging Engineering checklist
 └── tools/
     ├── handoff-manifest.html         ← Handoff Manifest Builder
-    └── project-asset-registry.html  ← Project Asset Registry
+    ├── project-asset-registry.html   ← Project Asset Registry
+    └── chinese-srs.html              ← Chinese SCM Vocabulary Reference
 ```
 
 ---
@@ -150,11 +151,10 @@ Recommended folder structure per project:
 
 ## Embedding in Notion
 
-Each page has its own GitHub Pages URL. Use Notion's `/embed` block with the full URL to render any page inline:
+Each page has its own GitHub Pages URL. Use Notion's `/embed` block with the full URL to render any page inline. The Phase Map index is the recommended entry point — all other pages are accessible from there.
 
 ```
-https://patrick-scm-solution.github.io/SCM-hardware-dev-system/checklists/me-assets.html
-https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/handoff-manifest.html
+https://patrick-scm-solution.github.io/SCM-hardware-dev-system/index.html
 ```
 
 ---
