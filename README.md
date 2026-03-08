@@ -8,6 +8,22 @@ Built for use alongside Google Drive, Notion, and Odoo Knowledge.
 
 ---
 
+## Live Pages
+
+| Page | URL |
+|------|-----|
+| Phase Map | [/index.html](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/index.html) |
+| ME Asset Checklist | [/checklists/me-assets.html](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/checklists/me-assets.html) |
+| EE Asset Checklist | [/checklists/ee-assets.html](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/checklists/ee-assets.html) |
+| CMF & Materials | [/checklists/cmf-materials.html](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/checklists/cmf-materials.html) |
+| Tooling & Molds | [/checklists/tooling-molds.html](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/checklists/tooling-molds.html) |
+| Packaging Engineering | [/checklists/packaging.html](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/checklists/packaging.html) |
+| Handoff Manifest Builder | [/tools/handoff-manifest.html](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/handoff-manifest.html) |
+| Project Asset Registry | [/tools/project-asset-registry.html](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/project-asset-registry.html) |
+| Shared Stylesheet | [/css/scm-styles.css](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/css/scm-styles.css) |
+
+---
+
 ## Repository Structure
 
 ```
