@@ -1,100 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tooling & Molds — SCM Hardware System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/scm-styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Packaging Engineering Checklist — SCM Hardware System</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/scm-styles.css">
+<style>
+  
+  /* Packaging blue accent */
+  .section-num { color: var(--scm-blue); background: rgba(27,155,212,.1); border-color: rgba(27,155,212,.2); }
+  .item-ext { color: var(--scm-blue); }
+  .progress-fill { background: linear-gradient(90deg, var(--scm-blue), var(--scm-green)); }
+  .progress-label { color: var(--scm-blue); }
+  .item:hover { background: rgba(27,155,212,.04); }
+  .cl-item-note { font-size: 11px; color: var(--scm-blue); margin-top: 4px; font-style: italic; }
+</style>
 </head>
 <body>
 <div class="wrap">
-<nav><a href="../../index.html">← Phase Map</a><span>/</span><span>Checklists</span><span>/</span><span>Tooling & Molds</span></nav>
-<div class="phase-tag" style="color:#9B6BD4;border:1px solid rgba(155,107,212,.3);background:rgba(155,107,212,.08)">Design Phase — DR2 · Test Phase — T1/T2/T3</div>
-<h1>Tooling &amp; Molds<br>Checklist</h1>
-<p class="subtitle">Tooling is where design intent becomes physical reality — and where the most costly mistakes happen. Lock CMF and geometry before cutting steel. Never pay 100% upfront and always own your tools.</p>
-<div class="pw">
-  <div class="pt"><div class="pf" id="pF" style="background:linear-gradient(90deg,#9B6BD4,var(--green))"></div></div>
-  <div class="pl" id="pL" style="color:#9B6BD4">0 / 0</div>
-  <button class="rb" onclick="resetAll()">&#8635; Reset</button>
+
+<nav class="nav-breadcrumb">
+  <a href="../index.html">← Phase Map</a>
+  <span>/</span><span>Checklists</span>
+  <span>/</span><span>Packaging</span>
+</nav>
+
+<div class="phase-tag">Design Phase — DR2 · Factory — DR4</div>
+<h1>Packaging<br>Engineering Checklist</h1>
+<p class="subtitle">Packaging must be fully specified before tooling is ordered for inserts and before artwork is sent to print. Late packaging changes are expensive — a complete spec at DR2 prevents surprises at DR4.</p>
+
+<div class="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">0 / 0</div>
+  <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
 </div>
+
 <div id="sections"></div>
-<footer><span>SCM Solution LTD. — Hardware Development System</span><span>Tooling & Molds · Rev 1.0</span></footer>
+
+<footer>
+  <span>SCM Solution LTD. — Hardware Development System</span>
+  <span>Packaging Engineering · Rev 1.0</span>
+</footer>
 </div>
 <script>
 const D=[
-  {n:"01",t:"Tooling Strategy & Ownership",items:[
-    {nm:"Tooling Type Decision",ex:".pdf",ds:"Document tool type per part: injection mold, die cast, sheet metal progressive die, extrusion die, vacuum form. Drives all subsequent decisions.",b:["i"]},
-    {nm:"Tooling Ownership Agreement",ex:".docx / .pdf",ds:"Written agreement confirming who owns the tooling — you or the factory. Critical IP and leverage consideration. You should own your tools.",nt:"Tooling owned by the factory = factory leverage. Always own your own tools.",b:["i"]},
-    {nm:"Tooling Quote (RFQ)",ex:".xlsx",ds:"Itemized tooling cost per part. Includes tool steel grade, number of cavities, hot runner vs cold runner, estimated tool life (shots).",b:["c","r"]},
-    {nm:"Tooling Payment Schedule",ex:".pdf",ds:"Payment milestones tied to T1/T2/T3 sample approvals. Typical: 50% upfront, 30% at T1, 20% at final approval. Never pay 100% upfront.",nt:"Tie final payment to your sign-off on production samples — not the factory's.",b:["i"]},
-    {nm:"Tool Life Expectation",ex:".pdf",ds:"Agreed number of shots before tool maintenance or replacement. P20 steel ~300k shots, H13 steel ~1M+ shots.",b:["c","s"]},
+  {n:"01",t:"Packaging Strategy",items:[
+    {nm:"Packaging Brief",ex:".pdf",ds:"Defines packaging objectives: retail shelf impact, protection level, unboxing experience, sustainability targets, cost target.",b:["i"]},
+    {nm:"Packaging Tier Structure",ex:".pdf",ds:"Document all packaging levels: L1 primary (product box), L2 inner carton, L3 master carton. Each has different requirements.",b:["c","o","s"]},
+    {nm:"Retail vs E-commerce Spec",ex:".pdf",ds:"Different requirements for retail shelf display vs direct-to-consumer e-commerce. E-comm needs to survive courier handling without outer box.",nt:"ISTA 6-Amazon SIOC test required for e-commerce products sold on Amazon.",b:["c","r"]},
+    {nm:"Sustainability Requirements",ex:".pdf",ds:"Recycled content targets, plastic-free goals, FSC certification requirements. Increasingly required by large retailers.",b:["c","r"]},
+    {nm:"Cost Target per Unit",ex:".xlsx",ds:"Packaging cost target as % of product COGS. Typically 5–15% for consumer electronics. Document and track against actuals.",b:["i"]},
   ]},
-  {n:"02",t:"Mold Design Review",items:[
-    {nm:"Mold Flow Analysis",ex:".pdf / simulation",ds:"Simulated plastic flow, weld line locations, sink mark prediction, air trap locations. Run before tool steel is cut.",nt:"Any weld lines on Class-A surfaces must be resolved in design before tooling starts.",b:["c","r"]},
-    {nm:"Gate Location Approval",ex:".pdf / CAD",ds:"Gate type (edge, submarine, hot tip) and location approved. Gate location affects weld lines, flow marks, and vestige appearance.",b:["c","s"]},
-    {nm:"Parting Line Approval",ex:".pdf / CAD",ds:"Parting line location confirmed on all parts. Must not fall on Class-A cosmetic surfaces.",b:["c","s"]},
-    {nm:"Draft Angle Confirmation",ex:".pdf / CAD",ds:"All surfaces have sufficient draft for ejection. Min 1° for untextured, add 1° per 0.025mm texture depth.",b:["c","s"]},
-    {nm:"Ejector Pin Locations",ex:".pdf / CAD",ds:"Ejector pin placement approved — pins must fall on non-cosmetic surfaces only. Pin marks are permanent.",b:["c","s"]},
-    {nm:"Slider / Lifter Requirements",ex:".pdf / CAD",ds:"Document any undercuts requiring sliders or lifters. Each adds cost and complexity to the tool.",b:["c","r"]},
-    {nm:"Number of Cavities",ex:".pdf",ds:"Single or multi-cavity tool confirmed based on volume requirements and part size. More cavities = faster output, higher tool cost.",b:["c","s"]},
-    {nm:"Hot Runner vs Cold Runner",ex:".pdf",ds:"Runner system specified. Hot runner = less waste, better quality, higher tool cost. Cold runner = lower tool cost, more waste.",b:["c","r"]},
+  {n:"02",t:"Primary Packaging — Product Box",items:[
+    {nm:"Structural Design",ex:".pdf / .ai / .dxf",ds:"Box structure: tuck end, snap lock, rigid setup box, sleeve etc. Includes dieline (flat pattern) for printing and manufacturing.",b:["c","o","s"]},
+    {nm:"Box Dimensions",ex:".pdf / .xlsx",ds:"Internal and external dimensions confirmed. Internal must fit product + all inserts with defined clearances.",nt:"Always verify against actual product sample — CAD dimensions and real parts differ.",b:["c","o","s"]},
+    {nm:"Material Specification",ex:".pdf",ds:"Board grade, weight (gsm), coating type (gloss/matte/soft touch), recycled content percentage.",b:["c","o","s"]},
+    {nm:"Print Specification",ex:".pdf / artwork",ds:"Color mode (CMYK/Pantone), number of colors, bleed and safe zones, finish (UV spot, foil, emboss).",b:["c","o","s"]},
+    {nm:"Artwork Files",ex:".ai / .pdf",ds:"Print-ready artwork in correct colorspace with bleed. Separate files per language/region variant.",b:["c","s"]},
+    {nm:"Regulatory Markings",ex:".pdf",ds:"All required marks on packaging: CE, FCC, RoHS, recycling symbols, battery disposal, country of origin, barcode.",b:["c","o","s"]},
+    {nm:"Barcode Specification",ex:".pdf / .xlsx",ds:"UPC/EAN barcode, GS1 registration, barcode placement and size. Verified scannable by retailer requirements.",nt:"Apply for GS1 barcodes at gs1.org well in advance of production.",b:["c","o","s"]},
   ]},
-  {n:"03",t:"T1 Sample Review",items:[
-    {nm:"T1 Sample Review Plan",ex:".pdf",ds:"Documents what will be checked at T1: dimensions, fit, function, cosmetics, color. Defined before samples arrive.",b:["c","s"]},
-    {nm:"T1 Dimensional Report",ex:".xlsx / CMM report",ds:"Full dimensional check of T1 samples against drawing tolerances. CMM or manual measurement.",b:["c","s"]},
-    {nm:"T1 Cosmetic Review",ex:".pdf",ds:"Cosmetic review against CMF spec and defect standard. Document all issues with photos.",b:["c","r"]},
-    {nm:"T1 Fit Check",ex:".pdf",ds:"Physical assembly of T1 parts to check fit, clearances, and alignment with mating components.",b:["c","s"]},
-    {nm:"T1 Issue Log",ex:".xlsx",ds:"All T1 issues logged with severity, root cause, and required correction. Drives T2 mold modifications.",b:["c","s"]},
-    {nm:"T1 Sign-off or Rejection",ex:".pdf",ds:"Formal T1 disposition — approved, conditionally approved, or rejected. Must be signed before mold modifications proceed.",b:["i"]},
+  {n:"03",t:"Inserts & Protective Elements",items:[
+    {nm:"Inner Tray / Insert Design",ex:".pdf / CAD",ds:"Thermoformed, pulp, or cardboard insert holding product in position. Prevent movement during shipping.",b:["c","o","s"]},
+    {nm:"Insert Material Spec",ex:".pdf",ds:"Thermoform material (PETG, PET), pulp spec, or cardboard grade for inserts.",b:["c","s"]},
+    {nm:"Foam Specification",ex:".pdf",ds:"Foam type (PE, EVA, PU), density (kg/m³), color, and cut dimensions. For fragile products.",b:["c","s"]},
+    {nm:"Accessory Positioning",ex:".pdf / CAD",ds:"All accessories — cables, manuals, adapters — positioned and confirmed to fit. No loose items rattling.",b:["c","o","s"]},
+    {nm:"Moisture / Desiccant",ex:".pdf",ds:"Desiccant type, quantity, and placement for moisture-sensitive products or long sea freight.",b:["c","r"]},
+    {nm:"ESD Packaging",ex:".pdf",ds:"Anti-static bags or foam for ESD-sensitive electronics. Pink PE foam, metallic shielding bags.",b:["c","r"]},
   ]},
-  {n:"04",t:"T2 / T3 Sample Iteration",items:[
-    {nm:"Mold Modification Report",ex:".pdf",ds:"Documents all steel modifications made after T1. Includes before/after photos of mold changes.",b:["c","s"]},
-    {nm:"T2 Dimensional Report",ex:".xlsx",ds:"Repeat full dimensional check after mold modifications. Compare to T1 report.",b:["c","s"]},
-    {nm:"T2 Cosmetic Review",ex:".pdf",ds:"Updated cosmetic review. Confirm all T1 cosmetic issues are resolved.",b:["c","r"]},
-    {nm:"T2/T3 Sign-off",ex:".pdf",ds:"Final tool approval signed by lead engineer and PM. No more changes to tool after this point without ECO.",nt:"After T2/T3 sign-off, any tool modification requires a formal ECO and may incur additional cost.",b:["i"]},
+  {n:"04",t:"Shipping Cartons",items:[
+    {nm:"Inner Carton Spec",ex:".pdf / .dxf",ds:"Inner carton dimensions, board grade (ECT rating), units per inner carton.",b:["c","o","s"]},
+    {nm:"Master Carton Spec",ex:".pdf / .dxf",ds:"Master carton dimensions, board grade, units per master carton, gross weight.",nt:"Keep gross weight under 20kg for manual handling. Under 15kg preferred.",b:["c","o","s"]},
+    {nm:"Carton Markings",ex:".pdf",ds:"Shipping marks, handle with care symbols, fragile, this side up, stacking limits. Per destination country requirements.",b:["c","o","s"]},
+    {nm:"Pallet Configuration",ex:".pdf / .xlsx",ds:"Cartons per layer, layers per pallet, total units per pallet, pallet type (CHEP, EUR, custom).",b:["c","o","s"]},
+    {nm:"Stacking Strength",ex:".pdf",ds:"Carton ECT rating confirmed against stacking height and weight. Minimum 32 ECT for standard use.",b:["c","r"]},
   ]},
-  {n:"05",t:"Production Tooling Handover",items:[
-    {nm:"Tool Asset Register",ex:".xlsx",ds:"Record of all tools: tool number, part name, material, cavity count, location (which factory), tool age and shot count.",b:["i"]},
-    {nm:"Tool Maintenance Schedule",ex:".xlsx",ds:"Planned maintenance intervals: cleaning, lubrication, inspection, repair. Typically every 50k–100k shots.",b:["c","s"]},
-    {nm:"Tool Storage Agreement",ex:".pdf",ds:"Written agreement on tool storage conditions at factory. Humidity and temperature controlled storage for steel tools.",b:["c","i"]},
-    {nm:"Tool Transfer Protocol",ex:".pdf",ds:"Process for moving tools between factories. Includes inspection on arrival and test shots before production resumes.",nt:"Moving tools between factories always requires a new T1 sample review.",b:["i"]},
-    {nm:"End-of-Life Tool Plan",ex:".pdf",ds:"What happens to tooling at product end-of-life. Return, destroy, or store. Especially important for tools owned by you.",b:["i"]},
+  {n:"05",t:"Testing & Compliance",items:[
+    {nm:"Drop Test",ex:".pdf / test report",ds:"ISTA 1A, 2A, or 3A drop test per product weight. Tests packaging protection across face, edge, and corner drops.",b:["c","r"]},
+    {nm:"Vibration Test",ex:".pdf / test report",ds:"ISTA vibration test simulating truck transport. Confirms product stays protected and inserts stay in position.",b:["c","r"]},
+    {nm:"Compression Test",ex:".pdf / test report",ds:"Carton stacking strength test. Confirms carton survives warehouse stacking at max pallet height.",b:["c","r"]},
+    {nm:"Retail Scan Test",ex:".pdf",ds:"Barcode scan test confirming all barcodes scan correctly at retail POS system. Required before mass production print run.",b:["c","r"]},
+    {nm:"Amazon SIOC (if applicable)",ex:".pdf / test report",ds:"Ships In Own Container test for Amazon. Confirms product ships without additional Amazon box. Required for SIOC listing.",b:["c","r"]},
+    {nm:"Packaging Golden Sample",ex:"Physical",ds:"Approved packaging sample signed off by client and PM. Used as print and structure reference at production.",b:["c","r"]},
+  ]},
+  {n:"06",t:"Labelling & Compliance",items:[
+    {nm:"Product Label Spec",ex:".pdf / .ai",ds:"Product label artwork: model number, serial number format, certifications, warnings, regulatory text, QR code if applicable.",b:["c","o","s"]},
+    {nm:"Label Placement Drawing",ex:".pdf",ds:"Documents exactly where labels are applied on product and packaging. Dimensions and orientation specified.",b:["c","o","s"]},
+    {nm:"Country of Origin Marking",ex:".pdf",ds:"Made in [Country] marking on product and outer carton. Required for customs clearance in most markets.",b:["c","o","s"]},
+    {nm:"Multi-language Requirements",ex:".pdf / .xlsx",ds:"List of languages required per market. EU typically requires local language on packaging. Confirm per destination.",b:["c","r"]},
+    {nm:"Warning Labels",ex:".pdf",ds:"Required warnings: battery, choking hazard, voltage, laser class, chemical warnings. Per market and product type.",b:["c","o","s"]},
   ]}
 ];
-
-const BM={c:{l:"\u2192 CM",k:"bc"},o:{l:"\u2192 ODM",k:"bo"},s:{l:"External Safe",k:"bs"},r:{l:"Review First",k:"br"},i:{l:"Internal Only",k:"bi"}};
-function save(key,S){try{localStorage.setItem(key,JSON.stringify(S));}catch(e){}}
-function load(key){try{const s=localStorage.getItem(key);return s?JSON.parse(s):{};}catch(e){return {};}}
-function makeChecklist(D, storageKey, accentColor) {
-  let S=load(storageKey);
-  function upd(){
-    let tot=0,chk=0;
-    D.forEach(sec=>sec.items.forEach((_,i)=>{tot++;if(S[sec.n+i])chk++;}));
-    const p=tot?Math.round(chk/tot*100):0;
-    document.getElementById("pF").style.width=p+"%";
-    document.getElementById("pL").textContent=chk+" / "+tot+" ("+p+"%)";
-    D.forEach(sec=>{const c=sec.items.filter((_,i)=>S[sec.n+i]).length;const el=document.getElementById("sp"+sec.n);if(el)el.textContent=c+" / "+sec.items.length;});
-  }
-  window.tog=function(n,i){const k=n+i;S[k]=!S[k];const el=document.getElementById("it"+k);if(S[k])el.classList.add("checked");else el.classList.remove("checked");save(storageKey,S);upd();}
-  window.togS=function(n){document.getElementById("sec"+n).classList.toggle("collapsed");}
-  window.resetAll=function(){if(!confirm("Reset all?"))return;S={};document.querySelectorAll(".item").forEach(e=>e.classList.remove("checked"));save(storageKey,S);upd();}
-  const c=document.getElementById("sections");
+const BM={
+  c:{label:"→ CM",      cls:"badge-cm"},
+  o:{label:"→ ODM",     cls:"badge-odm"},
+  s:{label:"External Safe", cls:"badge-safe"},
+  r:{label:"Review First",  cls:"badge-review"},
+  i:{label:"Internal Only", cls:"badge-int"}
+};
+let S={};
+const KEY="packaging-v1";
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function load(){try{const s=localStorage.getItem(KEY);if(s)S=JSON.parse(s);}catch(e){}}
+function updateProgress(){
+  let tot=0,chk=0;
+  D.forEach(sec=>sec.items.forEach((_,i)=>{tot++;if(S[sec.n+i])chk++;}));
+  const p=tot?Math.round(chk/tot*100):0;
+  document.getElementById("progressFill").style.width=p+"%";
+  document.getElementById("progressLabel").textContent=chk+" / "+tot+" ("+p+"%)";
   D.forEach(sec=>{
-    const d=document.createElement("div");d.className="section";d.id="sec"+sec.n;
-    const sc=sec.items.filter((_,i)=>S[sec.n+i]).length;
-    d.innerHTML="<div class=\"sh\" onclick=\"togS('"+sec.n+"')\"><span class=\"sn\">"+sec.n+"</span><span class=\"st\">"+sec.t+"</span><span class=\"sp\" id=\"sp"+sec.n+"\">"+sc+" / "+sec.items.length+"</span><span class=\"cv\">&#9662;</span></div><div class=\"items\">"+
-    sec.items.map((it,i)=>{
-      const k=sec.n+i;const ck=S[k]?"checked":"";
-      const bg=it.b.map(b=>"<span class=\"badge "+BM[b].k+"\">"+BM[b].l+"</span>").join("");
-      const nt=it.nt?"<div class=\"ino\">&#128161; "+it.nt+"</div>":"";
-      return "<div class=\"item "+ck+"\" id=\"it"+k+"\" onclick=\"tog('"+sec.n+"',"+i+")\"><div class=\"cb\"><span class=\"tk\">&#10003;</span></div><div class=\"ib\"><div class=\"in\"><span style=\"font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;color:"+accentColor+";margin-right:6px\">"+it.ex+"</span>"+it.nm+"</div><div class=\"id\">"+it.ds+"</div>"+nt+"<div class=\"bd\">"+bg+"</div></div></div>";
-    }).join("")+"</div>";
-    c.appendChild(d);
+    const c=sec.items.filter((_,i)=>S[sec.n+i]).length;
+    const el=document.getElementById("sec-progress-"+sec.n);
+    if(el)el.textContent=c+" / "+sec.items.length;
   });
-  upd();
 }
-
-makeChecklist(D, "tooling-v1", "#9B6BD4");
+function toggleItem(key){
+  S[key]=!S[key];
+  const el=document.getElementById("item-"+key);
+  if(S[key])el.classList.add("checked");
+  else el.classList.remove("checked");
+  save();updateProgress();
+}
+function toggleSection(n){document.getElementById("sec"+n).classList.toggle("collapsed");}
+function resetAll(){
+  if(!confirm("Reset all checklist items?"))return;
+  S={};
+  document.querySelectorAll(".item").forEach(e=>e.classList.remove("checked"));
+  save();updateProgress();
+}
+function render(){
+  load();
+  const container=document.getElementById("sections");
+  D.forEach(sec=>{
+    const secEl=document.createElement("div");
+    secEl.className="cl-section";
+    secEl.id="sec"+sec.n;
+    const secChecked=sec.items.filter((_,i)=>S[sec.n+i]).length;
+    const itemsHTML=sec.items.map((it,i)=>{
+      const key=sec.n+i;
+      const checked=S[key]?"checked":"";
+      const badges=it.b.map(b=>`<span class="badge ${BM[b].cls}">${BM[b].label}</span>`).join("");
+      const note=it.nt?`<div class="cl-item-note">💡 ${it.nt}</div>`:"";
+      return `<div class="item ${checked}" id="item-${key}" onclick="toggleItem('${key}')">
+        <div class="checkbox"><span class="tick">✓</span></div>
+        <div class="item-body">
+          <div class="item-name"><span class="item-ext">${it.ex}</span>${it.nm}</div>
+          <div class="item-desc">${it.ds}</div>
+          ${note}
+          <div class="item-badges">${badges}</div>
+        </div>
+      </div>`;
+    }).join("");
+    secEl.innerHTML=`
+      <div class="section-header" onclick="toggleSection('${sec.n}')">
+        <span class="section-num">${sec.n}</span>
+        <span class="section-title-text">${sec.t}</span>
+        <span class="section-progress" id="sec-progress-${sec.n}">${secChecked} / ${sec.items.length}</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="items">${itemsHTML}</div>`;
+    container.appendChild(secEl);
+  });
+  updateProgress();
+}
+render();
 </script>
 </body>
 </html>
