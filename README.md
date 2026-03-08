@@ -27,6 +27,7 @@ Interactive overview of all six development phases — Idea, PoC, Design, Test, 
 |------|-------------|
 [Handoff Manfest Tool](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/handoff-manifest.html) | Asset Pack Manifest Builder For Keeping Assets Organized |
 [Project Asset Registry](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/project-asset-registry.html) | Asset Registry to Organize File Locations |
+[Chinese Language SRS](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/chinese-srs.html) | Tool For Learn Chinese Vocabulary |
 
 tools/project-asset-registry.html
 ### Coming Soon
