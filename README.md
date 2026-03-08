@@ -1,54 +1,81 @@
 # SCM Solution — Hardware Development System
 
-A structured reference system for hardware product development, covering the full journey from Idea through to Mass Production.
+A structured reference and tooling system for hardware product development, covering the full journey from Idea through to Mass Production.
 
-Built for use alongside Google Drive, Notion, and Odoo Knowledge. A way for me to visualize my thoughts on supplychain and product development. 
+Built for use alongside Google Drive, Notion, and Odoo Knowledge.
 
----
-
-## Live Site
-[View the Phase Map →](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/index.html)
+**Live Site → [patrick-scm-solution.github.io/SCM-hardware-dev-system](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/)**
 
 ---
 
-## What's Inside
+## Repository Structure
 
-### Phase Map (`index.html`)
-Interactive overview of all six development phases — Idea, PoC, Design, Test, Factory, Mass Production. Click any phase to expand deliverables, SCM Solution tasks, and gate criteria.
+```
+SCM-hardware-dev-system/
+├── index.html                        ← Interactive phase map
+├── README.md
+├── css/
+│   └── scm-styles.css                ← Shared stylesheet (all pages)
+├── checklists/
+│   ├── me-assets.html                ← ME asset checklist
+│   ├── ee-assets.html                ← EE asset checklist
+│   ├── cmf-materials.html            ← CMF & Materials checklist
+│   ├── tooling-molds.html            ← Tooling & Molds checklist
+│   └── packaging.html                ← Packaging Engineering checklist
+└── tools/
+    ├── handoff-manifest.html         ← Handoff Manifest Builder
+    └── project-asset-registry.html  ← Project Asset Registry
+```
+
+---
+
+## Pages
+
+### Phase Map — `index.html`
+Interactive overview of all six development phases: Idea, PoC, Design, Test, Factory, Mass Production. Click any phase to expand deliverables and gate criteria. Links out to all checklists and tools.
+
+---
 
 ### Checklists
+
 | File | Description |
 |------|-------------|
-| [ME Asset Checklist](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/checklists/checklist-me-assets.html) | Mechanical Engineering asset checklist — master assembly through to manufacturer exports |
-| [EE Asset Checklist](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/checklists/checklist-me-assets.html) | Electrical Engineering asset checklist — schematics, Gerbers, BOM, CPL, test scripts |
+| `checklists/me-assets.html` | Mechanical Engineering assets — master assembly, drawings, STEP exports, DXFs, supporting docs |
+| `checklists/ee-assets.html` | Electrical Engineering assets — schematics, Gerbers, BOM, CPL, firmware, test scripts |
+| `checklists/cmf-materials.html` | Color, Material & Finish specs — color callouts, plastic/metal specs, surface finish, compliance |
+| `checklists/tooling-molds.html` | Tooling & Molds — strategy, mold design, T1/T2/T3 review, production handover |
+| `checklists/packaging.html` | Packaging Engineering — primary box, inserts, shipping cartons, drop test, labelling |
 
-### Tools
-| File | Description |
-|------|-------------|
-[Handoff Manfest Tool](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/handoff-manifest.html) | Asset Pack Manifest Builder For Keeping Assets Organized |
-[Project Asset Registry](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/project-asset-registry.html) | Asset Registry to Organize File Locations |
-[Chinese Language SRS](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/chinese-srs.html) | Tool For Learn Chinese Vocabulary |
-
-tools/project-asset-registry.html
-### Coming Soon
-- `checklists/dr0-gate.html` through `dr4-gate.html` — Design review gate checklists
-- `templates/mrd.html` — Market Requirements Document template
-- `templates/prd.html` — Product Requirements Document template
-- `templates/trd.html` — Technical Requirements Document template
-- `templates/rfi.html` — Request for Information template
-- `templates/rfp.html` — Request for Proposal Document template
-- `templates/rfq.html` — Request for Quoatation Document template
-- `templates/NDA.html` — Non Disclosure Agreement template
-- `templates/handoff-manifest.html` — Handoff manifest template ^^ See Tools Above
-- `sops/file-release.html` — File release SOP
-- `sops/revision-control.html` — Revision control SOP
-- `templates/manufacturing-sop.html` — Manufacturing template
-- `templates/factory-audit.html` — Factory Audit template
-- `templates/QC-QA.html` — QC-QA templates
+All checklists track completion progress with a live progress bar and persist state in browser localStorage.
 
 ---
 
-## Development Phases
+### Tools
+
+| File | Description |
+|------|-------------|
+| `tools/handoff-manifest.html` | 4-step builder: select asset packs → log file locations → confirm NDA → export manifest for CM/ODM |
+| `tools/project-asset-registry.html` | Central index for all project files across vendors, clients, and storage locations. Tracks status, access level, version, and storage path per asset. Exports JSON/CSV. |
+
+---
+
+## Stylesheet
+
+All pages share a single stylesheet at `css/scm-styles.css`. Page-specific styles are kept in a small inline `<style>` block per file.
+
+**Link from root pages:**
+```html
+<link rel="stylesheet" href="css/scm-styles.css">
+```
+
+**Link from subpages (`checklists/`, `tools/`):**
+```html
+<link rel="stylesheet" href="../css/scm-styles.css">
+```
+
+---
+
+## Development Phases & Gates
 
 | Phase | Gate | Key Activities |
 |-------|------|----------------|
@@ -60,32 +87,58 @@ tools/project-asset-registry.html
 | MP | Mass Production | Yield, QC, logistics, failure analysis |
 
 ---
-## Next Stages
-Adopt to Workflow in Notion then will migrate to Odoo once the workflow functions 
+
 ## Google Drive Structure
 
-Create this folder structure for every new project:
+Recommended folder structure per project:
 
 ```
 /[Project_Name]/
   /00_Master_Checklist/
   /01_Master_Assembly/
   /02_Parts/
-  /03_Native_CAD/          ← restricted access
-  /04_Exports/             ← STEP, DXF, PDF
+  /03_Native_CAD/          ← internal only
+  /04_Exports/             ← STEP, DXF, PDF — safe to share
   /05_Drawings/
   /06_Supporting_Docs/
   /07_EE_Assets/
-  /08_BOM_AVL/
+    /Native/               ← internal only
+  /08_BOM_AVL/             ← strip pricing before sharing
   /09_Test_Scripts/
   /10_Vendor_Audits/
   /11_Contact_Log/
   /Handoff_Packages/
     /CM_RevA_[date]/
     /ODM_RevA_[date]/
-    /SupplyChain_RevA_[date]/
+    /Client_RevA_[date]/
 ```
 
+---
 
+## Coming Soon
+
+| File | Description |
+|------|-------------|
+| `checklists/dr0-gate.html` → `dr4-gate.html` | Design review gate pass/fail checklists |
+| `templates/mrd.html` | Market Requirements Document |
+| `templates/prd.html` | Product Requirements Document |
+| `templates/trd.html` | Technical Requirements Document |
+| `checklists/quality-aql.html` | Quality inspection & AQL tracker |
+| `checklists/compliance.html` | CE, FCC, RoHS, REACH compliance tracker |
+| `templates/rfq.html` | RFQ & should-cost model template |
+| `sops/revision-control.html` | File naming, versioning & release SOP |
+
+---
+
+## Embedding in Notion
+
+Each page has its own GitHub Pages URL. Use Notion's `/embed` block with the full URL to render any page inline:
+
+```
+https://patrick-scm-solution.github.io/SCM-hardware-dev-system/checklists/me-assets.html
+https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/handoff-manifest.html
+```
+
+---
 
 © 2025 SCM Solution LTD.
