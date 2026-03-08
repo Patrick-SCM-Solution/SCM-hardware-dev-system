@@ -1,809 +1,1231 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>漢字 SRS —Vocab App</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Noto+Sans+TC:wght@400;700&family=Sora:wght@300;500;700;800&display=swap" rel="stylesheet">
+<title>漢字 SRS — Vocab Desk</title>
+
+<!-- SCM System Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700
+  &family=Barlow+Condensed:wght@600;700;800
+  &family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400
+  &family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- SCM Shared Stylesheet -->
+<link rel="stylesheet" href="../css/scm-styles.css">
+
 <style>
-:root {
-  --bg: #0b0c0e;
-  --surface: #13151a;
-  --surface2: #1a1d24;
-  --surface3: #22262f;
-  --border: #272b35;
-  --border2: #333844;
-  --accent: #e8c547;
-  --accent-dim: rgba(232,197,71,0.12);
-  --green: #4ec994;
-  --green-dim: rgba(78,201,148,0.12);
-  --blue: #5b9fe8;
-  --blue-dim: rgba(91,159,232,0.12);
-  --red: #e05a5a;
-  --red-dim: rgba(224,90,90,0.12);
-  --orange: #e0905a;
-  --text: #dde1ea;
-  --text2: #9aa0ad;
-  --text3: #5a6070;
-  --zh: 'Noto Sans TC', sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;}
+/* ── SRS-SPECIFIC LAYOUT & COMPONENTS ─────────────────────────
+   All colors inherited exclusively from scm-styles.css tokens.
+   No hardcoded color values anywhere in this block.
+   ─────────────────────────────────────────────────────────── */
 
-/* ── LAYOUT ── */
-.app{display:grid;grid-template-rows:auto 1fr;height:100vh;overflow:hidden;}
-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;height:52px;
-  background:var(--surface);border-bottom:1px solid var(--border);
-  position:relative;z-index:10;
+/* App shell */
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+  overflow: hidden;
 }
-.logo{
-  font-family:'IBM Plex Mono',monospace;font-size:12px;
-  letter-spacing:0.12em;color:var(--accent);text-transform:uppercase;
-}
-.logo em{color:var(--text3);font-style:normal;}
-nav{display:flex;gap:4px;}
-.tab{
-  background:none;border:1px solid transparent;color:var(--text3);
-  padding:5px 14px;border-radius:6px;cursor:pointer;
-  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.06em;
-  transition:all .15s;text-transform:uppercase;
-}
-.tab:hover{color:var(--text);border-color:var(--border2);}
-.tab.active{color:var(--accent);border-color:var(--accent);background:var(--accent-dim);}
+body { overflow: hidden; }
 
-.body{display:flex;overflow:hidden;}
-.sidebar{
-  width:220px;flex-shrink:0;border-right:1px solid var(--border);
-  background:var(--surface);padding:20px 0;display:flex;flex-direction:column;gap:2px;
+/* ── HEADER ── */
+.srs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 52px;
+  background: var(--surf);
+  border-bottom: 1px solid var(--bdr);
+  position: relative;
+  z-index: 10;
 }
-.sidebar-btn{
-  display:flex;align-items:center;gap:10px;padding:9px 20px;
-  color:var(--text3);cursor:pointer;font-size:12px;
-  transition:all .15s;border:none;background:none;width:100%;text-align:left;
-  border-left:2px solid transparent;
-}
-.sidebar-btn:hover{color:var(--text);background:var(--surface2);}
-.sidebar-btn.active{color:var(--accent);background:var(--accent-dim);border-left-color:var(--accent);}
-.sidebar-btn .icon{font-size:15px;width:20px;text-align:center;}
-.sidebar-section{
-  padding:16px 20px 6px;font-family:'IBM Plex Mono',monospace;
-  font-size:9px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;
-}
-.sidebar-divider{height:1px;background:var(--border);margin:10px 16px;}
 
-.content{flex:1;overflow-y:auto;padding:32px;}
+.srs-logo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--scm-blue);
+  text-transform: uppercase;
+}
+.srs-logo em { color: var(--muted); font-style: normal; }
+
+/* Header nav tabs — override SCM .tab for header context */
+.srs-nav { display: flex; gap: 4px; }
+.srs-tab {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--muted);
+  padding: 5px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  transition: all .15s;
+  text-transform: uppercase;
+}
+.srs-tab:hover { color: var(--text); border-color: var(--bdr); }
+.srs-tab.active {
+  color: var(--scm-blue);
+  border-color: var(--scm-blue);
+  background: var(--bg-hover);
+}
+
+/* ── BODY LAYOUT ── */
+.srs-body { display: flex; overflow: hidden; }
+
+.srs-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--bdr);
+  background: var(--surf);
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-section {
+  padding: 16px 20px 6px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sidebar-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: Barlow, sans-serif;
+  transition: all .15s;
+  border: none;
+  border-left: 2px solid transparent;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.sidebar-btn:hover { color: var(--text); background: var(--bg-hover); }
+.sidebar-btn.active {
+  color: var(--scm-blue);
+  background: var(--bg-hover);
+  border-left-color: var(--scm-blue);
+}
+.sidebar-btn .icon { font-size: 15px; width: 20px; text-align: center; }
+
+.sidebar-divider { height: 1px; background: var(--bdr); margin: 10px 16px; }
+
+.srs-content { flex: 1; overflow-y: auto; padding: 32px; }
 
 /* ── VIEWS ── */
-.view{display:none;max-width:780px;margin:0 auto;}
-.view.active{display:block;}
+.view { display: none; max-width: 780px; margin: 0 auto; }
+.view.active { display: block; }
 
-/* ── STUDY VIEW ── */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
-.stat{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:10px;padding:16px;text-align:center;
+/* ── STUDY CARD — Chinese-specific, no SCM equivalent ── */
+.study-card {
+  background: var(--surf);
+  border: 1px solid var(--bdr);
+  border-radius: 8px;
+  padding: 52px 44px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  position: relative;
+  transition: border-color .2s, box-shadow .2s;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
 }
-.stat .n{
-  font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:600;
-  color:var(--accent);line-height:1;
-}
-.stat .l{font-size:10px;color:var(--text3);margin-top:5px;text-transform:uppercase;letter-spacing:.07em;}
+.study-card:hover { border-color: var(--scm-blue); box-shadow: var(--shadow-md); }
 
-.prog-wrap{background:var(--surface3);border-radius:3px;height:3px;margin-bottom:28px;overflow:hidden;}
-.prog-bar{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.card-tag {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--scm-green);
+  border: 1px solid var(--scm-green);
+  border-radius: 3px;
+  padding: 2px 8px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
 
-.study-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:16px;
-  padding:52px 44px;min-height:300px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:18px;position:relative;
-  transition:border-color .2s;margin-bottom:16px;
+.card-pos {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .06em;
 }
-.study-card:hover{border-color:var(--border2);}
-.card-tag{
-  position:absolute;top:16px;left:16px;
-  font-family:'IBM Plex Mono',monospace;font-size:9px;
-  color:var(--green);border:1px solid rgba(78,201,148,.3);
-  border-radius:4px;padding:2px 8px;letter-spacing:.07em;text-transform:uppercase;
-}
-.card-pos{
-  position:absolute;top:16px;right:16px;
-  font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);
-}
-.en-prompt{font-size:24px;font-weight:700;color:var(--text);text-align:center;}
-.answer-wrap{
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-  filter:blur(10px);transition:filter .3s;cursor:pointer;user-select:none;
-}
-.answer-wrap.revealed{filter:none;cursor:default;}
-.answer-wrap:not(.revealed):hover{filter:blur(5px);}
-.zh-big{font-family:var(--zh);font-size:56px;font-weight:700;color:var(--text);line-height:1.1;}
-.pinyin-line{font-family:'IBM Plex Mono',monospace;font-size:15px;color:var(--accent);letter-spacing:.04em;}
-.reveal-hint{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;}
 
-.reveal-cta{
-  background:var(--surface2);border:1px solid var(--border2);color:var(--text2);
-  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-  padding:12px 32px;border-radius:8px;cursor:pointer;transition:all .15s;
-  display:flex;align-items:center;gap:8px;
+.en-prompt {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  text-align: center;
+  letter-spacing: .03em;
+  text-transform: uppercase;
 }
-.reveal-cta:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
 
-.rating-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:4px;}
-.r-btn{
-  padding:14px 6px;border-radius:10px;border:1px solid var(--border);
-  background:var(--surface);cursor:pointer;transition:all .15s;
-  display:flex;flex-direction:column;align-items:center;gap:5px;
+.reveal-hint {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: "Barlow Condensed", sans-serif;
+  letter-spacing: .1em;
+  text-transform: uppercase;
 }
-.r-btn:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
-.r-btn .rn{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;}
-.r-btn .rl{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);}
-.r-btn.q0{border-color:var(--red);} .r-btn.q0:hover{background:var(--red-dim);} .r-btn.q0 .rn{color:var(--red);}
-.r-btn.q1{border-color:var(--orange);} .r-btn.q1:hover{background:rgba(224,144,90,.12);} .r-btn.q1 .rn{color:var(--orange);}
-.r-btn.q2{border-color:var(--blue);} .r-btn.q2:hover{background:var(--blue-dim);} .r-btn.q2 .rn{color:var(--blue);}
-.r-btn.q3{border-color:var(--green);} .r-btn.q3:hover{background:var(--green-dim);} .r-btn.q3 .rn{color:var(--green);}
 
-.sentence-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:12px;
-  padding:22px 28px;margin-top:4px;
+/* Chinese answer — blurred until revealed */
+.answer-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  filter: blur(10px);
+  transition: filter .3s;
+  cursor: pointer;
+  user-select: none;
 }
-.sentence-zh{font-family:var(--zh);font-size:16px;color:var(--text);margin-bottom:6px;line-height:1.7;}
-.sentence-en{font-size:12px;color:var(--text3);line-height:1.6;}
+.answer-wrap.revealed { filter: none; cursor: default; }
+.answer-wrap:not(.revealed):hover { filter: blur(5px); }
 
-.complete-box{
-  background:var(--surface);border:1px solid var(--border);border-radius:16px;
-  padding:60px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;
+/* The actual Chinese characters */
+.zh-big {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.1;
 }
-.complete-box .big{font-size:52px;}
-.complete-box h2{font-size:20px;font-weight:700;}
-.complete-box p{font-size:13px;color:var(--text3);max-width:360px;line-height:1.8;}
 
-/* ── LIBRARY VIEW ── */
-.lib-toolbar{
-  display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;
+.pinyin-line {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 15px;
+  color: var(--scm-blue);
+  letter-spacing: .04em;
 }
-.lib-search{
-  flex:1;background:var(--surface);border:1px solid var(--border);
-  color:var(--text);padding:9px 14px;border-radius:8px;
-  font-family:'Sora',sans-serif;font-size:13px;outline:none;transition:border-color .15s;
-}
-.lib-search:focus{border-color:var(--accent);}
-.lib-search::placeholder{color:var(--text3);}
-.cat-filter{
-  background:var(--surface);border:1px solid var(--border);color:var(--text2);
-  padding:9px 12px;border-radius:8px;font-size:12px;outline:none;cursor:pointer;
-  font-family:'IBM Plex Mono',monospace;
-}
-.cat-filter:focus{border-color:var(--accent);}
 
-.lib-table{width:100%;border-collapse:collapse;}
-.lib-table thead tr{border-bottom:1px solid var(--border);}
-.lib-table th{
-  padding:8px 12px;text-align:left;font-family:'IBM Plex Mono',monospace;
-  font-size:9px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;font-weight:400;
+/* Reveal button */
+.reveal-cta {
+  background: var(--mid);
+  border: 1px solid var(--bdr);
+  color: var(--muted);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 12px 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.lib-table tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
-.lib-table tbody tr:hover{background:var(--surface2);}
-.lib-table td{padding:12px 12px;font-size:13px;vertical-align:middle;}
-.td-zh{font-family:var(--zh);font-size:18px;font-weight:700;}
-.td-py{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);margin-top:2px;}
-.td-cat{
-  font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--green);
-  border:1px solid rgba(78,201,148,.25);border-radius:3px;padding:2px 7px;
-  letter-spacing:.05em;text-transform:uppercase;display:inline-block;
+.reveal-cta:hover {
+  border-color: var(--scm-blue);
+  color: var(--scm-blue);
+  background: var(--bg-hover);
 }
-.td-due{font-family:'IBM Plex Mono',monospace;font-size:10px;}
-.due-now{color:var(--red);}
-.due-soon{color:var(--accent);}
-.due-ok{color:var(--text3);}
-.row-del{
-  background:none;border:1px solid var(--border);color:var(--text3);
-  font-size:11px;padding:3px 9px;border-radius:4px;cursor:pointer;transition:all .15s;
+
+/* Rating buttons */
+.rating-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 4px;
 }
-.row-del:hover{border-color:var(--red);color:var(--red);}
+.r-btn {
+  padding: 14px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--bdr);
+  background: var(--surf);
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.r-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.r-btn .rn {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1;
+}
+.r-btn .rl {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+}
+.r-btn.q0 { border-color: var(--scm-warn); }
+.r-btn.q0:hover { background: var(--bg-hover); }
+.r-btn.q0 .rn { color: var(--scm-warn); }
+.r-btn.q1 { border-color: var(--scm-accent); }
+.r-btn.q1:hover { background: var(--bg-hover); }
+.r-btn.q1 .rn { color: var(--scm-accent); }
+.r-btn.q2 { border-color: var(--scm-blue); }
+.r-btn.q2:hover { background: var(--bg-hover); }
+.r-btn.q2 .rn { color: var(--scm-blue); }
+.r-btn.q3 { border-color: var(--scm-green); }
+.r-btn.q3:hover { background: var(--bg-hover); }
+.r-btn.q3 .rn { color: var(--scm-green); }
+
+/* Sentence example card */
+.sentence-card {
+  background: var(--surf);
+  border: 1px solid var(--bdr);
+  border-radius: 8px;
+  padding: 22px 28px;
+  margin-top: 4px;
+}
+.sentence-zh {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 16px;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.7;
+}
+.sentence-en {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Session complete box */
+.complete-box {
+  background: var(--surf);
+  border: 1px solid var(--bdr);
+  border-radius: 8px;
+  padding: 60px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.complete-box .big { font-size: 52px; }
+.complete-box h2 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.complete-box p { font-size: 13px; color: var(--muted); max-width: 360px; line-height: 1.8; }
+
+/* ── LIBRARY TABLE ── */
+.lib-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* Chinese cell */
+.td-zh { font-family: 'Noto Sans TC', sans-serif; font-size: 18px; font-weight: 700; }
+.td-py {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  color: var(--scm-blue);
+  margin-top: 2px;
+}
+.td-cat {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--scm-green);
+  border: 1px solid var(--scm-green);
+  border-radius: 3px;
+  padding: 2px 7px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  display: inline-block;
+}
+.td-due { font-family: "IBM Plex Mono", monospace; font-size: 10px; }
+.due-now  { color: var(--scm-warn); }
+.due-soon { color: var(--scm-blue); }
+.due-ok   { color: var(--muted); }
+.row-del {
+  background: none;
+  border: 1px solid var(--bdr);
+  color: var(--muted);
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+.row-del:hover { border-color: var(--scm-warn); color: var(--scm-warn); }
 
 /* ── IMPORT VIEW ── */
-.import-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px;}
-.import-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:12px;
-  padding:24px;cursor:pointer;transition:all .2s;
-  display:flex;flex-direction:column;gap:10px;
+.import-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
 }
-.import-card:hover{border-color:var(--accent);background:var(--accent-dim);}
-.import-card.wide{grid-column:1/-1;}
-.import-card .ic-icon{font-size:28px;}
-.import-card h3{font-size:14px;font-weight:700;}
-.import-card p{font-size:12px;color:var(--text3);line-height:1.6;}
+.import-card {
+  background: var(--surf);
+  border: 1px solid var(--bdr);
+  border-radius: 8px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+}
+.import-card:hover { border-color: var(--scm-blue); background: var(--bg-hover); }
+.import-card.wide { grid-column: 1 / -1; }
+.import-card .ic-icon { font-size: 28px; }
+.import-card h3 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.import-card p { font-size: 12px; color: var(--muted); line-height: 1.6; }
 
-.import-panel{display:none;flex-direction:column;gap:16px;}
-.import-panel.open{display:flex;}
-.panel-header{display:flex;align-items:center;justify-content:space-between;}
-.panel-title{font-size:16px;font-weight:700;}
-.panel-close{
-  background:none;border:1px solid var(--border);color:var(--text3);
-  padding:5px 12px;border-radius:6px;cursor:pointer;font-size:11px;
-  font-family:'IBM Plex Mono',monospace;transition:all .15s;
-}
-.panel-close:hover{border-color:var(--text);color:var(--text);}
+.import-panel { display: none; flex-direction: column; gap: 16px; }
+.import-panel.open { display: flex; }
 
-textarea.import-ta{
-  background:var(--surface2);border:1px solid var(--border);
-  color:var(--text);padding:14px;border-radius:8px;
-  font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.7;
-  resize:vertical;min-height:180px;outline:none;transition:border-color .15s;
-  width:100%;
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
 }
-textarea.import-ta:focus{border-color:var(--accent);}
-textarea.import-ta::placeholder{color:var(--text3);}
+.panel-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
 
-.import-hint{
-  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
-  padding:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;
-  color:var(--text3);line-height:1.8;
+.import-hint {
+  background: var(--mid);
+  border: 1px solid var(--bdr);
+  border-radius: 6px;
+  padding: 14px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.8;
 }
-.import-hint strong{color:var(--accent);}
+.import-hint strong { color: var(--scm-blue); }
 
-.file-drop{
-  border:2px dashed var(--border2);border-radius:10px;padding:40px;
-  text-align:center;cursor:pointer;transition:all .2s;display:flex;
-  flex-direction:column;align-items:center;gap:10px;
+textarea.import-ta {
+  background: var(--mid);
+  border: 1px solid var(--bdr);
+  color: var(--text);
+  padding: 14px;
+  border-radius: 6px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  resize: vertical;
+  min-height: 180px;
+  outline: none;
+  transition: border-color .15s;
+  width: 100%;
 }
-.file-drop:hover,.file-drop.dragover{border-color:var(--accent);background:var(--accent-dim);}
-.file-drop .drop-icon{font-size:32px;}
-.file-drop p{font-size:13px;color:var(--text3);}
-.file-drop em{font-size:11px;color:var(--text3);font-style:normal;font-family:'IBM Plex Mono',monospace;}
-#csv-file-input{display:none;}
+textarea.import-ta:focus { border-color: var(--scm-blue); }
+textarea.import-ta::placeholder { color: var(--muted); opacity: .5; }
 
-.preview-table-wrap{
-  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
-  overflow:auto;max-height:240px;
+.file-drop {
+  border: 2px dashed var(--bdr);
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
-.preview-table{width:100%;border-collapse:collapse;font-size:12px;}
-.preview-table th{
-  padding:8px 12px;background:var(--surface3);font-family:'IBM Plex Mono',monospace;
-  font-size:9px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;
-  position:sticky;top:0;
+.file-drop:hover,
+.file-drop.dragover {
+  border-color: var(--scm-blue);
+  background: var(--bg-hover);
 }
-.preview-table td{padding:8px 12px;border-top:1px solid var(--border);vertical-align:middle;}
-.preview-table .pv-zh{font-family:var(--zh);font-size:15px;font-weight:700;}
-.preview-table .pv-check{color:var(--green);font-size:14px;}
-.preview-table .pv-warn{color:var(--orange);font-size:12px;}
+.file-drop .drop-icon { font-size: 32px; }
+.file-drop p { font-size: 13px; color: var(--muted); }
+.file-drop em {
+  font-size: 11px;
+  color: var(--muted);
+  font-style: normal;
+  font-family: "IBM Plex Mono", monospace;
+  opacity: .6;
+}
+#csv-file-input { display: none; }
 
-.import-actions{display:flex;gap:10px;align-items:center;}
-.import-count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);}
-
-/* ── ADD SINGLE VIEW ── */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.form-grid.full{grid-template-columns:1fr;}
-.field{display:flex;flex-direction:column;gap:6px;}
-.field label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;}
-.field input,.field select,.field textarea{
-  background:var(--surface2);border:1px solid var(--border);color:var(--text);
-  padding:10px 13px;border-radius:8px;font-family:'Sora',sans-serif;font-size:14px;
-  outline:none;transition:border-color .15s;
+.preview-table-wrap {
+  background: var(--mid);
+  border: 1px solid var(--bdr);
+  border-radius: 6px;
+  overflow: auto;
+  max-height: 240px;
 }
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
-.field textarea{resize:vertical;min-height:72px;}
-.field select option{background:var(--surface2);}
-
-/* ── SHARED BUTTONS ── */
-.btn{
-  padding:10px 22px;border-radius:8px;font-family:'IBM Plex Mono',monospace;
-  font-size:11px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
-  transition:all .15s;border:1px solid transparent;
+.preview-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.preview-table th {
+  padding: 8px 12px;
+  background: var(--dark);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  position: sticky;
+  top: 0;
 }
-.btn-primary{background:var(--accent);color:var(--bg);font-weight:700;}
-.btn-primary:hover{opacity:.85;}
-.btn-secondary{background:var(--surface2);border-color:var(--border2);color:var(--text2);}
-.btn-secondary:hover{border-color:var(--text);color:var(--text);}
-.btn-danger{background:var(--red-dim);border-color:var(--red);color:var(--red);}
-.btn-danger:hover{background:rgba(224,90,90,.2);}
+.preview-table td {
+  padding: 8px 12px;
+  border-top: 1px solid var(--bdr);
+  vertical-align: middle;
+}
+.preview-table .pv-zh { font-family: 'Noto Sans TC', sans-serif; font-size: 15px; font-weight: 700; }
+.preview-table .pv-check { color: var(--scm-green); font-size: 14px; }
+.preview-table .pv-warn  { color: var(--scm-accent); font-size: 12px; }
+
+.import-actions { display: flex; gap: 10px; align-items: center; }
+.import-count {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
 
 /* ── TOAST ── */
-.toast{
-  position:fixed;bottom:24px;right:24px;
-  background:var(--surface);border:1px solid var(--border2);
-  padding:12px 20px;border-radius:8px;font-size:12px;
-  font-family:'IBM Plex Mono',monospace;color:var(--text);
-  transform:translateY(80px);opacity:0;transition:all .3s;z-index:1000;
-  display:flex;align-items:center;gap:8px;
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 72px; /* offset from theme toggle */
+  background: var(--surf);
+  border: 1px solid var(--bdr);
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text);
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all .3s;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-md);
 }
-.toast.show{transform:translateY(0);opacity:1;}
-.toast.success .t-icon{color:var(--green);}
-.toast.error .t-icon{color:var(--red);}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success .t-icon { color: var(--scm-green); }
+.toast.error   .t-icon { color: var(--scm-warn); }
 
-/* ── EMPTY ── */
-.empty-state{text-align:center;padding:60px 20px;color:var(--text3);line-height:1.9;font-size:13px;}
-.empty-state .ei{font-size:36px;display:block;margin-bottom:12px;}
+/* ── PROGRESS BAR — slim inline variant ── */
+.study-prog-wrap {
+  background: var(--bdr);
+  border-radius: 3px;
+  height: 3px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+.study-prog-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--scm-blue), var(--scm-green));
+  border-radius: 3px;
+  transition: width .4s ease;
+}
 
 /* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:5px;}
-::-webkit-scrollbar-track{background:var(--bg);}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--bdr); border-radius: 3px; }
 </style>
 </head>
+
 <body>
 <div class="app">
 
-<header>
-  <div class="logo">漢字 SRS <em>// vocab desk</em></div>
-  <nav>
-    <button class="tab active" onclick="switchView('study')" id="tab-study">▶ Study</button>
-    <button class="tab" onclick="switchView('library')" id="tab-library">Library</button>
-    <button class="tab" onclick="switchView('import')" id="tab-import">Import</button>
-    <button class="tab" onclick="switchView('add')" id="tab-add">+ Add Card</button>
+<!-- HEADER -->
+<header class="srs-header">
+  <div class="srs-logo">漢字 SRS <em>// vocab desk</em></div>
+  <nav class="srs-nav">
+    <button class="srs-tab active" onclick="switchView('study')" id="tab-study">▶ Study</button>
+    <button class="srs-tab" onclick="switchView('library')" id="tab-library">Library</button>
+    <button class="srs-tab" onclick="switchView('import')" id="tab-import">Import</button>
+    <button class="srs-tab" onclick="switchView('add')" id="tab-add">+ Add Card</button>
   </nav>
 </header>
 
-<div class="body">
-<aside class="sidebar">
-  <div class="sidebar-section">Study</div>
-  <button class="sidebar-btn active" onclick="switchView('study')" id="sb-study">
-    <span class="icon">📖</span> Daily Review
-  </button>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-section">Manage</div>
-  <button class="sidebar-btn" onclick="switchView('library')" id="sb-library">
-    <span class="icon">🗂</span> Library
-  </button>
-  <button class="sidebar-btn" onclick="switchView('add')" id="sb-add">
-    <span class="icon">✏️</span> Add Single
-  </button>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-section">Import</div>
-  <button class="sidebar-btn" onclick="openImportPanel('paste')" id="sb-paste">
-    <span class="icon">📋</span> Paste Table
-  </button>
-  <button class="sidebar-btn" onclick="openImportPanel('csv')" id="sb-csv">
-    <span class="icon">📂</span> CSV / Excel
-  </button>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-section">Export</div>
-  <button class="sidebar-btn" onclick="exportCSV()">
-    <span class="icon">💾</span> Export CSV
-  </button>
-</aside>
+<div class="srs-body">
 
-<div class="content">
+  <!-- SIDEBAR -->
+  <aside class="srs-sidebar">
+    <div class="sidebar-section">Study</div>
+    <button class="sidebar-btn active" onclick="switchView('study')" id="sb-study">
+      <span class="icon">📖</span> Daily Review
+    </button>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Manage</div>
+    <button class="sidebar-btn" onclick="switchView('library')" id="sb-library">
+      <span class="icon">🗂</span> Library
+    </button>
+    <button class="sidebar-btn" onclick="switchView('add')" id="sb-add">
+      <span class="icon">✏️</span> Add Single
+    </button>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Import</div>
+    <button class="sidebar-btn" onclick="openImportPanel('paste')" id="sb-paste">
+      <span class="icon">📋</span> Paste Table
+    </button>
+    <button class="sidebar-btn" onclick="openImportPanel('csv')" id="sb-csv">
+      <span class="icon">📂</span> CSV / Excel
+    </button>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Export</div>
+    <button class="sidebar-btn" onclick="exportCSV()">
+      <span class="icon">💾</span> Export CSV
+    </button>
+  </aside>
 
-<!-- ── STUDY ── -->
-<div class="view active" id="view-study">
-  <div class="stats-row">
-    <div class="stat"><div class="n" id="s-due">0</div><div class="l">Due Today</div></div>
-    <div class="stat"><div class="n" id="s-total">0</div><div class="l">Total</div></div>
-    <div class="stat"><div class="n" id="s-streak">0</div><div class="l">Streak</div></div>
-    <div class="stat"><div class="n" id="s-done">0</div><div class="l">Done Today</div></div>
-  </div>
-  <div class="prog-wrap"><div class="prog-bar" id="prog" style="width:0%"></div></div>
+  <!-- MAIN CONTENT -->
+  <div class="srs-content">
 
-  <div id="area-card">
-    <div class="study-card" id="study-card">
-      <div class="card-tag" id="c-cat">—</div>
-      <div class="card-pos" id="c-pos">— / —</div>
-      <div class="en-prompt" id="c-en">—</div>
-      <div class="reveal-hint">click answer to reveal · or press Space</div>
-      <div class="answer-wrap" id="c-answer" onclick="revealAnswer()">
-        <div class="zh-big" id="c-zh">???</div>
-        <div class="pinyin-line" id="c-py">???</div>
+    <!-- ── STUDY ── -->
+    <div class="view active" id="view-study">
+
+      <!-- Stats — uses SCM .stats-bar / .stat-card -->
+      <div class="stats-bar" style="margin-bottom:24px;">
+        <div class="stat-card stat-card--amber">
+          <div class="stat-val" id="s-due">0</div>
+          <div class="stat-lbl">Due Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="s-total">0</div>
+          <div class="stat-lbl">Total</div>
+        </div>
+        <div class="stat-card stat-card--green">
+          <div class="stat-val" id="s-streak">0</div>
+          <div class="stat-lbl">Streak</div>
+        </div>
+        <div class="stat-card stat-card--blue">
+          <div class="stat-val" id="s-done">0</div>
+          <div class="stat-lbl">Done Today</div>
+        </div>
       </div>
-    </div>
-    <div style="display:flex;justify-content:center;margin-bottom:16px;">
-      <button class="reveal-cta" id="reveal-btn" onclick="revealAnswer()">
-        <span>Reveal Answer</span><span style="font-size:14px;">↵</span>
-      </button>
-    </div>
-  </div>
 
-  <div class="rating-grid" id="area-rating" style="display:none">
-    <button class="r-btn q0" onclick="rate(0)"><span class="rn">0</span><span class="rl">Blackout</span></button>
-    <button class="r-btn q1" onclick="rate(1)"><span class="rn">1</span><span class="rl">Hard</span></button>
-    <button class="r-btn q2" onclick="rate(2)"><span class="rn">2</span><span class="rl">Good</span></button>
-    <button class="r-btn q3" onclick="rate(3)"><span class="rn">3</span><span class="rl">Easy</span></button>
-  </div>
-
-  <div id="area-sentence" style="display:none;margin-top:12px;">
-    <div class="sentence-card">
-      <div class="sentence-zh" id="c-sent-zh">—</div>
-      <div class="sentence-en" id="c-sent-en">—</div>
-    </div>
-  </div>
-
-  <div id="area-complete" style="display:none;margin-top:8px;">
-    <div class="complete-box">
-      <div class="big">✅</div>
-      <h2>Session Complete</h2>
-      <p>All cards reviewed. Your schedule is set — come back tomorrow to keep the streak alive.</p>
-      <button class="btn btn-secondary" onclick="restartSession()" style="margin-top:8px;">Review Again</button>
-    </div>
-  </div>
-
-  <div id="area-empty" style="display:none;margin-top:8px;">
-    <div class="empty-state">
-      <span class="ei">📭</span>
-      No cards yet. Use <strong>Import</strong> or <strong>Add Card</strong> to get started.
-    </div>
-  </div>
-</div>
-
-<!-- ── LIBRARY ── -->
-<div class="view" id="view-library">
-  <div class="lib-toolbar">
-    <input class="lib-search" type="text" placeholder="Search cards…" oninput="renderLibrary()" id="lib-search">
-    <select class="cat-filter" onchange="renderLibrary()" id="cat-filter">
-      <option value="">All Categories</option>
-      <option>PCB Design</option>
-      <option>Product Development</option>
-      <option>Supply Chain</option>
-      <option>General</option>
-    </select>
-    <button class="btn btn-danger" onclick="confirmClearAll()" style="white-space:nowrap;font-size:10px;">Clear All</button>
-  </div>
-  <table class="lib-table">
-    <thead>
-      <tr>
-        <th>Chinese</th>
-        <th>English</th>
-        <th>Category</th>
-        <th>Next Review</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="lib-body"></tbody>
-  </table>
-  <div id="lib-empty" class="empty-state" style="display:none">
-    <span class="ei">📚</span>No cards match your search.
-  </div>
-</div>
-
-<!-- ── IMPORT ── -->
-<div class="view" id="view-import">
-  <div class="import-grid" id="import-cards">
-    <div class="import-card" onclick="openImportPanel('paste')">
-      <div class="ic-icon">📋</div>
-      <h3>Paste from Chat</h3>
-      <p>Copy a vocab table directly from a Claude conversation and paste it here. Supports the Markdown table format used in our sessions.</p>
-    </div>
-    <div class="import-card" onclick="openImportPanel('csv')">
-      <div class="ic-icon">📂</div>
-      <h3>Upload CSV / Excel</h3>
-      <p>Upload a .csv file with columns: Chinese, Pinyin, English, Category, SentenceZh, SentenceEn. Download the template to get started.</p>
-    </div>
-    <div class="import-card wide" onclick="openImportPanel('bulk')">
-      <div class="ic-icon">⚡</div>
-      <h3>Bulk Text Entry</h3>
-      <p>Type or paste one card per line in a simple format: <strong>Chinese | Pinyin | English | Category</strong>. Fast for adding batches without a spreadsheet.</p>
-    </div>
-  </div>
-
-  <!-- PASTE PANEL -->
-  <div class="import-panel" id="panel-paste">
-    <div class="panel-header">
-      <div class="panel-title">📋 Paste Markdown Table</div>
-      <button class="panel-close" onclick="closeImportPanel()">✕ Close</button>
-    </div>
-    <div class="import-hint">
-      Copy the vocab table from our chat and paste below.<br>
-      Expected columns: <strong>English | 繁體中文 | Pinyin</strong> (and optionally Category, sentences).<br>
-      Column order doesn't matter — the parser auto-detects headers.
-    </div>
-    <textarea class="import-ta" id="paste-input" placeholder="| English | 繁體中文 | Pinyin | Notes |&#10;|---|---|---|---|&#10;| Supply chain | 供應鏈 | Gōngyìng liàn | |" oninput="parsePastePreview()"></textarea>
-    <div id="paste-preview"></div>
-    <div class="import-actions">
-      <span class="import-count" id="paste-count"></span>
-      <button class="btn btn-primary" onclick="importFromPaste()" id="paste-import-btn" disabled>Import Cards</button>
-    </div>
-  </div>
-
-  <!-- CSV PANEL -->
-  <div class="import-panel" id="panel-csv">
-    <div class="panel-header">
-      <div class="panel-title">📂 Upload CSV</div>
-      <button class="panel-close" onclick="closeImportPanel()">✕ Close</button>
-    </div>
-    <div class="import-hint">
-      CSV columns (header row required):<br>
-      <strong>Chinese, Pinyin, English, Category, SentenceZh, SentenceEn</strong><br>
-      Only Chinese + English are required. Category defaults to "General".
-    </div>
-    <div style="display:flex;gap:10px;">
-      <button class="btn btn-secondary" onclick="downloadTemplate()">⬇ Download Template</button>
-    </div>
-    <div class="file-drop" id="file-drop" onclick="document.getElementById('csv-file-input').click()">
-      <div class="drop-icon">📄</div>
-      <p>Click to choose a CSV file</p>
-      <em>or drag and drop here</em>
-    </div>
-    <input type="file" id="csv-file-input" accept=".csv" onchange="handleCSVFile(event)">
-    <div id="csv-preview"></div>
-    <div class="import-actions">
-      <span class="import-count" id="csv-count"></span>
-      <button class="btn btn-primary" onclick="importFromCSV()" id="csv-import-btn" disabled>Import Cards</button>
-    </div>
-  </div>
-
-  <!-- BULK PANEL -->
-  <div class="import-panel" id="panel-bulk">
-    <div class="panel-header">
-      <div class="panel-title">⚡ Bulk Text Entry</div>
-      <button class="panel-close" onclick="closeImportPanel()">✕ Close</button>
-    </div>
-    <div class="import-hint">
-      One card per line: <strong>Chinese | Pinyin | English | Category</strong><br>
-      Example: <strong>量產 | Liàngchǎn | Mass production | Product Development</strong><br>
-      Category is optional — defaults to "General".
-    </div>
-    <textarea class="import-ta" id="bulk-input" placeholder="供應鏈 | Gōngyìng liàn | Supply chain | Supply Chain&#10;報價 | Bàojià | Quote | Supply Chain&#10;走線 | Zǒuxiàn | PCB trace | PCB Design" oninput="parseBulkPreview()" style="min-height:220px;"></textarea>
-    <div id="bulk-preview"></div>
-    <div class="import-actions">
-      <span class="import-count" id="bulk-count"></span>
-      <button class="btn btn-primary" onclick="importFromBulk()" id="bulk-import-btn" disabled>Import Cards</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── ADD SINGLE ── -->
-<div class="view" id="view-add">
-  <h2 style="font-size:18px;font-weight:700;margin-bottom:20px;">Add a Card</h2>
-  <div style="display:flex;flex-direction:column;gap:14px;">
-    <div class="form-grid">
-      <div class="field">
-        <label>Chinese (繁體) *</label>
-        <input type="text" id="a-zh" placeholder="e.g. 供應鏈">
+      <!-- Progress bar -->
+      <div class="study-prog-wrap">
+        <div class="study-prog-bar" id="prog" style="width:0%"></div>
       </div>
-      <div class="field">
-        <label>Pinyin</label>
-        <input type="text" id="a-py" placeholder="e.g. Gōngyìng liàn">
+
+      <!-- Card area -->
+      <div id="area-card">
+        <div class="study-card" id="study-card">
+          <div class="card-tag" id="c-cat">—</div>
+          <div class="card-pos" id="c-pos">— / —</div>
+          <div class="en-prompt" id="c-en">—</div>
+          <div class="reveal-hint">click answer to reveal · or press Space</div>
+          <div class="answer-wrap" id="c-answer" onclick="revealAnswer()">
+            <div class="zh-big" id="c-zh">???</div>
+            <div class="pinyin-line" id="c-py">???</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:center;margin-bottom:16px;">
+          <button class="reveal-cta" id="reveal-btn" onclick="revealAnswer()">
+            <span>Reveal Answer</span><span>↵</span>
+          </button>
+        </div>
       </div>
-    </div>
-    <div class="form-grid">
-      <div class="field">
-        <label>English *</label>
-        <input type="text" id="a-en" placeholder="e.g. Supply chain">
+
+      <!-- Rating -->
+      <div class="rating-grid" id="area-rating" style="display:none">
+        <button class="r-btn q0" onclick="rate(0)">
+          <span class="rn">0</span><span class="rl">Blackout</span>
+        </button>
+        <button class="r-btn q1" onclick="rate(1)">
+          <span class="rn">1</span><span class="rl">Hard</span>
+        </button>
+        <button class="r-btn q2" onclick="rate(2)">
+          <span class="rn">2</span><span class="rl">Good</span>
+        </button>
+        <button class="r-btn q3" onclick="rate(3)">
+          <span class="rn">3</span><span class="rl">Easy</span>
+        </button>
       </div>
-      <div class="field">
-        <label>Category</label>
-        <select id="a-cat">
+
+      <!-- Example sentence -->
+      <div id="area-sentence" style="display:none;margin-top:12px;">
+        <div class="sentence-card">
+          <div class="sentence-zh" id="c-sent-zh">—</div>
+          <div class="sentence-en" id="c-sent-en">—</div>
+        </div>
+      </div>
+
+      <!-- Complete -->
+      <div id="area-complete" style="display:none;margin-top:8px;">
+        <div class="complete-box">
+          <div class="big">✅</div>
+          <h2>Session Complete</h2>
+          <p>All cards reviewed. Your schedule is set — come back tomorrow to keep the streak alive.</p>
+          <button class="btn btn-ghost" onclick="restartSession()" style="margin-top:8px;">
+            Review Again
+          </button>
+        </div>
+      </div>
+
+      <!-- Empty -->
+      <div id="area-empty" style="display:none;margin-top:8px;">
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <p>No cards yet. Use <strong>Import</strong> or <strong>Add Card</strong> to get started.</p>
+        </div>
+      </div>
+
+    </div><!-- /view-study -->
+
+    <!-- ── LIBRARY ── -->
+    <div class="view" id="view-library">
+      <div class="lib-toolbar">
+        <!-- SCM .search-wrap -->
+        <div class="search-wrap" style="flex:1">
+          <input class="search-input" type="text"
+            placeholder="Search cards…"
+            oninput="renderLibrary()" id="lib-search">
+        </div>
+        <select class="field" style="width:auto;margin:0;"
+          onchange="renderLibrary()" id="cat-filter">
+          <option value="">All Categories</option>
           <option>PCB Design</option>
           <option>Product Development</option>
-          <option selected>Supply Chain</option>
+          <option>Supply Chain</option>
           <option>General</option>
         </select>
+        <button class="btn btn-danger" onclick="confirmClearAll()">Clear All</button>
       </div>
-    </div>
-    <div class="form-grid">
-      <div class="field">
-        <label>Example Sentence (Chinese)</label>
-        <textarea id="a-szh" placeholder="e.g. 我們需要確認交期。"></textarea>
-      </div>
-      <div class="field">
-        <label>Example Sentence (English)</label>
-        <textarea id="a-sen" placeholder="e.g. We need to confirm the lead time."></textarea>
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;margin-top:4px;">
-      <button class="btn btn-primary" onclick="saveNewCard()">Save Card</button>
-      <button class="btn btn-secondary" onclick="clearAddForm()">Clear</button>
-    </div>
-  </div>
-</div>
 
-</div><!-- /content -->
-</div><!-- /body -->
+      <!-- SCM .data-table -->
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Chinese</th>
+            <th>English</th>
+            <th>Category</th>
+            <th>Next Review</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="lib-body"></tbody>
+      </table>
+      <div id="lib-empty" class="empty-state" style="display:none">
+        <div class="empty-icon">📚</div>
+        <p>No cards match your search.</p>
+      </div>
+    </div>
+
+    <!-- ── IMPORT ── -->
+    <div class="view" id="view-import">
+
+      <div class="import-grid" id="import-cards">
+        <div class="import-card" onclick="openImportPanel('paste')">
+          <div class="ic-icon">📋</div>
+          <h3>Paste from Chat</h3>
+          <p>
+            Copy a vocab table directly from a Claude conversation and paste it
+            here. Supports the Markdown table format used in our sessions.
+          </p>
+        </div>
+        <div class="import-card" onclick="openImportPanel('csv')">
+          <div class="ic-icon">📂</div>
+          <h3>Upload CSV / Excel</h3>
+          <p>
+            Upload a .csv file with columns: Chinese, Pinyin, English, Category,
+            SentenceZh, SentenceEn. Download the template to get started.
+          </p>
+        </div>
+        <div class="import-card wide" onclick="openImportPanel('bulk')">
+          <div class="ic-icon">⚡</div>
+          <h3>Bulk Text Entry</h3>
+          <p>
+            Type or paste one card per line:
+            <strong>Chinese | Pinyin | English | Category</strong>.
+            Fast for adding batches without a spreadsheet.
+          </p>
+        </div>
+      </div>
+
+      <!-- PASTE PANEL -->
+      <div class="import-panel" id="panel-paste">
+        <div class="panel-header">
+          <div class="panel-title">📋 Paste Markdown Table</div>
+          <button class="btn btn-ghost btn-sm" onclick="closeImportPanel()">✕ Close</button>
+        </div>
+        <div class="import-hint">
+          Copy the vocab table from our chat and paste below.<br>
+          Expected columns: <strong>English | 繁體中文 | Pinyin</strong>
+          (and optionally Category, sentences).<br>
+          Column order doesn't matter — the parser auto-detects headers.
+        </div>
+        <textarea class="import-ta" id="paste-input"
+          placeholder="| English | 繁體中文 | Pinyin | Notes |&#10;|---|---|---|---|&#10;| Supply chain | 供應鏈 | Gōngyìng liàn | |"
+          oninput="parsePastePreview()"></textarea>
+        <div id="paste-preview"></div>
+        <div class="import-actions">
+          <span class="import-count" id="paste-count"></span>
+          <button class="btn btn-primary" onclick="importFromPaste()"
+            id="paste-import-btn" disabled>Import Cards</button>
+        </div>
+      </div>
+
+      <!-- CSV PANEL -->
+      <div class="import-panel" id="panel-csv">
+        <div class="panel-header">
+          <div class="panel-title">📂 Upload CSV</div>
+          <button class="btn btn-ghost btn-sm" onclick="closeImportPanel()">✕ Close</button>
+        </div>
+        <div class="import-hint">
+          CSV columns (header row required):<br>
+          <strong>Chinese, Pinyin, English, Category, SentenceZh, SentenceEn</strong><br>
+          Only Chinese + English are required. Category defaults to "General".
+        </div>
+        <div>
+          <button class="btn btn-ghost" onclick="downloadTemplate()">
+            ⬇ Download Template
+          </button>
+        </div>
+        <div class="file-drop" id="file-drop"
+          onclick="document.getElementById('csv-file-input').click()">
+          <div class="drop-icon">📄</div>
+          <p>Click to choose a CSV file</p>
+          <em>or drag and drop here</em>
+        </div>
+        <input type="file" id="csv-file-input" accept=".csv"
+          onchange="handleCSVFile(event)">
+        <div id="csv-preview"></div>
+        <div class="import-actions">
+          <span class="import-count" id="csv-count"></span>
+          <button class="btn btn-primary" onclick="importFromCSV()"
+            id="csv-import-btn" disabled>Import Cards</button>
+        </div>
+      </div>
+
+      <!-- BULK PANEL -->
+      <div class="import-panel" id="panel-bulk">
+        <div class="panel-header">
+          <div class="panel-title">⚡ Bulk Text Entry</div>
+          <button class="btn btn-ghost btn-sm" onclick="closeImportPanel()">✕ Close</button>
+        </div>
+        <div class="import-hint">
+          One card per line:
+          <strong>Chinese | Pinyin | English | Category</strong><br>
+          Example:
+          <strong>量產 | Liàngchǎn | Mass production | Product Development</strong><br>
+          Category is optional — defaults to "General".
+        </div>
+        <textarea class="import-ta" id="bulk-input"
+          placeholder="供應鏈 | Gōngyìng liàn | Supply chain | Supply Chain&#10;報價 | Bàojià | Quote | Supply Chain&#10;走線 | Zǒuxiàn | PCB trace | PCB Design"
+          oninput="parseBulkPreview()" style="min-height:220px;"></textarea>
+        <div id="bulk-preview"></div>
+        <div class="import-actions">
+          <span class="import-count" id="bulk-count"></span>
+          <button class="btn btn-primary" onclick="importFromBulk()"
+            id="bulk-import-btn" disabled>Import Cards</button>
+        </div>
+      </div>
+
+    </div><!-- /view-import -->
+
+    <!-- ── ADD SINGLE ── -->
+    <div class="view" id="view-add">
+      <div class="page-header">
+        <div class="phase-tag phase-tag--amber">New Card</div>
+        <h1>Add Vocabulary</h1>
+        <p class="subtitle">Add a single card to your deck manually.</p>
+      </div>
+
+      <!-- Uses SCM .field-grid / .field -->
+      <div class="field-grid fg-2">
+        <div class="field">
+          <label>Chinese (繁體) *</label>
+          <input type="text" id="a-zh" placeholder="e.g. 供應鏈">
+        </div>
+        <div class="field">
+          <label>Pinyin</label>
+          <input type="text" id="a-py" placeholder="e.g. Gōngyìng liàn">
+        </div>
+      </div>
+      <div class="field-grid fg-2">
+        <div class="field">
+          <label>English *</label>
+          <input type="text" id="a-en" placeholder="e.g. Supply chain">
+        </div>
+        <div class="field">
+          <label>Category</label>
+          <select id="a-cat">
+            <option>PCB Design</option>
+            <option>Product Development</option>
+            <option selected>Supply Chain</option>
+            <option>General</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-grid fg-2">
+        <div class="field">
+          <label>Example Sentence (Chinese)</label>
+          <textarea id="a-szh" placeholder="e.g. 我們需要確認交期。"></textarea>
+        </div>
+        <div class="field">
+          <label>Example Sentence (English)</label>
+          <textarea id="a-sen" placeholder="e.g. We need to confirm the lead time."></textarea>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveNewCard()">Save Card</button>
+        <button class="btn btn-ghost" onclick="clearAddForm()">Clear</button>
+      </div>
+    </div>
+
+  </div><!-- /srs-content -->
+</div><!-- /srs-body -->
 </div><!-- /app -->
 
-<div class="toast" id="toast"><span class="t-icon">✓</span><span id="toast-msg">Done</span></div>
+<!-- Toast notification -->
+<div class="toast" id="toast">
+  <span class="t-icon">✓</span>
+  <span id="toast-msg">Done</span>
+</div>
+
+<!-- SCM Theme Toggle -->
+<button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+  <span class="theme-toggle-icon">☀</span>
+</button>
 
 <script>
+// ════════════════════════════════════════════
+//  THEME TOGGLE (SCM standard)
+// ════════════════════════════════════════════
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('scm-theme', next);
+  document.querySelector('.theme-toggle-icon').textContent =
+    next === 'light' ? '☾' : '☀';
+}
+(function() {
+  const saved = localStorage.getItem('scm-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  const icon = document.querySelector('.theme-toggle-icon');
+  if (icon) icon.textContent = saved === 'light' ? '☾' : '☀';
+})();
+
 // ════════════════════════════════════════════
 //  DATA / STORAGE
 // ════════════════════════════════════════════
 const KEY = 'hanzi_srs_v2';
-let db = {cards:[], streak:0, lastStudied:null, doneToday:0};
-let session = {queue:[], index:0, revealed:false};
+let db = { cards: [], streak: 0, lastStudied: null, doneToday: 0 };
+let session = { queue: [], index: 0, revealed: false };
 let pastePreviewCards = [];
 let csvPreviewCards = [];
 let bulkPreviewCards = [];
 
-function load(){
-  try{ const r=localStorage.getItem(KEY); if(r) db=JSON.parse(r); }catch(e){}
+function load() {
+  try {
+    const r = localStorage.getItem(KEY);
+    if (r) db = JSON.parse(r);
+  } catch(e) {}
   const today = new Date().toDateString();
-  const yesterday = new Date(Date.now()-86400000).toDateString();
-  if(db.lastStudied !== today){
-    if(db.lastStudied === yesterday) db.streak = (db.streak||0)+1;
-    else if(db.lastStudied && db.lastStudied !== today) db.streak = 0;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if (db.lastStudied !== today) {
+    if (db.lastStudied === yesterday) db.streak = (db.streak || 0) + 1;
+    else if (db.lastStudied && db.lastStudied !== today) db.streak = 0;
     db.doneToday = 0;
   }
 }
-function save(){ localStorage.setItem(KEY,JSON.stringify(db)); }
+function save() { localStorage.setItem(KEY, JSON.stringify(db)); }
 
 // ════════════════════════════════════════════
 //  SM-2
 // ════════════════════════════════════════════
-function sm2(card, q){
-  let {interval,easeFactor,repetitions} = card;
-  if(q<1){ repetitions=0; interval=1; }
-  else{
-    if(repetitions===0) interval=1;
-    else if(repetitions===1) interval=3;
-    else interval=Math.round(interval*easeFactor);
+function sm2(card, q) {
+  let { interval, easeFactor, repetitions } = card;
+  if (q < 1) {
+    repetitions = 0;
+    interval = 1;
+  } else {
+    if (repetitions === 0) interval = 1;
+    else if (repetitions === 1) interval = 3;
+    else interval = Math.round(interval * easeFactor);
     repetitions++;
-    easeFactor = Math.max(1.3, easeFactor+(0.1-(3-q)*(0.08+(3-q)*0.02)));
+    easeFactor = Math.max(
+      1.3,
+      easeFactor + (0.1 - (3 - q) * (0.08 + (3 - q) * 0.02))
+    );
   }
-  return {...card, interval, easeFactor, repetitions, nextReview:Date.now()+interval*86400000};
-}
-function isDue(c){ return Date.now()>=c.nextReview; }
-function makeCard(data){
   return {
-    id: Date.now()+Math.random(),
-    chinese: data.chinese||'', pinyin: data.pinyin||'',
-    english: data.english||'', category: data.category||'General',
-    sentenceZh: data.sentenceZh||'', sentenceEn: data.sentenceEn||'',
-    interval:1, easeFactor:2.5, repetitions:0, nextReview:Date.now()
+    ...card,
+    interval,
+    easeFactor,
+    repetitions,
+    nextReview: Date.now() + interval * 86400000
+  };
+}
+
+function isDue(c) { return Date.now() >= c.nextReview; }
+
+function makeCard(data) {
+  return {
+    id: Date.now() + Math.random(),
+    chinese:    data.chinese    || '',
+    pinyin:     data.pinyin     || '',
+    english:    data.english    || '',
+    category:   data.category   || 'General',
+    sentenceZh: data.sentenceZh || '',
+    sentenceEn: data.sentenceEn || '',
+    interval:     1,
+    easeFactor:   2.5,
+    repetitions:  0,
+    nextReview:   Date.now()
   };
 }
 
 // ════════════════════════════════════════════
-//  SEED
+//  SEED DATA
 // ════════════════════════════════════════════
-const SEED=[
-  {chinese:'供應鏈',pinyin:'Gōngyìng liàn',english:'Supply chain',category:'Supply Chain',sentenceZh:'我們的供應鏈受到了影響。',sentenceEn:'Our supply chain has been impacted.'},
-  {chinese:'報價',pinyin:'Bàojià',english:'Quotation / Quote',category:'Supply Chain',sentenceZh:'請盡快提供報價。',sentenceEn:'Please provide a quote as soon as possible.'},
-  {chinese:'交期',pinyin:'Jiāoqī',english:'Lead time',category:'Supply Chain',sentenceZh:'這個零件的交期是幾週？',sentenceEn:'What is the lead time for this component?'},
-  {chinese:'印刷電路板',pinyin:'Yìnshuā diànlùbǎn',english:'PCB (Printed Circuit Board)',category:'PCB Design',sentenceZh:'這塊印刷電路板需要重新設計。',sentenceEn:'This PCB needs to be redesigned.'},
-  {chinese:'走線',pinyin:'Zǒuxiàn',english:'Trace / Track',category:'PCB Design',sentenceZh:'走線的寬度需要調整。',sentenceEn:'The trace width needs to be adjusted.'},
-  {chinese:'封裝',pinyin:'Fēngzhuāng',english:'Footprint',category:'PCB Design',sentenceZh:'請確認封裝是否正確。',sentenceEn:'Please verify the footprint is correct.'},
-  {chinese:'量產',pinyin:'Liàngchǎn',english:'Mass production',category:'Product Development',sentenceZh:'我們計劃下季度開始量產。',sentenceEn:'We plan to begin mass production next quarter.'},
-  {chinese:'原型',pinyin:'Yuánxíng',english:'Prototype',category:'Product Development',sentenceZh:'第一個原型已經完成了。',sentenceEn:'The first prototype is complete.'},
-  {chinese:'物料清單',pinyin:'Wùliào qīngdān',english:'Bill of Materials (BOM)',category:'PCB Design',sentenceZh:'請更新物料清單。',sentenceEn:'Please update the BOM.'},
-  {chinese:'採購單',pinyin:'Cǎigòu dān',english:'Purchase order (PO)',category:'Supply Chain',sentenceZh:'採購單已經發出了。',sentenceEn:'The purchase order has been sent.'},
-  {chinese:'里程碑',pinyin:'Lǐchéngbēi',english:'Milestone',category:'Product Development',sentenceZh:'我們已經達到了第一個里程碑。',sentenceEn:'We have reached the first milestone.'},
-  {chinese:'韌體',pinyin:'Rèntǐ',english:'Firmware',category:'PCB Design',sentenceZh:'韌體更新需要測試。',sentenceEn:'The firmware update needs to be tested.'},
-  {chinese:'廠商',pinyin:'Chǎngshāng',english:'Vendor',category:'Supply Chain',sentenceZh:'我需要聯繫廠商確認規格。',sentenceEn:'I need to contact the vendor to confirm specs.'},
-  {chinese:'檢驗',pinyin:'Jiǎnyàn',english:'Inspection',category:'Supply Chain',sentenceZh:'貨物到達後需要進行檢驗。',sentenceEn:'An inspection is required upon arrival of goods.'},
-  {chinese:'設計審查',pinyin:'Shèjì shěnchá',english:'Design review',category:'Product Development',sentenceZh:'設計審查排在下週四。',sentenceEn:'The design review is scheduled for next Thursday.'},
+const SEED = [
+  { chinese:'供應鏈', pinyin:'Gōngyìng liàn', english:'Supply chain', category:'Supply Chain', sentenceZh:'我們的供應鏈受到了影響。', sentenceEn:'Our supply chain has been impacted.' },
+  { chinese:'報價', pinyin:'Bàojià', english:'Quotation / Quote', category:'Supply Chain', sentenceZh:'請盡快提供報價。', sentenceEn:'Please provide a quote as soon as possible.' },
+  { chinese:'交期', pinyin:'Jiāoqī', english:'Lead time', category:'Supply Chain', sentenceZh:'這個零件的交期是幾週？', sentenceEn:'What is the lead time for this component?' },
+  { chinese:'印刷電路板', pinyin:'Yìnshuā diànlùbǎn', english:'PCB (Printed Circuit Board)', category:'PCB Design', sentenceZh:'這塊印刷電路板需要重新設計。', sentenceEn:'This PCB needs to be redesigned.' },
+  { chinese:'走線', pinyin:'Zǒuxiàn', english:'Trace / Track', category:'PCB Design', sentenceZh:'走線的寬度需要調整。', sentenceEn:'The trace width needs to be adjusted.' },
+  { chinese:'封裝', pinyin:'Fēngzhuāng', english:'Footprint', category:'PCB Design', sentenceZh:'請確認封裝是否正確。', sentenceEn:'Please verify the footprint is correct.' },
+  { chinese:'量產', pinyin:'Liàngchǎn', english:'Mass production', category:'Product Development', sentenceZh:'我們計劃下季度開始量產。', sentenceEn:'We plan to begin mass production next quarter.' },
+  { chinese:'原型', pinyin:'Yuánxíng', english:'Prototype', category:'Product Development', sentenceZh:'第一個原型已經完成了。', sentenceEn:'The first prototype is complete.' },
+  { chinese:'物料清單', pinyin:'Wùliào qīngdān', english:'Bill of Materials (BOM)', category:'PCB Design', sentenceZh:'請更新物料清單。', sentenceEn:'Please update the BOM.' },
+  { chinese:'採購單', pinyin:'Cǎigòu dān', english:'Purchase order (PO)', category:'Supply Chain', sentenceZh:'採購單已經發出了。', sentenceEn:'The purchase order has been sent.' },
+  { chinese:'里程碑', pinyin:'Lǐchéngbēi', english:'Milestone', category:'Product Development', sentenceZh:'我們已經達到了第一個里程碑。', sentenceEn:'We have reached the first milestone.' },
+  { chinese:'韌體', pinyin:'Rèntǐ', english:'Firmware', category:'PCB Design', sentenceZh:'韌體更新需要測試。', sentenceEn:'The firmware update needs to be tested.' },
+  { chinese:'廠商', pinyin:'Chǎngshāng', english:'Vendor', category:'Supply Chain', sentenceZh:'我需要聯繫廠商確認規格。', sentenceEn:'I need to contact the vendor to confirm specs.' },
+  { chinese:'檢驗', pinyin:'Jiǎnyàn', english:'Inspection', category:'Supply Chain', sentenceZh:'貨物到達後需要進行檢驗。', sentenceEn:'An inspection is required upon arrival of goods.' },
+  { chinese:'設計審查', pinyin:'Shèjì shěnchá', english:'Design review', category:'Product Development', sentenceZh:'設計審查排在下週四。', sentenceEn:'The design review is scheduled for next Thursday.' },
 ];
-function seedIfEmpty(){ if(!db.cards.length){ db.cards=SEED.map(makeCard); save(); } }
+
+function seedIfEmpty() {
+  if (!db.cards.length) { db.cards = SEED.map(makeCard); save(); }
+}
 
 // ════════════════════════════════════════════
 //  STUDY
 // ════════════════════════════════════════════
-function buildQueue(){ session.queue=db.cards.filter(isDue); session.index=0; session.revealed=false; }
-function currentCard(){ return session.queue[session.index]||null; }
+function buildQueue() {
+  session.queue = db.cards.filter(isDue);
+  session.index = 0;
+  session.revealed = false;
+}
+function currentCard() { return session.queue[session.index] || null; }
 
-function revealAnswer(){
-  if(session.revealed) return;
-  session.revealed=true;
+function revealAnswer() {
+  if (session.revealed) return;
+  session.revealed = true;
   document.getElementById('c-answer').classList.add('revealed');
-  document.getElementById('reveal-btn').style.display='none';
-  document.getElementById('area-rating').style.display='grid';
-  const c=currentCard();
-  if(c&&c.sentenceZh){
-    document.getElementById('c-sent-zh').textContent=c.sentenceZh;
-    document.getElementById('c-sent-en').textContent=c.sentenceEn||'';
-    document.getElementById('area-sentence').style.display='block';
+  document.getElementById('reveal-btn').style.display = 'none';
+  document.getElementById('area-rating').style.display = 'grid';
+  const c = currentCard();
+  if (c && c.sentenceZh) {
+    document.getElementById('c-sent-zh').textContent = c.sentenceZh;
+    document.getElementById('c-sent-en').textContent = c.sentenceEn || '';
+    document.getElementById('area-sentence').style.display = 'block';
   }
 }
 
-function rate(q){
-  const c=currentCard(); if(!c) return;
-  const updated=sm2(c,q);
-  const i=db.cards.findIndex(x=>x.id===c.id);
-  if(i!==-1) db.cards[i]=updated;
-  db.doneToday=(db.doneToday||0)+1;
-  db.lastStudied=new Date().toDateString();
-  save(); session.index++; session.revealed=false; renderStudy();
+function rate(q) {
+  const c = currentCard();
+  if (!c) return;
+  const updated = sm2(c, q);
+  const i = db.cards.findIndex(x => x.id === c.id);
+  if (i !== -1) db.cards[i] = updated;
+  db.doneToday = (db.doneToday || 0) + 1;
+  db.lastStudied = new Date().toDateString();
+  save();
+  session.index++;
+  session.revealed = false;
+  renderStudy();
 }
 
-function restartSession(){ buildQueue(); renderStudy(); }
+function restartSession() { buildQueue(); renderStudy(); }
 
-function renderStudy(){
-  const c=currentCard(), total=session.queue.length, done=session.index;
-  document.getElementById('s-due').textContent=db.cards.filter(isDue).length;
-  document.getElementById('s-total').textContent=db.cards.length;
-  document.getElementById('s-streak').textContent=db.streak||0;
-  document.getElementById('s-done').textContent=db.doneToday||0;
-  document.getElementById('prog').style.width=(total>0?Math.round(done/total*100):0)+'%';
+function renderStudy() {
+  const c = currentCard();
+  const total = session.queue.length;
+  const done = session.index;
 
-  ['area-card','area-rating','area-sentence','area-complete','area-empty'].forEach(id=>
-    document.getElementById(id).style.display='none'
-  );
-  if(!db.cards.length){ document.getElementById('area-empty').style.display='block'; return; }
-  if(!c){ document.getElementById('area-complete').style.display='block'; return; }
-  document.getElementById('area-card').style.display='block';
-  document.getElementById('c-cat').textContent=c.category;
-  document.getElementById('c-pos').textContent=`${done+1} / ${total}`;
-  document.getElementById('c-en').textContent=c.english;
-  document.getElementById('c-zh').textContent=c.chinese;
-  document.getElementById('c-py').textContent=c.pinyin;
+  document.getElementById('s-due').textContent = db.cards.filter(isDue).length;
+  document.getElementById('s-total').textContent = db.cards.length;
+  document.getElementById('s-streak').textContent = db.streak || 0;
+  document.getElementById('s-done').textContent = db.doneToday || 0;
+  document.getElementById('prog').style.width =
+    (total > 0 ? Math.round(done / total * 100) : 0) + '%';
+
+  ['area-card','area-rating','area-sentence','area-complete','area-empty']
+    .forEach(id => document.getElementById(id).style.display = 'none');
+
+  if (!db.cards.length) {
+    document.getElementById('area-empty').style.display = 'block';
+    return;
+  }
+  if (!c) {
+    document.getElementById('area-complete').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('area-card').style.display = 'block';
+  document.getElementById('c-cat').textContent = c.category;
+  document.getElementById('c-pos').textContent = `${done + 1} / ${total}`;
+  document.getElementById('c-en').textContent = c.english;
+  document.getElementById('c-zh').textContent = c.chinese;
+  document.getElementById('c-py').textContent = c.pinyin;
   document.getElementById('c-answer').classList.remove('revealed');
-  document.getElementById('reveal-btn').style.display='flex';
+  document.getElementById('reveal-btn').style.display = 'flex';
 }
 
 // ════════════════════════════════════════════
 //  LIBRARY
 // ════════════════════════════════════════════
-function renderLibrary(){
-  const q=(document.getElementById('lib-search').value||'').toLowerCase();
-  const cat=document.getElementById('cat-filter').value;
-  let cards=db.cards.filter(c=>{
-    const matchQ=!q||(c.chinese+c.pinyin+c.english).toLowerCase().includes(q);
-    const matchC=!cat||c.category===cat;
-    return matchQ&&matchC;
+function renderLibrary() {
+  const q = (document.getElementById('lib-search').value || '').toLowerCase();
+  const cat = document.getElementById('cat-filter').value;
+  const cards = db.cards.filter(c => {
+    const matchQ = !q || (c.chinese + c.pinyin + c.english).toLowerCase().includes(q);
+    const matchC = !cat || c.category === cat;
+    return matchQ && matchC;
   });
-  const tbody=document.getElementById('lib-body'); tbody.innerHTML='';
-  document.getElementById('lib-empty').style.display=cards.length?'none':'block';
-  cards.forEach(c=>{
-    const daysUntil=Math.max(0,Math.round((c.nextReview-Date.now())/86400000));
-    const dueLabel=isDue(c)?'<span class="due-now">● due now</span>'
-      :daysUntil<=2?`<span class="due-soon">in ${daysUntil}d</span>`
-      :`<span class="due-ok">in ${daysUntil}d</span>`;
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td><div class="td-zh">${c.chinese}</div><div class="td-py">${c.pinyin}</div></td>
+
+  const tbody = document.getElementById('lib-body');
+  tbody.innerHTML = '';
+  document.getElementById('lib-empty').style.display = cards.length ? 'none' : 'block';
+
+  cards.forEach(c => {
+    const daysUntil = Math.max(0, Math.round((c.nextReview - Date.now()) / 86400000));
+    const dueLabel = isDue(c)
+      ? '<span class="due-now">● due now</span>'
+      : daysUntil <= 2
+        ? `<span class="due-soon">in ${daysUntil}d</span>`
+        : `<span class="due-ok">in ${daysUntil}d</span>`;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <div class="td-zh">${c.chinese}</div>
+        <div class="td-py">${c.pinyin}</div>
+      </td>
       <td>${c.english}</td>
       <td><span class="td-cat">${c.category}</span></td>
       <td class="td-due">${dueLabel}</td>
-      <td><button class="row-del" onclick="deleteCard('${c.id}')">✕</button></td>
+      <td>
+        <button class="row-del" onclick="deleteCard('${c.id}')">✕ del</button>
+      </td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-function deleteCard(id){
-  db.cards=db.cards.filter(c=>String(c.id)!==String(id));
+function deleteCard(id) {
+  db.cards = db.cards.filter(c => String(c.id) !== String(id));
   save(); buildQueue(); renderLibrary(); renderStudy();
-  toast('Card deleted','success');
+  toast('Card deleted', 'success');
 }
 
-function confirmClearAll(){
-  if(confirm('Delete ALL cards? This cannot be undone.')){ db.cards=[]; save(); buildQueue(); renderLibrary(); renderStudy(); toast('All cards cleared','success'); }
+function confirmClearAll() {
+  if (confirm('Delete ALL cards? This cannot be undone.')) {
+    db.cards = [];
+    save(); buildQueue(); renderLibrary(); renderStudy();
+    toast('All cards cleared', 'success');
+  }
 }
 
 // ════════════════════════════════════════════
-//  IMPORT — PASTE (Markdown table)
+//  IMPORT — PASTE
 // ════════════════════════════════════════════
-function parsePastePreview(){
-  const raw=document.getElementById('paste-input').value;
-  pastePreviewCards=parseMarkdownTable(raw);
-  renderPreview('paste-preview',pastePreviewCards);
-  document.getElementById('paste-count').textContent=pastePreviewCards.length?`${pastePreviewCards.length} cards ready`:'';
-  document.getElementById('paste-import-btn').disabled=!pastePreviewCards.length;
+function parsePastePreview() {
+  pastePreviewCards = parseMarkdownTable(document.getElementById('paste-input').value);
+  renderPreview('paste-preview', pastePreviewCards);
+  const n = pastePreviewCards.length;
+  document.getElementById('paste-count').textContent = n ? `${n} cards ready` : '';
+  document.getElementById('paste-import-btn').disabled = !n;
 }
 
-function parseMarkdownTable(raw){
-  const lines=raw.trim().split('\n').map(l=>l.trim()).filter(l=>l.startsWith('|'));
-  if(lines.length<2) return[];
-  // Parse headers
-  const headers=lines[0].split('|').map(h=>h.trim().toLowerCase()).filter(Boolean);
-  const headerMap={};
-  headers.forEach((h,i)=>{
-    if(/chinese|繁體|中文|漢字/.test(h)) headerMap.chinese=i;
-    if(/pinyin|拼音/.test(h)) headerMap.pinyin=i;
-    if(/english|英文|en/.test(h)) headerMap.english=i;
-    if(/category|cat|類別/.test(h)) headerMap.category=i;
-    if(/sentence.*zh|example.*zh|sentencezh/.test(h)) headerMap.sentenceZh=i;
-    if(/sentence.*en|example.*en|sentenceen/.test(h)) headerMap.sentenceEn=i;
-    if(/notes?|備注/.test(h)) headerMap.notes=i;
+function parseMarkdownTable(raw) {
+  const lines = raw.trim().split('\n')
+    .map(l => l.trim()).filter(l => l.startsWith('|'));
+  if (lines.length < 2) return [];
+
+  const headers = lines[0].split('|')
+    .map(h => h.trim().toLowerCase()).filter(Boolean);
+  const hm = {};
+  headers.forEach((h, i) => {
+    if (/chinese|繁體|中文|漢字/.test(h)) hm.chinese = i;
+    if (/pinyin|拼音/.test(h))            hm.pinyin  = i;
+    if (/english|英文|en/.test(h))        hm.english  = i;
+    if (/category|cat|類別/.test(h))      hm.category = i;
+    if (/sentence.*zh|sentencezh/.test(h)) hm.sentenceZh = i;
+    if (/sentence.*en|sentenceen/.test(h)) hm.sentenceEn = i;
+    if (/notes?|備注/.test(h))            hm.notes = i;
   });
-  // If no explicit english/chinese found, try column positions from common format
-  // Format: | English | 繁體中文 | Pinyin | Notes |
-  if(headerMap.english===undefined) headerMap.english=0;
-  if(headerMap.chinese===undefined) headerMap.chinese=1;
-  if(headerMap.pinyin===undefined) headerMap.pinyin=2;
+  if (hm.english  === undefined) hm.english  = 0;
+  if (hm.chinese  === undefined) hm.chinese  = 1;
+  if (hm.pinyin   === undefined) hm.pinyin   = 2;
 
-  const cards=[];
-  for(let i=2;i<lines.length;i++){
-    const cols=lines[i].split('|').map(c=>c.trim()).filter((_,j)=>j>0);
-    if(!cols.length||cols.join('').replace(/-/g,'').trim()==='') continue;
-    const get=(k)=>cols[headerMap[k]]||'';
-    const chinese=get('chinese'), english=get('english');
-    if(!chinese&&!english) continue;
+  const cards = [];
+  for (let i = 2; i < lines.length; i++) {
+    const cols = lines[i].split('|')
+      .map(c => c.trim()).filter((_, j) => j > 0);
+    if (!cols.length || cols.join('').replace(/-/g,'').trim() === '') continue;
+    const get = k => cols[hm[k]] || '';
+    const chinese = get('chinese');
+    const english = get('english');
+    if (!chinese && !english) continue;
     cards.push({
-      chinese: chinese||'',
-      pinyin: get('pinyin'),
-      english: english||'',
-      category: guessCategory(get('category')||get('notes')||english),
+      chinese,
+      pinyin:     get('pinyin'),
+      english,
+      category:   guessCategory(get('category') || get('notes') || english),
       sentenceZh: get('sentenceZh'),
       sentenceEn: get('sentenceEn'),
     });
@@ -811,140 +1233,195 @@ function parseMarkdownTable(raw){
   return cards;
 }
 
-function guessCategory(hint){
-  const h=(hint||'').toLowerCase();
-  if(/pcb|circuit|schematic|layout|gerber|bom|trace|via|footprint|firmware/.test(h)) return 'PCB Design';
-  if(/supply|vendor|supplier|sourcing|logistics|purchase|po|lead|invoice|customs|qc|delivery/.test(h)) return 'Supply Chain';
-  if(/product|npi|prototype|production|milestone|tooling|spec|revision/.test(h)) return 'Product Development';
+function guessCategory(hint) {
+  const h = (hint || '').toLowerCase();
+  if (/pcb|circuit|schematic|layout|gerber|bom|trace|via|footprint|firmware/.test(h))
+    return 'PCB Design';
+  if (/supply|vendor|supplier|sourcing|logistics|purchase|po|lead|invoice|customs|qc/.test(h))
+    return 'Supply Chain';
+  if (/product|npi|prototype|production|milestone|tooling|spec|revision/.test(h))
+    return 'Product Development';
   return 'General';
 }
 
-function importFromPaste(){
+function importFromPaste() {
   addCards(pastePreviewCards);
-  document.getElementById('paste-input').value='';
-  document.getElementById('paste-preview').innerHTML='';
-  document.getElementById('paste-count').textContent='';
-  document.getElementById('paste-import-btn').disabled=true;
-  pastePreviewCards=[];
+  document.getElementById('paste-input').value = '';
+  document.getElementById('paste-preview').innerHTML = '';
+  document.getElementById('paste-count').textContent = '';
+  document.getElementById('paste-import-btn').disabled = true;
+  pastePreviewCards = [];
 }
 
 // ════════════════════════════════════════════
 //  IMPORT — CSV
 // ════════════════════════════════════════════
-function handleCSVFile(e){
-  const file=e.target.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{ csvPreviewCards=parseCSV(ev.target.result); renderPreview('csv-preview',csvPreviewCards); document.getElementById('csv-count').textContent=csvPreviewCards.length?`${csvPreviewCards.length} cards ready`:''; document.getElementById('csv-import-btn').disabled=!csvPreviewCards.length; };
+function handleCSVFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    csvPreviewCards = parseCSV(ev.target.result);
+    renderPreview('csv-preview', csvPreviewCards);
+    const n = csvPreviewCards.length;
+    document.getElementById('csv-count').textContent = n ? `${n} cards ready` : '';
+    document.getElementById('csv-import-btn').disabled = !n;
+  };
   reader.readAsText(file);
 }
 
-function parseCSV(text){
-  const lines=text.trim().split('\n');
-  if(!lines.length) return[];
-  const headers=lines[0].split(',').map(h=>h.replace(/"/g,'').trim().toLowerCase());
-  const map={};
-  headers.forEach((h,i)=>{
-    if(/chinese|繁體|zh/.test(h)) map.chinese=i;
-    if(/pinyin/.test(h)) map.pinyin=i;
-    if(/english|en$/.test(h)) map.english=i;
-    if(/cat/.test(h)) map.category=i;
-    if(/sentencezh|sentence_zh/.test(h)) map.sentenceZh=i;
-    if(/sentenceen|sentence_en/.test(h)) map.sentenceEn=i;
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (!lines.length) return [];
+  const headers = lines[0].split(',')
+    .map(h => h.replace(/"/g,'').trim().toLowerCase());
+  const map = {};
+  headers.forEach((h, i) => {
+    if (/chinese|繁體|zh/.test(h)) map.chinese = i;
+    if (/pinyin/.test(h))          map.pinyin  = i;
+    if (/english|en$/.test(h))     map.english  = i;
+    if (/cat/.test(h))             map.category = i;
+    if (/sentencezh|sentence_zh/.test(h)) map.sentenceZh = i;
+    if (/sentenceen|sentence_en/.test(h)) map.sentenceEn = i;
   });
-  if(map.chinese===undefined) map.chinese=0;
-  if(map.english===undefined) map.english=2;
-  const cards=[];
-  for(let i=1;i<lines.length;i++){
-    const cols=parseCSVLine(lines[i]);
-    const get=k=>map[k]!==undefined?(cols[map[k]]||'').replace(/^"|"$/g,'').trim():'';
-    if(!get('chinese')&&!get('english')) continue;
-    cards.push({ chinese:get('chinese'), pinyin:get('pinyin'), english:get('english'), category:get('category')||guessCategory(get('english')), sentenceZh:get('sentenceZh'), sentenceEn:get('sentenceEn') });
+  if (map.chinese === undefined) map.chinese = 0;
+  if (map.english === undefined) map.english = 2;
+
+  const cards = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = parseCSVLine(lines[i]);
+    const get = k =>
+      map[k] !== undefined
+        ? (cols[map[k]] || '').replace(/^"|"$/g,'').trim()
+        : '';
+    if (!get('chinese') && !get('english')) continue;
+    cards.push({
+      chinese:    get('chinese'),
+      pinyin:     get('pinyin'),
+      english:    get('english'),
+      category:   get('category') || guessCategory(get('english')),
+      sentenceZh: get('sentenceZh'),
+      sentenceEn: get('sentenceEn'),
+    });
   }
   return cards;
 }
 
-function parseCSVLine(line){
-  const result=[]; let cur='', inQ=false;
-  for(let i=0;i<line.length;i++){
-    if(line[i]==='"') inQ=!inQ;
-    else if(line[i]===','&&!inQ){ result.push(cur); cur=''; }
-    else cur+=line[i];
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    if (line[i] === '"') inQ = !inQ;
+    else if (line[i] === ',' && !inQ) { result.push(cur); cur = ''; }
+    else cur += line[i];
   }
-  result.push(cur); return result;
+  result.push(cur);
+  return result;
 }
 
-function downloadTemplate(){
-  const header='Chinese,Pinyin,English,Category,SentenceZh,SentenceEn\n';
-  const sample='供應鏈,Gōngyìng liàn,Supply chain,Supply Chain,我們的供應鏈受到了影響。,Our supply chain has been impacted.\n';
-  const blob=new Blob([header+sample],{type:'text/csv'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='hanzi-srs-template.csv'; a.click();
+function downloadTemplate() {
+  const header = 'Chinese,Pinyin,English,Category,SentenceZh,SentenceEn\n';
+  const sample = '供應鏈,Gōngyìng liàn,Supply chain,Supply Chain,' +
+    '我們的供應鏈受到了影響。,Our supply chain has been impacted.\n';
+  const blob = new Blob([header + sample], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'hanzi-srs-template.csv';
+  a.click();
 }
 
-function importFromCSV(){
+function importFromCSV() {
   addCards(csvPreviewCards);
-  csvPreviewCards=[]; document.getElementById('csv-preview').innerHTML='';
-  document.getElementById('csv-count').textContent=''; document.getElementById('csv-import-btn').disabled=true;
-  document.getElementById('csv-file-input').value='';
+  csvPreviewCards = [];
+  document.getElementById('csv-preview').innerHTML = '';
+  document.getElementById('csv-count').textContent = '';
+  document.getElementById('csv-import-btn').disabled = true;
+  document.getElementById('csv-file-input').value = '';
 }
 
 // ════════════════════════════════════════════
-//  IMPORT — BULK TEXT
+//  IMPORT — BULK
 // ════════════════════════════════════════════
-function parseBulkPreview(){
-  const raw=document.getElementById('bulk-input').value;
-  bulkPreviewCards=parseBulkText(raw);
-  renderPreview('bulk-preview',bulkPreviewCards);
-  document.getElementById('bulk-count').textContent=bulkPreviewCards.length?`${bulkPreviewCards.length} cards ready`:'';
-  document.getElementById('bulk-import-btn').disabled=!bulkPreviewCards.length;
+function parseBulkPreview() {
+  bulkPreviewCards = parseBulkText(document.getElementById('bulk-input').value);
+  renderPreview('bulk-preview', bulkPreviewCards);
+  const n = bulkPreviewCards.length;
+  document.getElementById('bulk-count').textContent = n ? `${n} cards ready` : '';
+  document.getElementById('bulk-import-btn').disabled = !n;
 }
 
-function parseBulkText(raw){
-  return raw.trim().split('\n').map(line=>{
-    const parts=line.split('|').map(p=>p.trim());
-    if(parts.length<3) return null;
-    return { chinese:parts[0], pinyin:parts[1], english:parts[2], category:parts[3]||guessCategory(parts[2]), sentenceZh:'', sentenceEn:'' };
+function parseBulkText(raw) {
+  return raw.trim().split('\n').map(line => {
+    const parts = line.split('|').map(p => p.trim());
+    if (parts.length < 3) return null;
+    return {
+      chinese:    parts[0],
+      pinyin:     parts[1],
+      english:    parts[2],
+      category:   parts[3] || guessCategory(parts[2]),
+      sentenceZh: '',
+      sentenceEn: '',
+    };
   }).filter(Boolean);
 }
 
-function importFromBulk(){
+function importFromBulk() {
   addCards(bulkPreviewCards);
-  document.getElementById('bulk-input').value=''; document.getElementById('bulk-preview').innerHTML='';
-  document.getElementById('bulk-count').textContent=''; document.getElementById('bulk-import-btn').disabled=true;
-  bulkPreviewCards=[];
+  document.getElementById('bulk-input').value = '';
+  document.getElementById('bulk-preview').innerHTML = '';
+  document.getElementById('bulk-count').textContent = '';
+  document.getElementById('bulk-import-btn').disabled = true;
+  bulkPreviewCards = [];
 }
 
 // ════════════════════════════════════════════
 //  SHARED IMPORT HELPERS
 // ════════════════════════════════════════════
-function addCards(cards){
-  if(!cards.length) return;
-  // Deduplicate by chinese
-  const existing=new Set(db.cards.map(c=>c.chinese));
-  const newCards=cards.filter(c=>!existing.has(c.chinese));
-  const skipped=cards.length-newCards.length;
-  newCards.forEach(c=>db.cards.push(makeCard(c)));
+function addCards(cards) {
+  if (!cards.length) return;
+  const existing = new Set(db.cards.map(c => c.chinese));
+  const newCards = cards.filter(c => !existing.has(c.chinese));
+  const skipped = cards.length - newCards.length;
+  newCards.forEach(c => db.cards.push(makeCard(c)));
   save(); buildQueue(); renderStudy();
-  const msg=`${newCards.length} card${newCards.length!==1?'s':''} imported`+(skipped?` (${skipped} duplicate${skipped!==1?'s':''} skipped)`:'');
-  toast(msg,'success');
+  const msg = `${newCards.length} card${newCards.length !== 1 ? 's' : ''} imported` +
+    (skipped ? ` (${skipped} duplicate${skipped !== 1 ? 's' : ''} skipped)` : '');
+  toast(msg, 'success');
   closeImportPanel();
   switchView('library');
 }
 
-function renderPreview(containerId, cards){
-  const el=document.getElementById(containerId);
-  if(!cards.length){ el.innerHTML=''; return; }
-  el.innerHTML=`
+function renderPreview(containerId, cards) {
+  const el = document.getElementById(containerId);
+  if (!cards.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `
     <div class="preview-table-wrap">
       <table class="preview-table">
-        <thead><tr><th>Chinese</th><th>Pinyin</th><th>English</th><th>Category</th><th></th></tr></thead>
-        <tbody>${cards.map(c=>`
+        <thead>
           <tr>
-            <td class="pv-zh">${c.chinese||'<span style="color:var(--red)">missing</span>'}</td>
-            <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent)">${c.pinyin||''}</td>
-            <td>${c.english||'<span style="color:var(--red)">missing</span>'}</td>
-            <td style="font-size:10px;color:var(--green)">${c.category}</td>
-            <td>${c.chinese&&c.english?'<span class="pv-check">✓</span>':'<span class="pv-warn">⚠</span>'}</td>
-          </tr>`).join('')}
+            <th>Chinese</th><th>Pinyin</th>
+            <th>English</th><th>Category</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${cards.map(c => `
+            <tr>
+              <td class="pv-zh">
+                ${c.chinese || '<span style="color:var(--scm-warn)">missing</span>'}
+              </td>
+              <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--scm-amber)">
+                ${c.pinyin || ''}
+              </td>
+              <td>
+                ${c.english || '<span style="color:var(--scm-warn)">missing</span>'}
+              </td>
+              <td style="font-size:10px;color:var(--scm-teal)">${c.category}</td>
+              <td>
+                ${c.chinese && c.english
+                  ? '<span class="pv-check">✓</span>'
+                  : '<span class="pv-warn">⚠</span>'}
+              </td>
+            </tr>`).join('')}
         </tbody>
       </table>
     </div>`;
@@ -953,71 +1430,104 @@ function renderPreview(containerId, cards){
 // ════════════════════════════════════════════
 //  EXPORT
 // ════════════════════════════════════════════
-function exportCSV(){
-  const header='Chinese,Pinyin,English,Category,SentenceZh,SentenceEn,Interval,EaseFactor,Repetitions\n';
-  const rows=db.cards.map(c=>[c.chinese,c.pinyin,c.english,c.category,c.sentenceZh||'',c.sentenceEn||'',c.interval||1,c.easeFactor||2.5,c.repetitions||0].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob=new Blob([header+rows],{type:'text/csv'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download=`hanzi-srs-export-${new Date().toISOString().slice(0,10)}.csv`; a.click();
-  toast('Exported to CSV','success');
+function exportCSV() {
+  const header =
+    'Chinese,Pinyin,English,Category,SentenceZh,SentenceEn,' +
+    'Interval,EaseFactor,Repetitions\n';
+  const rows = db.cards.map(c => {
+    const fields = [
+      c.chinese, c.pinyin, c.english, c.category,
+      c.sentenceZh || '', c.sentenceEn || '',
+      c.interval || 1, c.easeFactor || 2.5, c.repetitions || 0
+    ];
+    return fields.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',');
+  }).join('\n');
+  const blob = new Blob([header + rows], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `hanzi-srs-export-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast('Exported to CSV', 'success');
 }
 
 // ════════════════════════════════════════════
 //  ADD SINGLE
 // ════════════════════════════════════════════
-function saveNewCard(){
-  const zh=document.getElementById('a-zh').value.trim();
-  const en=document.getElementById('a-en').value.trim();
-  if(!zh||!en){ toast('Chinese and English are required','error'); return; }
+function saveNewCard() {
+  const zh = document.getElementById('a-zh').value.trim();
+  const en = document.getElementById('a-en').value.trim();
+  if (!zh || !en) { toast('Chinese and English are required', 'error'); return; }
   db.cards.push(makeCard({
-    chinese:zh, pinyin:document.getElementById('a-py').value.trim(),
-    english:en, category:document.getElementById('a-cat').value,
-    sentenceZh:document.getElementById('a-szh').value.trim(),
-    sentenceEn:document.getElementById('a-sen').value.trim(),
+    chinese:    zh,
+    pinyin:     document.getElementById('a-py').value.trim(),
+    english:    en,
+    category:   document.getElementById('a-cat').value,
+    sentenceZh: document.getElementById('a-szh').value.trim(),
+    sentenceEn: document.getElementById('a-sen').value.trim(),
   }));
   save(); buildQueue(); renderStudy();
-  toast(`"${zh}" added`,'success');
+  toast(`"${zh}" added`, 'success');
   clearAddForm();
 }
-function clearAddForm(){ ['a-zh','a-py','a-en','a-szh','a-sen'].forEach(id=>document.getElementById(id).value=''); }
+function clearAddForm() {
+  ['a-zh','a-py','a-en','a-szh','a-sen']
+    .forEach(id => document.getElementById(id).value = '');
+}
 
 // ════════════════════════════════════════════
 //  NAVIGATION
 // ════════════════════════════════════════════
-const VIEWS=['study','library','import','add'];
-function switchView(v){
-  VIEWS.forEach(id=>{
-    document.getElementById('view-'+id).classList.toggle('active',id===v);
-    const t=document.getElementById('tab-'+id); if(t) t.classList.toggle('active',id===v);
-    const s=document.getElementById('sb-'+id); if(s) s.classList.toggle('active',id===v);
+const VIEWS = ['study','library','import','add'];
+function switchView(v) {
+  VIEWS.forEach(id => {
+    document.getElementById('view-' + id).classList.toggle('active', id === v);
+    const t = document.getElementById('tab-' + id);
+    if (t) t.classList.toggle('active', id === v);
+    const s = document.getElementById('sb-' + id);
+    if (s) s.classList.toggle('active', id === v);
   });
-  if(v==='library') renderLibrary();
-  if(v==='import') closeImportPanel();
+  if (v === 'library') renderLibrary();
+  if (v === 'import') closeImportPanel();
 }
 
 // ════════════════════════════════════════════
 //  IMPORT PANELS
 // ════════════════════════════════════════════
-function openImportPanel(name){
+function openImportPanel(name) {
   switchView('import');
-  document.getElementById('import-cards').style.display='none';
-  ['paste','csv','bulk'].forEach(p=>document.getElementById('panel-'+p).classList.remove('open'));
-  document.getElementById('panel-'+name).classList.add('open');
+  document.getElementById('import-cards').style.display = 'none';
+  ['paste','csv','bulk'].forEach(p =>
+    document.getElementById('panel-' + p).classList.remove('open')
+  );
+  document.getElementById('panel-' + name).classList.add('open');
 }
-function closeImportPanel(){
-  document.getElementById('import-cards').style.display='grid';
-  ['paste','csv','bulk'].forEach(p=>document.getElementById('panel-'+p).classList.remove('open'));
+function closeImportPanel() {
+  document.getElementById('import-cards').style.display = 'grid';
+  ['paste','csv','bulk'].forEach(p =>
+    document.getElementById('panel-' + p).classList.remove('open')
+  );
 }
 
 // Drag and drop for CSV
-const dropZone=document.getElementById('file-drop');
-dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
-dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
-dropZone.addEventListener('drop',e=>{
-  e.preventDefault(); dropZone.classList.remove('dragover');
-  const file=e.dataTransfer.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=ev=>{ csvPreviewCards=parseCSV(ev.target.result); renderPreview('csv-preview',csvPreviewCards); document.getElementById('csv-count').textContent=csvPreviewCards.length?`${csvPreviewCards.length} cards ready`:''; document.getElementById('csv-import-btn').disabled=!csvPreviewCards.length; };
+const dropZone = document.getElementById('file-drop');
+dropZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  dropZone.classList.add('dragover');
+});
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    csvPreviewCards = parseCSV(ev.target.result);
+    renderPreview('csv-preview', csvPreviewCards);
+    const n = csvPreviewCards.length;
+    document.getElementById('csv-count').textContent = n ? `${n} cards ready` : '';
+    document.getElementById('csv-import-btn').disabled = !n;
+  };
   reader.readAsText(file);
 });
 
@@ -1025,24 +1535,28 @@ dropZone.addEventListener('drop',e=>{
 //  TOAST
 // ════════════════════════════════════════════
 let toastTimer;
-function toast(msg,type='success'){
-  const el=document.getElementById('toast');
-  document.getElementById('toast-msg').textContent=msg;
-  el.className=`toast ${type} show`;
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  el.className = `toast ${type} show`;
   clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.classList.remove('show'),3000);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
 }
 
 // ════════════════════════════════════════════
 //  KEYBOARD
 // ════════════════════════════════════════════
-document.addEventListener('keydown',e=>{
-  if(document.getElementById('view-study').classList.contains('active')){
-    if(!session.revealed&&(e.key===' '||e.key==='Enter')){ e.preventDefault(); revealAnswer(); }
-    if(session.revealed){
-      if(e.key==='1') rate(0); if(e.key==='2') rate(1);
-      if(e.key==='3') rate(2); if(e.key==='4') rate(3);
-    }
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('view-study').classList.contains('active')) return;
+  if (!session.revealed && (e.key === ' ' || e.key === 'Enter')) {
+    e.preventDefault();
+    revealAnswer();
+  }
+  if (session.revealed) {
+    if (e.key === '1') rate(0);
+    if (e.key === '2') rate(1);
+    if (e.key === '3') rate(2);
+    if (e.key === '4') rate(3);
   }
 });
 
