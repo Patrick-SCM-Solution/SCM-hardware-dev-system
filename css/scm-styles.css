@@ -774,3 +774,38 @@ footer {
 .big            { font-size:40px;margin-bottom:12px; }
 .card-title-left { display:flex;align-items:center;gap:10px; }
 .card-title-left::before { content:"";display:block;width:3px;height:16px;border-radius:2px;background:var(--scm-amber); }
+
+/* ── MISSING ELEMENT SELECTORS ───────────────────────────────────
+   These element-level styles were previously inline per-file.
+   Added here so all pages inherit them from the shared stylesheet.
+   ─────────────────────────────────────────────────────────────── */
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 56px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--bdr);
+}
+
+/* ── ALSO MISSING: .sol logo span ────────────────────────────── */
+.sol { color: var(--text); font-weight: 400; }
+
+/* ── ASSET TABLE (project registry) ─────────────────────────────
+   .asset-table was in registry page CSS but references here too  */
+.asset-table { width:100%; border-collapse:collapse; }
+.asset-table th {
+  background: rgba(10,13,20,.8); color: var(--muted);
+  font-family: "Barlow Condensed", sans-serif; font-size: 10px;
+  font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--bdr);
+  cursor: pointer; user-select: none; white-space: nowrap;
+}
+.asset-table th:hover  { color: var(--scm-blue); }
+.asset-table th.sorted { color: var(--scm-amber); }
+.asset-table td {
+  padding: 10px 12px; border-bottom: 1px solid rgba(30,58,85,.4);
+  vertical-align: middle; font-size: 12px;
+}
+.asset-table tr:hover td { background: rgba(246,173,85,.03); }
