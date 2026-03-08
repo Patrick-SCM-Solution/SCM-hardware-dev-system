@@ -3,32 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ME Asset Checklist — SCM Hardware System</title>
+<title>EE Asset Checklist — SCM Hardware System</title>
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/scm-styles.css">
   <style>
-  .cl-section-num{color:var(--scm-teal);background:rgba(79,209,197,.1);border-color:rgba(79,209,197,.2)}
-  .cl-item-ext{color:var(--scm-teal)}
-  .prog-fill{background:linear-gradient(90deg,var(--scm-teal),var(--scm-green))}
-  .prog-lbl{color:var(--scm-teal)}
-  .cl-item:hover{background:rgba(79,209,197,.04)}
+  .cl-section-num{color:var(--scm-sky);background:rgba(99,179,237,.1);border-color:rgba(99,179,237,.2)}
+  .cl-item-ext{color:var(--scm-sky)}
+  .prog-fill{background:linear-gradient(90deg,var(--scm-sky),var(--scm-green))}
+  .prog-lbl{color:var(--scm-sky)}
+  .cl-item:hover{background:rgba(99,179,237,.04)}
   </style>
 </head>
 <body>
 <div class="wrap">
-
   <nav>
     <a href="../index.html">← Phase Map</a>
     <span>/</span>
     <span>Checklists</span>
     <span>/</span>
-    <span>ME Asset Checklist</span>
+    <span>EE Asset Checklist</span>
   </nav>
 
   <header>
     <div class="phase-tag">Design Phase — DR2</div>
-    <h1>Mechanical Engineering<br>Asset Checklist</h1>
-    <p class="subtitle">All ME files must be checked off before the DR2 gate can be passed. Work through each section in order. Native CAD requires NDA confirmation before sending to any external partner.</p>
+    <h1>Electrical Engineering<br>Asset Checklist</h1>
+    <p class="subtitle">All EE files must be checked off before the DR2 gate can be passed. Native schematic and layout files are IP sensitive — confirm NDA before sending to any external partner.</p>
   </header>
 
   <div class="progress-wrap">
@@ -41,104 +40,90 @@
 
   <footer>
     <span>SCM Solution LTD. — Hardware Development System</span>
-    <span>ME Asset Checklist · Rev 1.0</span>
+    <span>EE Asset Checklist · Rev 1.0</span>
   </footer>
 </div>
 
 <script>
 const data = [
   {
-    num: "01", title: "Master Assembly File",
+    num: "01", title: "Schematic Files",
     items: [
-      { name: "Master Assembly", ext: ".sldasm / .iam / .f3d", desc: "Top-level assembly file referencing all sub-assemblies and parts. Single source of truth. Version-controlled.", badges: ["ip","odm"] },
-      { name: "Assembly Drawing (2D)", ext: ".dwg / .pdf", desc: "2D drawing from master assembly showing overall dimensions, key references, and BOM table.", badges: ["cm","odm","safe"] },
-      { name: "Exploded View", ext: ".pdf / image", desc: "Rendered exploded view for assembly instructions and service documentation.", badges: ["cm","odm","safe"] },
-      { name: "Top-Level BOM", ext: ".xlsx / .csv", desc: "Complete bill of materials. Includes part numbers, quantities, materials, supplier. Strip pricing before sending.", badges: ["cm","odm","rev"] },
+      { name: "Native Schematic", ext: ".sch / .SchDoc / .kicad_sch", desc: "Native schematic file from EE CAD tool (KiCad, Altium, Eagle). Full circuit design with net names and component references.", badges: ["ip"] },
+      { name: "Schematic PDF Export", ext: ".pdf", desc: "PDF export of all schematic sheets. Standard format sent to CM and ODM for troubleshooting and DFM review.", badges: ["cm","odm","safe"] },
+      { name: "Schematic Hierarchy Diagram", ext: ".pdf", desc: "Top-level block diagram showing schematic sheet hierarchy for complex multi-sheet designs.", badges: ["cm","odm","safe"] },
     ]
   },
   {
-    num: "02", title: "Part Files — Individual Components",
+    num: "02", title: "PCB Layout Files",
     items: [
-      { name: "Enclosure / Housing", ext: "Native CAD", desc: "3D model of main enclosure. Send STEP export to CM — not native file.", badges: ["ip"] },
-      { name: "Internal Brackets", ext: "Native CAD", desc: "Structural brackets, standoffs, mounting features.", badges: ["ip"] },
-      { name: "PCB Mechanical Keepout", ext: "Native CAD / .dxf", desc: "Mechanical model of PCB with keepout zones, connector cutouts, mounting holes. Coordinate with EE team.", badges: ["cm","odm","rev"] },
-      { name: "Buttons / Controls", ext: "Native CAD", desc: "All user-facing physical controls — buttons, dials, ports.", badges: ["ip"] },
-      { name: "Gaskets / Seals", ext: "Native CAD", desc: "Sealing components for IP-rated enclosures.", badges: ["ip"] },
-      { name: "Cosmetic / External Surfaces", ext: "Native CAD", desc: "Class-A surfaces, cosmetic faces, surface finish definitions. High IP sensitivity.", badges: ["ip"] },
-      { name: "Off-the-Shelf Part Models", ext: ".STEP / .stp", desc: "Standard hardware: screws, inserts, connectors, fans. Download from McMaster, Misumi etc.", badges: ["cm","odm","safe"] },
+      { name: "Native PCB Layout", ext: ".brd / .PcbDoc / .kicad_pcb", desc: "Native PCB layout file. Full board design with copper layers, vias, silkscreen, and courtyard definitions.", badges: ["ip"] },
+      { name: "PCB Layout PDF / Image", ext: ".pdf / .png", desc: "Visual export of PCB layout for review. Include top and bottom copper layers at minimum.", badges: ["cm","odm","safe"] },
+      { name: "Board Outline / Mechanical Layer", ext: ".dxf / .dwg", desc: "PCB board outline exported as DXF for mechanical team integration and enclosure design.", badges: ["cm","odm","safe"] },
+      { name: "3D PCB Model", ext: ".step / .stp", desc: "3D export of PCB with component heights for mechanical clearance checking.", badges: ["cm","odm","safe"] },
     ]
   },
   {
-    num: "03", title: "Native CAD Files — Program Specific",
+    num: "03", title: "Fabrication Package — PCB Fab",
     items: [
-      { name: "SolidWorks Assembly", ext: ".sldasm", desc: "Native SolidWorks master assembly. Requires SolidWorks license to open.", badges: ["ip"] },
-      { name: "SolidWorks Parts", ext: ".sldprt", desc: "Native SolidWorks individual part files.", badges: ["ip"] },
-      { name: "Autodesk Inventor Assembly", ext: ".iam", desc: "Native Inventor master assembly. Requires Inventor license.", badges: ["ip"] },
-      { name: "Autodesk Inventor Parts", ext: ".ipt", desc: "Native Inventor individual part files.", badges: ["ip"] },
-      { name: "Fusion 360 Archive", ext: ".f3d / .f3z", desc: "Fusion 360 native file or full archive. .f3z includes all linked components.", badges: ["ip"] },
-      { name: "CATIA Assembly", ext: ".CATProduct", desc: "Native CATIA V5/V6 assembly. Enterprise / automotive use.", badges: ["ip"] },
-      { name: "CATIA Parts", ext: ".CATPart", desc: "Native CATIA individual part files.", badges: ["ip"] },
-      { name: "PTC Creo Assembly", ext: ".asm", desc: "Native Creo Parametric assembly file.", badges: ["ip"] },
-      { name: "PTC Creo Parts", ext: ".prt", desc: "Native Creo individual part files.", badges: ["ip"] },
-      { name: "Siemens NX Assembly", ext: ".prt (assembly)", desc: "Native NX assembly file. Same extension as parts — name carefully.", badges: ["ip"] },
+      { name: "Gerber Files", ext: ".gbr / .ger", desc: "Full Gerber set: copper layers, silkscreen, soldermask, paste layers. Primary PCB fabrication format.", badges: ["cm","odm","safe"] },
+      { name: "Drill Files", ext: ".drl / .xln", desc: "NC drill file with plated and non-plated holes. Must accompany Gerber files.", badges: ["cm","odm","safe"] },
+      { name: "ODB++", ext: ".tgz / .zip", desc: "Richer alternative to Gerbers preferred by some CMs. Includes all fab data in one package.", badges: ["cm","odm","safe"] },
+      { name: "PCB Fab Spec", ext: ".pdf", desc: "Board stackup, layer count, finished copper weights, surface finish (HASL/ENIG), impedance requirements, controlled depth drilling.", badges: ["cm","odm","safe"] },
+      { name: "IPC Netlist", ext: ".ipc / .txt", desc: "IPC-D-356 netlist for electrical testing. Confirms net connectivity after fabrication.", badges: ["cm","odm","safe"] },
     ]
   },
   {
-    num: "04", title: "Neutral / Export Formats — Manufacturer Deliverables",
+    num: "04", title: "Bill of Materials + AVL",
     items: [
-      { name: "STEP — Full Assembly", ext: ".step / .stp", desc: "Neutral 3D assembly export. Primary format sent to CM for quoting, DFM, and tooling. AP214 or AP242 preferred.", badges: ["cm","odm","safe"] },
-      { name: "STEP — Individual Parts", ext: ".step / .stp", desc: "Individual part exports. Send alongside assembly STEP for reference.", badges: ["cm","odm","safe"] },
-      { name: "IGES", ext: ".igs / .iges", desc: "Older neutral format. Use STEP unless CM specifically requests IGES.", badges: ["cm","odm","safe"] },
-      { name: "STL — Prototyping Only", ext: ".stl", desc: "Mesh export for 3D printing and rapid prototyping ONLY. Not for production use.", badges: ["cm","odm","safe"] },
-      { name: "DXF — 2D Profiles", ext: ".dxf", desc: "2D vector profiles for sheet metal, laser cutting, waterjet. Confirm units (mm vs inch) before sending.", badges: ["cm","odm","safe"] },
-      { name: "DWG — 2D Drawings", ext: ".dwg", desc: "2D drawing format. AutoCAD native but widely supported.", badges: ["cm","odm","safe"] },
-      { name: "PDF — All Drawings", ext: ".pdf", desc: "PDF exports of all engineering drawings. Always include with any manufacturer package. Include revision number in filename.", badges: ["cm","odm","safe"] },
+      { name: "BOM — Full with MPNs", ext: ".xlsx / .csv", desc: "Complete BOM with Manufacturer Part Numbers (MPNs), reference designators, quantities, descriptions, and footprints.", badges: ["cm","odm","safe"] },
+      { name: "BOM — DNP Callouts", ext: ".xlsx / .csv", desc: "Clearly marks all Do Not Populate (DNP) components. Critical for assembly — errors here cause board failures.", badges: ["cm","odm","safe"] },
+      { name: "Approved Vendor List (AVL)", ext: ".xlsx", desc: "Approved manufacturers and distributors per component. Includes approved alternates where available.", badges: ["cm","odm","safe"] },
+      { name: "BOM Costing Sheet", ext: ".xlsx", desc: "Internal costing version of BOM. Strip pricing before sending externally.", badges: ["rev"] },
     ]
   },
   {
-    num: "05", title: "Engineering Drawings — 2D Documentation",
+    num: "05", title: "Component Placement List (CPL)",
     items: [
-      { name: "Part Drawing — Each Custom Part", ext: ".dwg / .pdf", desc: "Per-part 2D drawing with GD&T, tolerances, surface finish callouts, and material spec. Required for every custom part.", badges: ["cm","odm","rev"] },
-      { name: "Assembly Drawing", ext: ".dwg / .pdf", desc: "Shows assembled configuration, key dimensions, sub-assembly callouts.", badges: ["cm","odm","safe"] },
-      { name: "Weld / Fabrication Drawing", ext: ".dwg / .pdf", desc: "Weld symbols, joint types, fabrication notes. If applicable.", badges: ["cm","odm","safe"] },
-      { name: "Sheet Metal Flat Pattern", ext: ".dwg / .dxf", desc: "Unfolded flat pattern with bend lines. K-factor and bend radius must be specified.", badges: ["cm","odm","safe"] },
-      { name: "Packaging Drawing", ext: ".dwg / .pdf", desc: "Carton, foam insert, and tray dimensions.", badges: ["cm","odm","safe"] },
-      { name: "Cosmetic / Finish Drawing", ext: ".pdf", desc: "Color callouts, texture specs, CMF documentation. Include Pantone or RAL references.", badges: ["cm","odm","rev"] },
+      { name: "Pick and Place File", ext: ".csv / .txt", desc: "XY coordinates, rotation, and side (top/bottom) for every component. Used by CM to program pick-and-place machines.", badges: ["cm","odm","safe"] },
+      { name: "Assembly Drawing — Top", ext: ".pdf", desc: "Top-side assembly drawing showing component placement, reference designators, and polarity markers.", badges: ["cm","odm","safe"] },
+      { name: "Assembly Drawing — Bottom", ext: ".pdf", desc: "Bottom-side assembly drawing if components are placed on both sides.", badges: ["cm","odm","safe"] },
     ]
   },
   {
-    num: "06", title: "Supporting Documents",
+    num: "06", title: "Test Scripts + Firmware",
     items: [
-      { name: "Tolerance Stackup Analysis", ext: ".xlsx / .pdf", desc: "Critical fit/clearance analysis showing worst-case and nominal dimensional chains. Essential for tight-fit assemblies.", badges: ["cm","odm","rev"] },
-      { name: "DFM Feedback Log", ext: ".xlsx / .docx", desc: "Documented DFM review feedback from CM/ODM with design responses. Living document — update each revision.", badges: ["cm","odm","safe"] },
-      { name: "Material Specification Sheet", ext: ".pdf", desc: "Material standards e.g. ABS UL94-V0, 6061-T6 Al. Linked to part drawings.", badges: ["cm","odm","safe"] },
-      { name: "Surface Finish / CMF Spec", ext: ".pdf", desc: "Detailed color, texture, coating, and finish specifications.", badges: ["cm","odm","rev"] },
-      { name: "Approved Vendor List — ME", ext: ".xlsx", desc: "Approved suppliers for each custom and off-the-shelf mechanical component. Include alternates where possible.", badges: ["cm","odm","safe"] },
+      { name: "Functional Test Script", ext: ".py / .js / .exe", desc: "Post-assembly functional test procedure. CM runs this on every board after assembly to verify pass/fail.", badges: ["cm","odm","safe"] },
+      { name: "ICT / Bed-of-Nails Fixture Spec", ext: ".pdf / .xlsx", desc: "In-circuit test fixture requirements. Defines test points, fixture design, and test coverage.", badges: ["cm","safe"] },
+      { name: "Firmware Binary", ext: ".bin / .hex / .elf", desc: "Production firmware binary to be flashed during manufacture.", badges: ["cm","odm","safe"] },
+      { name: "Flashing Instructions", ext: ".pdf / .md", desc: "Step-by-step firmware flashing procedure for the production line. Include tool requirements and verification steps.", badges: ["cm","odm","safe"] },
+      { name: "Test Coverage Report", ext: ".pdf / .xlsx", desc: "Documents what percentage of nets and components are covered by test. Flags any untestable areas.", badges: ["cm","odm","safe"] },
+    ]
+  },
+  {
+    num: "07", title: "Supporting Documents",
+    items: [
+      { name: "Design Rules Check (DRC) Report", ext: ".pdf / .txt", desc: "Confirmed zero DRC errors on final layout before release. Document and file the clean DRC report.", badges: ["rev"] },
+      { name: "Signal Integrity / Power Analysis", ext: ".pdf", desc: "SI and PI simulation results for high-speed or power-sensitive designs.", badges: ["rev"] },
+      { name: "Thermal Analysis", ext: ".pdf", desc: "Thermal simulation or calculation for heat-generating components. Required if any component runs hot.", badges: ["rev"] },
+      { name: "FMEA — EE", ext: ".xlsx / .pdf", desc: "Failure Mode and Effects Analysis for critical electrical subsystems.", badges: ["rev"] },
+      { name: "Certification Pre-compliance Report", ext: ".pdf", desc: "Pre-compliance EMC/safety test results. Required before submitting for formal certification.", badges: ["cm","odm","safe"] },
       { name: "Revision History Log", ext: ".xlsx / .docx", desc: "Tracks all design changes by revision, date, author, and reason. Always include with any file package.", badges: ["cm","odm","safe"] },
     ]
   }
 ];
 
 const badgeMap = {
-  cm:   { label: "→ CM",        cls: "badge-cm" },
-  odm:  { label: "→ ODM",       cls: "badge-odm" },
-  ip:   { label: "IP Sensitive", cls: "badge-ip" },
-  safe: { label: "External Safe",cls: "badge-safe" },
-  rev:  { label: "Review First", cls: "badge-rev" },
+  cm:   { label: "→ CM",         cls: "badge-cm" },
+  odm:  { label: "→ ODM",        cls: "badge-odm" },
+  ip:   { label: "IP Sensitive",  cls: "badge-ip" },
+  safe: { label: "External Safe", cls: "badge-safe" },
+  rev:  { label: "Review First",  cls: "badge-rev" },
 };
 
 let state = {};
-
-function saveState() {
-  try { localStorage.setItem('me-checklist', JSON.stringify(state)); } catch(e) {}
-}
-
-function loadState() {
-  try {
-    const s = localStorage.getItem('me-checklist');
-    if (s) state = JSON.parse(s);
-  } catch(e) {}
-}
+function saveState() { try { localStorage.setItem('ee-checklist', JSON.stringify(state)); } catch(e) {} }
+function loadState() { try { const s = localStorage.getItem('ee-checklist'); if (s) state = JSON.parse(s); } catch(e) {} }
 
 function updateProgress() {
   let total = 0, checked = 0;
@@ -146,51 +131,36 @@ function updateProgress() {
   const pct = total ? Math.round(checked / total * 100) : 0;
   document.getElementById('progressFill').style.width = pct + '%';
   document.getElementById('progressLabel').textContent = checked + ' / ' + total + ' (' + pct + '%)';
-
-  // Update section counts
   data.forEach(sec => {
-    const secItems = sec.items.map((_, i) => sec.num + '-' + i);
-    const secTotal = secItems.length;
-    const secChecked = secItems.filter(k => state[k]).length;
+    const secChecked = sec.items.filter((_, i) => state[sec.num + '-' + i]).length;
     const el = document.getElementById('sec-progress-' + sec.num);
-    if (el) el.textContent = secChecked + ' / ' + secTotal;
+    if (el) el.textContent = secChecked + ' / ' + sec.items.length;
   });
 }
 
 function toggleItem(key) {
   state[key] = !state[key];
   const el = document.getElementById('item-' + key);
-  if (state[key]) el.classList.add('checked');
-  else el.classList.remove('checked');
-  saveState();
-  updateProgress();
+  if (state[key]) el.classList.add('checked'); else el.classList.remove('checked');
+  saveState(); updateProgress();
 }
 
-function toggleSection(num) {
-  const sec = document.getElementById('section-' + num);
-  sec.classList.toggle('collapsed');
-}
+function toggleSection(num) { document.getElementById('section-' + num).classList.toggle('collapsed'); }
 
 function resetAll() {
   if (!confirm('Reset all checkboxes?')) return;
   state = {};
   document.querySelectorAll('.item').forEach(el => el.classList.remove('checked'));
-  saveState();
-  updateProgress();
+  saveState(); updateProgress();
 }
 
 function render() {
   loadState();
   const container = document.getElementById('sections');
-  container.innerHTML = '';
-
   data.forEach(sec => {
     const div = document.createElement('div');
-    div.className = 'section';
-    div.id = 'section-' + sec.num;
-
+    div.className = 'section'; div.id = 'section-' + sec.num;
     const secChecked = sec.items.filter((_, i) => state[sec.num + '-' + i]).length;
-
     div.innerHTML = `
       <div class="section-header" onclick="toggleSection('${sec.num}')">
         <span class="section-num">${sec.num}</span>
@@ -202,9 +172,7 @@ function render() {
         ${sec.items.map((item, i) => {
           const key = sec.num + '-' + i;
           const checked = state[key] ? 'checked' : '';
-          const badges = item.badges.map(b =>
-            `<span class="badge ${badgeMap[b].cls}">${badgeMap[b].label}</span>`
-          ).join('');
+          const badges = item.badges.map(b => `<span class="badge ${badgeMap[b].cls}">${badgeMap[b].label}</span>`).join('');
           return `
             <div class="item ${checked}" id="item-${key}" onclick="toggleItem('${key}')">
               <div class="checkbox"><span class="tick">✓</span></div>
@@ -213,17 +181,13 @@ function render() {
                 <div class="item-desc">${item.desc}</div>
                 <div class="item-badges">${badges}</div>
               </div>
-            </div>
-          `;
+            </div>`;
         }).join('')}
-      </div>
-    `;
+      </div>`;
     container.appendChild(div);
   });
-
   updateProgress();
 }
-
 render();
 </script>
 </body>
