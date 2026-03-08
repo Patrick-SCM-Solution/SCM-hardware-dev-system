@@ -4,16 +4,74 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SCM Solution — Hardware Development Phase Map</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- Root pages (index.html) -->
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/scm-styles.css">
-
-<!-- Subpages (checklists/, tools/) -->
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/scm-styles.css">
-<style></style>
-
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/scm-styles.css">
+  <style>
+  /* Phase arrows */
+  .phase-bar{display:flex;gap:0;position:relative}
+  .phase-arrow{flex:1;position:relative;padding:14px 14px 14px 28px;background:var(--surf);border:1px solid var(--bdr);cursor:pointer;transition:all .2s;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,0 100%,16px 50%);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-height:72px}
+  .phase-arrow:first-child{clip-path:polygon(0 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,0 100%);padding-left:14px}
+  .phase-arrow:hover,.phase-arrow.active{background:rgba(27,155,212,.15);border-color:var(--scm-blue);z-index:1}
+  .pa-label{font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+  .pa-sub{font-size:10px;color:var(--muted);margin-top:2px}
+  .phase-arrow.active .pa-label{color:var(--scm-blue)}
+  /* Detail panels */
+  .detail-panel{display:none;background:var(--surf);border:1px solid var(--bdr);border-radius:0 0 8px 8px;border-top:none;padding:28px 32px;margin-top:-1px}
+  .detail-panel.open{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:24px}
+  .dp-section-title{font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .dp-item{font-size:12px;padding:5px 0;border-bottom:1px solid rgba(30,58,85,.4);display:flex;align-items:flex-start;gap:8px}
+  .dp-item::before{content:"→";color:var(--scm-blue);flex-shrink:0;font-size:11px;margin-top:1px}
+  .dp-item.highlight{color:var(--scm-green);font-weight:600}
+  .dp-item.highlight::before{color:var(--scm-green)}
+  /* Flow */
+  .flow-section{margin-bottom:48px}
+  .section-title{font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:12px}
+  .section-title::after{content:"";flex:1;height:1px;background:var(--bdr)}
+  /* Gates */
+  .gate-flow{display:flex;align-items:center;overflow-x:auto;padding:20px 0}
+  .gate-node{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+  .gate-diamond{width:52px;height:52px;border:2px solid var(--scm-blue);background:rgba(27,155,212,.1);transform:rotate(45deg);display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .gate-diamond:hover{background:rgba(27,155,212,.2);transform:rotate(45deg) scale(1.08)}
+  .gate-inner{transform:rotate(-45deg);text-align:center}
+  .gate-id{font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:800;color:var(--scm-blue);letter-spacing:.05em}
+  .gate-name-label{font-size:10px;color:var(--muted);margin-top:10px;text-align:center;max-width:70px;line-height:1.3}
+  .gate-connector{flex:1;height:2px;background:linear-gradient(90deg,var(--scm-blue),rgba(27,155,212,.3));min-width:20px}
+  /* Bridge */
+  .bridge-section{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:28px 32px;margin-bottom:40px}
+  .bridge-title{font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:20px}
+  .scm{color:var(--scm-blue)}.bridge{color:var(--scm-green)}
+  .bridge-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+  .bridge-col-head{font-family:"Barlow Condensed",sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--scm-blue);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)}
+  .bridge-item{font-size:11px;color:var(--muted);padding:3px 0}
+  /* Resources */
+  .resources-section{margin-top:56px;padding-top:48px;border-top:1px solid var(--bdr)}
+  .resources-title{font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:32px}
+  .resources-group{margin-bottom:36px}
+  .resources-group-label{font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--scm-blue);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  .resources-group-label::after{content:"";flex:1;height:1px;background:var(--bdr)}
+  .resources-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+  .res-card{background:var(--surf);border:1px solid var(--bdr);border-radius:6px;padding:16px;text-decoration:none;color:var(--text);display:block;transition:all .15s}
+  .res-card:hover{border-color:var(--scm-blue);background:rgba(27,155,212,.06);transform:translateY(-1px)}
+  .res-card-tool:hover{border-color:var(--scm-green);background:rgba(125,194,66,.06)}
+  .res-card-soon{opacity:.45;cursor:default;pointer-events:none}
+  .res-icon{font-size:20px;margin-bottom:8px}
+  .res-name{font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+  .res-desc{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:10px}
+  .res-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:3px;color:var(--scm-blue);background:rgba(27,155,212,.1);border:1px solid rgba(27,155,212,.25)}
+  .res-tag-tool{color:var(--scm-green);background:rgba(125,194,66,.1);border-color:rgba(125,194,66,.25)}
+  .res-tag-soon{color:var(--muted);background:rgba(122,155,181,.08);border-color:rgba(122,155,181,.2)}
+  /* Logo */
+  .logo-area{margin-bottom:40px}
+  .logo-text{font-family:"Barlow Condensed",sans-serif;font-size:28px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+  .s{color:var(--scm-blue)}.c{color:var(--scm-green)}.m{color:var(--scm-blue)}.sol{color:var(--text);font-weight:400}
+  .logo-sub{font-size:11px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-top:4px}
+  /* Legend */
+  .legend{display:flex;gap:24px;flex-wrap:wrap;margin-top:24px;padding:16px 20px;background:var(--surf);border:1px solid var(--bdr);border-radius:6px}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)}
+  .l-diamond{width:12px;height:12px;border:2px solid var(--scm-blue);transform:rotate(45deg);flex-shrink:0}
+  .l-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .l-line{width:24px;height:2px;flex-shrink:0}
+  </style>
 </head>
 <body>
 <div class="wrap">
@@ -446,6 +504,119 @@
     <div class="legend-item">
       <div class="l-line" style="background:linear-gradient(90deg,var(--scm-blue),var(--scm-green))"></div>
       Primary development flow
+    </div>
+  </div>
+
+  <!-- Resources -->
+  <div class="resources-section">
+    <div class="resources-title">System Resources</div>
+
+    <div class="resources-group">
+      <div class="resources-group-label">Asset Checklists</div>
+      <div class="resources-grid">
+        <a href="checklists/me-assets.html" class="res-card">
+          <div class="res-icon">⚙️</div>
+          <div class="res-name">ME Asset Checklist</div>
+          <div class="res-desc">CAD files, drawings, STEP exports, supporting docs</div>
+          <div class="res-tag">Checklist</div>
+        </a>
+        <a href="checklists/ee-assets.html" class="res-card">
+          <div class="res-icon">⚡</div>
+          <div class="res-name">EE Asset Checklist</div>
+          <div class="res-desc">Schematics, Gerbers, BOM, CPL, firmware</div>
+          <div class="res-tag">Checklist</div>
+        </a>
+        <a href="checklists/cmf-materials.html" class="res-card">
+          <div class="res-icon">🎨</div>
+          <div class="res-name">CMF & Materials</div>
+          <div class="res-desc">Color, material, finish specs and compliance</div>
+          <div class="res-tag">Checklist</div>
+        </a>
+        <a href="checklists/tooling-molds.html" class="res-card">
+          <div class="res-icon">🔧</div>
+          <div class="res-name">Tooling & Molds</div>
+          <div class="res-desc">Mold design, T1/T2/T3 samples, tool ownership</div>
+          <div class="res-tag">Checklist</div>
+        </a>
+        <a href="checklists/packaging.html" class="res-card">
+          <div class="res-icon">📦</div>
+          <div class="res-name">Packaging Engineering</div>
+          <div class="res-desc">Box, insert, carton, labelling, drop test</div>
+          <div class="res-tag">Checklist</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="resources-group">
+      <div class="resources-group-label">Project Tools</div>
+      <div class="resources-grid">
+        <a href="tools/handoff-manifest.html" class="res-card res-card-tool">
+          <div class="res-icon">📋</div>
+          <div class="res-name">Handoff Manifest Builder</div>
+          <div class="res-desc">Select asset packs, log file locations, export manifest for CM / ODM</div>
+          <div class="res-tag res-tag-tool">Tool</div>
+        </a>
+        <a href="tools/project-asset-registry.html" class="res-card res-card-tool">
+          <div class="res-icon">🗂️</div>
+          <div class="res-name">Project Asset Registry</div>
+          <div class="res-desc">Central index of all project files across vendors, clients and storage locations</div>
+          <div class="res-tag res-tag-tool">Tool</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="resources-group">
+      <div class="resources-group-label">Coming Soon</div>
+      <div class="resources-grid">
+        <div class="res-card res-card-soon">
+          <div class="res-icon">🚦</div>
+          <div class="res-name">Gate Checklists DR0–DR4</div>
+          <div class="res-desc">Design review gate pass/fail criteria per phase</div>
+          <div class="res-tag res-tag-soon">Checklist</div>
+        </div>
+        <div class="res-card res-card-soon">
+          <div class="res-icon">📄</div>
+          <div class="res-name">MRD Template</div>
+          <div class="res-desc">Market Requirements Document</div>
+          <div class="res-tag res-tag-soon">Template</div>
+        </div>
+        <div class="res-card res-card-soon">
+          <div class="res-icon">📄</div>
+          <div class="res-name">PRD Template</div>
+          <div class="res-desc">Product Requirements Document</div>
+          <div class="res-tag res-tag-soon">Template</div>
+        </div>
+        <div class="res-card res-card-soon">
+          <div class="res-icon">📄</div>
+          <div class="res-name">TRD Template</div>
+          <div class="res-desc">Technical Requirements Document</div>
+          <div class="res-tag res-tag-soon">Template</div>
+        </div>
+        <div class="res-card res-card-soon">
+          <div class="res-icon">📑</div>
+          <div class="res-name">Quality / AQL Tracker</div>
+          <div class="res-desc">Inspection criteria, defect classification, AQL levels</div>
+          <div class="res-tag res-tag-soon">Checklist</div>
+        </div>
+        <div class="res-card res-card-soon">
+          <div class="res-icon">✅</div>
+          <div class="res-name">Compliance Tracker</div>
+          <div class="res-desc">CE, FCC, RoHS, REACH per target market</div>
+          <div class="res-tag res-tag-soon">Tracker</div>
+        </div>
+        <div class="res-card res-card-soon">
+          <div class="res-icon">💰</div>
+          <div class="res-name">Cost / RFQ Templates</div>
+          <div class="res-desc">Should-cost model, RFQ template, price breakdown</div>
+          <div class="res-tag res-tag-soon">Template</div>
+        </div>
+        <div class="res-card res-card-soon">
+          <div class="res-icon">🔁</div>
+          <div class="res-name">Revision Control SOP</div>
+          <div class="res-desc">File naming, versioning, and release process</div>
+          <div class="res-tag res-tag-soon">SOP</div>
+        </div>
+      </div>
     </div>
   </div>
 
