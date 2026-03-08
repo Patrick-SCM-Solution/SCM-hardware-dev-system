@@ -41,6 +41,14 @@
   --warn:        var(--scm-warn);
   --amber:       var(--scm-amber);
   --purple:      var(--scm-purple);
+
+  /* Phase colours — index.html detail panels */
+  --idea:    #1B9BD4;
+  --poc:     #2AAB6E;
+  --design:  #7DC242;
+  --test:    #F5A623;
+  --factory: #E8624A;
+  --mp:      #9B6BD4;
 }
 
 /* ── RESET & BASE ────────────────────────────────────────────── */
@@ -742,11 +750,11 @@ footer {
 
 /* Index page missing classes */
 .bridge-col { }
-.dp-body    { }
+.dp-body    { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:24px; }
 .dp-col     { display:flex;flex-direction:column;gap:4px; }
 .dp-col-title { font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px; }
 .dp-dot     { width:6px;height:6px;border-radius:50%;background:var(--scm-blue);flex-shrink:0;margin-top:5px; }
-.dp-gate-badge { display:inline-block;font-family:"Barlow Condensed",sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;color:var(--scm-blue);border:1px solid rgba(27,155,212,.3);background:rgba(27,155,212,.08); }
+.dp-gate-badge { display:inline-block;font-family:"Barlow Condensed",sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;color:#fff;border:1px solid rgba(255,255,255,.3); }
 .dp-header  { margin-bottom:16px; }
 .dp-title   { font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px; }
 .header-badge { display:inline-block;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:3px;background:rgba(27,155,212,.1);color:var(--scm-blue);border:1px solid rgba(27,155,212,.2); }
