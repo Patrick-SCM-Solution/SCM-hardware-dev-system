@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMF & Materials — SCM Hardware System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/scm-styles.css">
+</head>
+<body>
+<div class="wrap">
+<nav><a href="../../index.html">← Phase Map</a><span>/</span><span>Checklists</span><span>/</span><span>CMF & Materials</span></nav>
+<div class="phase-tag">Design Phase — DR2 · Factory — DR4</div>
+<h1>Color, Material &amp; Finish<br>+ Materials Specification</h1>
+<p class="subtitle">CMF defines how the product looks, feels, and is finished. Lock every spec before tooling is cut and confirm again at FAI. Ambiguous CMF is one of the most common causes of expensive late-stage rework.</p>
+<div class="ref-panel">
+  <div class="ref-card"><div class="rct">Color Systems</div><div class="ri">Pantone PMS — plastics &amp; print</div><div class="ri">RAL — industrial coatings</div><div class="ri">NCS — Scandinavian standard</div><div class="ri">Delta-E (ΔE) — tolerance measure</div></div>
+  <div class="ref-card"><div class="rct">Surface Finish</div><div class="ri">Gloss — 85+ GU (gloss units)</div><div class="ri">Semi-gloss — 30–70 GU</div><div class="ri">Matte — under 10 GU</div><div class="ri">Texture — SPI / VDI / Mold-Tech</div></div>
+  <div class="ref-card"><div class="rct">Common Coatings</div><div class="ri">UV coating — scratch resistance</div><div class="ri">Anodizing — aluminum parts</div><div class="ri">Powder coat — metal enclosures</div><div class="ri">PVD — thin film, premium finish</div></div>
+</div>
+<div class="pw"><div class="pt"><div class="pf" id="pF"></div></div><div class="pl" id="pL">0 / 0</div><button class="rb" onclick="resetAll()">&#8635; Reset</button></div>
+<div id="sections"></div>
+<footer><span>SCM Solution LTD. — Hardware Development System</span><span>CMF & Materials · Rev 1.0</span></footer>
+</div>
+<script>
+const D=[
+  {n:"01",t:"Color Specification",items:[
+    {nm:"Primary Color Callout",ex:".pdf",ds:"Pantone, RAL, or NCS code for each primary color. Specify the system — do not mix systems on the same part.",nt:"Always specify for plastic AND coating separately — they match differently.",b:["c","s"]},
+    {nm:"Secondary / Accent Colors",ex:".pdf",ds:"All secondary colors, accent lines, logo and indicator colors called out with system codes.",b:["c","o","s"]},
+    {nm:"Color Tolerance (Delta-E)",ex:".pdf",ds:"Acceptable ΔE tolerance. ΔE ≤ 1.0 for consumer, ΔE ≤ 2.0 industrial. ΔE > 3.0 is visible to the naked eye.",nt:"Specify measuring instrument and D65 standard illuminant.",b:["c","o","s"]},
+    {nm:"Color Approval Sample",ex:"Physical",ds:"Signed golden sample as production color reference. One copy at factory, one retained. Used at FAI.",b:["c","r"]},
+    {nm:"Metamerism Check",ex:".pdf",ds:"Color match confirmed under D65 daylight, A incandescent, F2 fluorescent light sources.",b:["c","r"]},
+    {nm:"Logo / Graphic Color Spec",ex:".pdf / .ai",ds:"Color callout for logos, graphics, printed elements. Include vector artwork.",b:["c","o","s"]},
+  ]},
+  {n:"02",t:"Material Spec — Plastics",items:[
+    {nm:"Resin Type and Grade",ex:"TDS / .pdf",ds:"Full spec: polymer, grade, manufacturer, part number. e.g. SABIC Cycolac MG47F ABS. Generic specs like just ABS are not acceptable.",b:["c","o","s"]},
+    {nm:"Flame Rating (UL94)",ex:"TDS",ds:"UL94 rating per component. V-0 required near electronics. V-2 minimum for most consumer products.",nt:"UL94 V-0 = self-extinguishing within 10 seconds.",b:["c","o","s"]},
+    {nm:"Color Masterbatch Spec",ex:".pdf",ds:"Masterbatch supplier, product code, loading percentage. Affects color accuracy and mechanical properties.",b:["c","r"]},
+    {nm:"Technical Data Sheet (TDS)",ex:".pdf",ds:"Tensile strength, impact resistance, HDT, shrinkage rate, MFI per resin. File in /06_Supporting_Docs/.",b:["c","o","s"]},
+    {nm:"Safety Data Sheet (SDS/MSDS)",ex:".pdf",ds:"Required by factory for handling and for RoHS/REACH compliance documentation.",b:["c","o","s"]},
+    {nm:"Approved Alternate Resins",ex:".xlsx",ds:"Pre-approved alternatives for shortage situations. Must be engineering-approved before factory substitutes.",b:["c","r"]},
+    {nm:"Shrinkage Rate",ex:".pdf",ds:"Documented shrinkage rate used in mold design. Typically 0.4–0.7% for ABS. Wrong rate = wrong dimensions.",nt:"Confirm with mold shop before tool steel is cut.",b:["c","o","s"]},
+  ]},
+  {n:"03",t:"Material Spec — Metals",items:[
+    {nm:"Alloy and Temper",ex:".pdf",ds:"Full designation: e.g. 6061-T6 aluminum, 304 stainless steel, C360 brass. Include temper/condition.",b:["c","o","s"]},
+    {nm:"Surface Preparation Spec",ex:".pdf",ds:"Pre-treatment before coating: degreasing, blasting, chemical conversion coating steps.",b:["c","s"]},
+    {nm:"Anodizing Specification",ex:".pdf",ds:"Type (II/III), color, thickness in microns, sealing method. For aluminum parts.",b:["c","s"]},
+    {nm:"Powder Coat Specification",ex:".pdf",ds:"Supplier, product code, RAL color, gloss level (GU), film thickness (microns), cure spec.",b:["c","s"]},
+    {nm:"Plating Specification",ex:".pdf",ds:"Plating type, thickness, substrate prep, adhesion and salt spray requirements.",b:["c","r"]},
+    {nm:"Mill Certificate",ex:".pdf",ds:"Material certification confirming alloy composition and mechanical properties. Required for regulated products.",b:["c","s"]},
+  ]},
+  {n:"04",t:"Surface Finish & Texture",items:[
+    {nm:"Gloss Level Specification",ex:".pdf",ds:"Gloss units (GU) at 60° per external surface. Specify instrument (BYK Gardner etc.) and tolerance ±GU.",b:["c","o","s"]},
+    {nm:"Mold Texture Code",ex:".pdf",ds:"SPI finish code (A1–D3) or VDI 3400 / Mold-Tech code per molded surface.",nt:"SPI A1 = mirror polish. SPI D3 = rough sand. Mold-Tech MT codes most common in Asia.",b:["c","s"]},
+    {nm:"Texture Reference Plaque",ex:"Physical",ds:"Physical texture plaque kept at tool shop during texturing and referenced at T1/FAI.",b:["c","r"]},
+    {nm:"Parting Line Locations",ex:".pdf / CAD",ds:"Documents where mold parting lines fall. Must not appear on Class-A cosmetic surfaces.",b:["c","s"]},
+    {nm:"Draft Angle Specification",ex:".pdf",ds:"Min 1° for untextured surfaces. Add 1° per 0.025mm texture depth for textured surfaces.",b:["c","s"]},
+    {nm:"Post-Process Operations",ex:".pdf",ds:"Any post-mold work: painting, pad printing, laser etching, UV coating, hot stamping, EMI shielding.",b:["c","o","s"]},
+  ]},
+  {n:"05",t:"CMF Drawing & Golden Sample",items:[
+    {nm:"CMF Drawing — Full Product",ex:".pdf",ds:"Consolidated drawing with all colors, materials, finishes called out on product views. This is what the factory builds to.",b:["c","o","s"]},
+    {nm:"Cosmetic Zone Classification",ex:".pdf",ds:"Class-A (fully visible), Class-B (partial), Class-C (hidden) surface map. Different defect standards per zone.",b:["c","o","s"]},
+    {nm:"Cosmetic Defect Standard",ex:".pdf",ds:"Acceptable vs rejectable defects per zone: scratch size, dent depth, color variation, sink marks, flow lines.",b:["c","o","s"]},
+    {nm:"CMF Golden Sample",ex:"Physical",ds:"Approved product sample signed off by client and PM. Used as reference at FAI and ongoing MP inspection.",b:["c","r"]},
+    {nm:"CMF Sign-off Sheet",ex:".pdf",ds:"Formal approval signed by design lead, client, and PM before tooling is cut.",b:["i"]},
+  ]},
+  {n:"06",t:"Material Compliance",items:[
+    {nm:"RoHS Compliance Declaration",ex:".pdf",ds:"Confirms materials meet RoHS restrictions: lead, mercury, cadmium, hexavalent chromium, PBB, PBDE.",b:["c","o","s"]},
+    {nm:"REACH SVHC Check",ex:".pdf",ds:"No Substances of Very High Concern above 0.1% w/w. Required for EU market.",b:["c","o","s"]},
+    {nm:"Prop 65 Declaration",ex:".pdf",ds:"California Prop 65 chemical check. Common triggers: lead in solder, phthalates in cables.",b:["c","r"]},
+    {nm:"Food / Skin Contact Compliance",ex:".pdf",ds:"FDA / EU 10/2011 compliance if surface contacts food or skin. Required for wearables, kitchen, children's products.",b:["c","r"]},
+    {nm:"Conflict Minerals Declaration",ex:".pdf",ds:"Dodd-Frank 3TG declaration (tin, tantalum, tungsten, gold) from supply chain.",b:["c","r"]},
+  ]}
+];
+const BM={c:{l:"\u2192 CM",k:"bc"},o:{l:"\u2192 ODM",k:"bo"},s:{l:"External Safe",k:"bs"},r:{l:"Review First",k:"br"},i:{l:"Internal Only",k:"bi"}};
+let S={};
+const KEY="cmf-v1";
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function load(){try{const s=localStorage.getItem(KEY);if(s)S=JSON.parse(s);}catch(e){}}
+function upd(){
+  let tot=0,chk=0;
+  D.forEach(sec=>sec.items.forEach((_,i)=>{tot++;if(S[sec.n+i])chk++;}));
+  const p=tot?Math.round(chk/tot*100):0;
+  document.getElementById("pF").style.width=p+"%";
+  document.getElementById("pL").textContent=chk+" / "+tot+" ("+p+"%)";
+  D.forEach(sec=>{
+    const c=sec.items.filter((_,i)=>S[sec.n+i]).length;
+    const el=document.getElementById("sp"+sec.n);
+    if(el)el.textContent=c+" / "+sec.items.length;
+  });
+}
+function tog(n,i){const k=n+i;S[k]=!S[k];const el=document.getElementById("it"+k);if(S[k])el.classList.add("checked");else el.classList.remove("checked");save();upd();}
+function togS(n){document.getElementById("sec"+n).classList.toggle("collapsed");}
+function resetAll(){if(!confirm("Reset all?"))return;S={};document.querySelectorAll(".item").forEach(e=>e.classList.remove("checked"));save();upd();}
+function render(){
+  load();
+  const c=document.getElementById("sections");
+  D.forEach(sec=>{
+    const d=document.createElement("div");d.className="section";d.id="sec"+sec.n;
+    const sc=sec.items.filter((_,i)=>S[sec.n+i]).length;
+    d.innerHTML="<div class=\"sh\" onclick=\"togS('"+sec.n+"')\"><span class=\"sn\">"+sec.n+"</span><span class=\"st\">"+sec.t+"</span><span class=\"sp\" id=\"sp"+sec.n+"\">"+sc+" / "+sec.items.length+"</span><span class=\"cv\">&#9662;</span></div><div class=\"items\">"+
+    sec.items.map((it,i)=>{
+      const k=sec.n+i;const ck=S[k]?"checked":"";
+      const bg=it.b.map(b=>"<span class=\"badge "+BM[b].k+"\">"+BM[b].l+"</span>").join("");
+      const nt=it.nt?"<div class=\"ino\">&#128161; "+it.nt+"</div>":"";
+      return "<div class=\"item "+ck+"\" id=\"it"+k+"\" onclick=\"tog('"+sec.n+"',"+i+")\"><div class=\"cb\"><span class=\"tk\">&#10003;</span></div><div class=\"ib\"><div class=\"in\"><span class=\"ix\">"+it.ex+"</span>"+it.nm+"</div><div class=\"id\">"+it.ds+"</div>"+nt+"<div class=\"bd\">"+bg+"</div></div></div>";
+    }).join("")+"</div>";
+    c.appendChild(d);
+  });
+  upd();
+}
+render();
+</script>
+</body>
+</html>
