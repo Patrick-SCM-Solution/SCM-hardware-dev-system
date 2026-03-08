@@ -7,14 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/scm-styles.css">
 <style>
-  
-  /* CMF amber accent */
-  .section-num { color: var(--scm-amber); background: rgba(246,173,85,.1); border-color: rgba(246,173,85,.2); }
-  .item-ext { color: var(--scm-amber); }
-  .progress-fill { background: linear-gradient(90deg, var(--scm-amber), var(--scm-green)); }
-  .progress-label { color: var(--scm-amber); }
-  .item:hover { background: rgba(246,173,85,.04); }
-  .cl-item-note { font-size: 11px; color: var(--scm-blue); margin-top: 4px; font-style: italic; }
+  /* Amber accent overrides */
+  .cl-section-num  { color:var(--scm-amber);background:rgba(246,173,85,.1);border-color:rgba(246,173,85,.2); }
+  .cl-item-ext     { color:var(--scm-amber); }
+  .cl-section-hdr:hover { background:#1f3550; }
+  .cl-item:hover   { background:rgba(246,173,85,.04); }
+  .progress-fill   { background:linear-gradient(90deg,var(--scm-amber),var(--scm-green)); }
+  .progress-label  { color:var(--scm-amber); }
 </style>
 </head>
 <body>
@@ -99,16 +98,16 @@ const D=[
   ]}
 ];
 const BM={
-  c:{label:"→ CM",      cls:"badge-cm"},
-  o:{label:"→ ODM",     cls:"badge-odm"},
-  s:{label:"External Safe", cls:"badge-safe"},
-  r:{label:"Review First",  cls:"badge-review"},
-  i:{label:"Internal Only", cls:"badge-int"}
+  c:{label:"→ CM",         cls:"badge-cm"},
+  o:{label:"→ ODM",        cls:"badge-odm"},
+  s:{label:"External Safe",cls:"badge-safe"},
+  r:{label:"Review First", cls:"badge-review"},
+  i:{label:"Internal Only",cls:"badge-int"}
 };
 let S={};
 const KEY="cmf-v1";
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
-function load(){try{const s=localStorage.getItem(KEY);if(s)S=JSON.parse(s);}catch(e){}}
+function load(){try{const d=localStorage.getItem(KEY);if(d)S=JSON.parse(d);}catch(e){}}
 function updateProgress(){
   let tot=0,chk=0;
   D.forEach(sec=>sec.items.forEach((_,i)=>{tot++;if(S[sec.n+i])chk++;}));
@@ -117,55 +116,56 @@ function updateProgress(){
   document.getElementById("progressLabel").textContent=chk+" / "+tot+" ("+p+"%)";
   D.forEach(sec=>{
     const c=sec.items.filter((_,i)=>S[sec.n+i]).length;
-    const el=document.getElementById("sec-progress-"+sec.n);
-    if(el)el.textContent=c+" / "+sec.items.length;
+    const el=document.getElementById("sp-"+sec.n);
+    if(el) el.textContent=c+" / "+sec.items.length;
   });
 }
 function toggleItem(key){
   S[key]=!S[key];
-  const el=document.getElementById("item-"+key);
-  if(S[key])el.classList.add("checked");
-  else el.classList.remove("checked");
-  save();updateProgress();
+  const el=document.getElementById("ci-"+key);
+  if(el) el.classList.toggle("checked",S[key]);
+  save(); updateProgress();
 }
-function toggleSection(n){document.getElementById("sec"+n).classList.toggle("collapsed");}
+function toggleSection(n){
+  const el=document.getElementById("cs-"+n);
+  if(el) el.classList.toggle("collapsed");
+}
 function resetAll(){
-  if(!confirm("Reset all checklist items?"))return;
+  if(!confirm("Reset all checklist items?")) return;
   S={};
-  document.querySelectorAll(".item").forEach(e=>e.classList.remove("checked"));
-  save();updateProgress();
+  document.querySelectorAll(".cl-item").forEach(e=>e.classList.remove("checked"));
+  save(); updateProgress();
 }
 function render(){
   load();
   const container=document.getElementById("sections");
   D.forEach(sec=>{
-    const secEl=document.createElement("div");
-    secEl.className="cl-section";
-    secEl.id="sec"+sec.n;
     const secChecked=sec.items.filter((_,i)=>S[sec.n+i]).length;
     const itemsHTML=sec.items.map((it,i)=>{
       const key=sec.n+i;
-      const checked=S[key]?"checked":"";
       const badges=it.b.map(b=>`<span class="badge ${BM[b].cls}">${BM[b].label}</span>`).join("");
       const note=it.nt?`<div class="cl-item-note">💡 ${it.nt}</div>`:"";
-      return `<div class="item ${checked}" id="item-${key}" onclick="toggleItem('${key}')">
-        <div class="checkbox"><span class="tick">✓</span></div>
-        <div class="item-body">
-          <div class="item-name"><span class="item-ext">${it.ex}</span>${it.nm}</div>
-          <div class="item-desc">${it.ds}</div>
+      return `<div class="cl-item${S[key]?" checked":""}" id="ci-${key}" onclick="toggleItem('${key}')">
+        <div class="cl-checkbox"><span class="cl-tick">✓</span></div>
+        <div class="cl-item-body">
+          <div class="cl-item-name"><span class="cl-item-ext">${it.ex}</span>${it.nm}</div>
+          <div class="cl-item-desc">${it.ds}</div>
           ${note}
-          <div class="item-badges">${badges}</div>
+          <div class="cl-item-badges">${badges}</div>
         </div>
       </div>`;
     }).join("");
+    const secEl=document.createElement("div");
+    secEl.className="cl-section";
+    secEl.id="cs-"+sec.n;
     secEl.innerHTML=`
-      <div class="section-header" onclick="toggleSection('${sec.n}')">
-        <span class="section-num">${sec.n}</span>
-        <span class="section-title-text">${sec.t}</span>
-        <span class="section-progress" id="sec-progress-${sec.n}">${secChecked} / ${sec.items.length}</span>
-        <span class="chevron">▾</span>
+      <div class="cl-section-hdr" onclick="toggleSection('${sec.n}')">
+        <span class="cl-section-num">${sec.n}</span>
+        <span class="cl-section-title">${sec.t}</span>
+        <span class="cl-section-count" id="sp-${sec.n}">${secChecked} / ${sec.items.length}</span>
+        <span class="cl-chevron">▾</span>
       </div>
-      <div class="items">${itemsHTML}</div>`;
+      <div class="cl-items">${itemsHTML}</div>`;
     container.appendChild(secEl);
   });
   updateProgress();
