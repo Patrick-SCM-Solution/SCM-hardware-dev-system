@@ -20,6 +20,7 @@ Built for use alongside Google Drive, Notion, and Odoo Knowledge.
 | Packaging Engineering | [/checklists/packaging.html](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/checklists/packaging.html) |
 | Handoff Manifest Builder | [/tools/handoff-manifest.html](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/handoff-manifest.html) |
 | Project Asset Registry | [/tools/project-asset-registry.html](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/project-asset-registry.html) |
+| Chinese SCM Reference | [/tools/chinese-srs.html](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/tools/chinese-srs.html) |
 | Shared Stylesheet | [/css/scm-styles.css](https://patrick-scm-solution.github.io/SCM-hardware-dev-system/css/scm-styles.css) |
 
 ---
@@ -72,6 +73,7 @@ All checklists track completion progress with a live progress bar and persist st
 |------|-------------|
 | `tools/handoff-manifest.html` | 4-step builder: select asset packs → log file locations → confirm NDA → export manifest for CM/ODM |
 | `tools/project-asset-registry.html` | Central index for all project files across vendors, clients, and storage locations. Tracks status, access level, version, and storage path per asset. Exports JSON/CSV. |
+| `tools/chinese-srs.html` | SCM vocabulary reference — English terms with Traditional Chinese (繁體) and Simplified Chinese (简体) equivalents and usage context. Searchable by category. |
 
 ---
 
